@@ -1,7 +1,6 @@
 import random
 from json import loads
-
-from api.admin import admin_token
+from api.admin import *
 from api.models import User, FoodGroup, Food, FoodSize, Token, Favorite, Order, Option, Address, \
     OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress
 from django.core.mail import send_mail

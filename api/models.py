@@ -255,7 +255,7 @@ class RestaurantInfo(models.Model):
     show_item_category_or_sub = models.BooleanField()  # if cat is True else False
 
     enable_accept_reject = models.BooleanField()
-    message_show = models.CharField(500)
+    message_show = models.CharField(max_length=500)
     time_auto_reject = models.IntegerField()
 
     def to_json(self, *args, **kwargs):
