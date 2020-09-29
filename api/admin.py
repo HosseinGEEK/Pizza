@@ -79,6 +79,8 @@ def res_info(request):
                     ri.save()
 
                 my_response(True, 'success', ri.to_json())
+            else:
+                return my_response(False, 'token invalid', {})
 
         except Exception as e:
             return my_response(False, 'error in res info, ' + str(e), {})
@@ -101,6 +103,8 @@ def post_code(request):
 
                 pc.save()
                 my_response(True, 'success', pc.to_json())
+            else:
+                return my_response(False, 'token invalid', {})
 
         except Exception as e:
             return my_response(False, 'error in post code, ' + str(e), {})
@@ -123,6 +127,8 @@ def offer(request):
 
                 o.save()
                 my_response(True, 'success', o.to_json())
+            else:
+                return my_response(False, 'token invalid', {})
 
         except Exception as e:
             return my_response(False, 'error in offer, ' + str(e), {})
@@ -147,6 +153,9 @@ def res_location(request):
                 a.save()
                 my_response(True, 'success', a.to_json())
 
+            else:
+                return my_response(False, 'token invalid', {})
+
         except Exception as e:
             return my_response(False, 'error in post res location, ' + str(e), {})
     else:
@@ -168,6 +177,9 @@ def get_location(request):
                     locs_list.append(l.to_json())
 
                 my_response(True, 'success', locs_list)
+
+            else:
+                return my_response(False, 'token invalid', {})
 
         except Exception as e:
             return my_response(False, 'error in get res location, ' + str(e), {})
@@ -194,6 +206,9 @@ def res_times(request):
                     time.save(force_update=True)
                 return my_response(True, 'success', {})
 
+            else:
+                return my_response(False, 'token invalid', {})
+
         except Exception as e:
             return my_response(False, 'error in times, ' + str(e), {})
 
@@ -216,6 +231,8 @@ def group(request):
                 else:
                     fg.save(force_update=True)
                 return my_response(True, 'success', {})
+            else:
+                return my_response(False, 'token invalid', {})
 
         except Exception as e:
             return my_response(False, 'error in group, ' + str(e), {})
@@ -260,6 +277,8 @@ def option(request):
                     o.save()
 
                 return my_response(True, 'success', o.to_json())
+            else:
+                return my_response(False, 'token invalid', {})
 
         except Exception as e:
             return my_response(False, 'error in option, ' + str(e), {})

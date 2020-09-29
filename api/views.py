@@ -77,6 +77,8 @@ def logout(request):
                 User.objects.filter(user_id=user.user_id).update(status=False)
                 token.delete()
                 return my_response(True, 'success', {})
+            else:
+                return my_response(False, 'token not exist', {})
         except Exception as e:
             return my_response(False, 'error in logout, ' + str(e), {})
     else:
@@ -94,6 +96,8 @@ def delete_user(request):
                 User.objects.filter(user_id=user.user_id).delete()
                 token.delete()
                 return my_response(True, 'success', {})
+            else:
+                return my_response(False, 'token not exist', {})
         except Exception as e:
             return my_response(False, 'error in logout, ' + str(e), {})
     else:
@@ -134,6 +138,8 @@ def my_send_mail(request):
                 )
 
                 return my_response(True, 'success', {})
+            else:
+                return my_response(False, 'token not exist', {})
         except Exception as e:
             return my_response(False, 'error in send mail, ' + str(e), {})
     else:
@@ -164,6 +170,8 @@ def change_pass(request):
                 user = User.objects.filter(user_id=user.user_id)
                 user.update(password=new)
                 return my_response(True, 'success', {})
+            else:
+                return my_response(False, 'token not exist', {})
         except Exception as e:
             return my_response(False, 'error in all changePass, ' + str(e), {})
     else:
@@ -243,7 +251,7 @@ def get_fav_foods(request):
 
             return my_response(True, 'success', favs_list)
         else:
-            return my_response(False, 'invalid token', {})
+            return my_response(False, 'token not exist', {})
     else:
         return my_response(False, 'invalid method', {})
 
@@ -265,7 +273,7 @@ def get_user_orders(request):
 
             return my_response(True, 'success', orders_list)
         else:
-            return my_response(False, 'invalid token', {})
+            return my_response(False, 'token not exist', {})
     else:
         return my_response(False, 'invalid method', {})
 
@@ -283,7 +291,7 @@ def get_user_address(request):
                 ads_list.append(a.to_json())
             return my_response(True, 'success', ads_list)
         else:
-            return my_response(False, 'invalid token', {})
+            return my_response(False, 'token not exist', {})
     else:
         return my_response(False, 'invalid method', {})
 
