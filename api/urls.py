@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    # path('', views.home, name='home'),
+    path('', views.base, name='home'),
     path('user/register/', views.register, name='register'),
     path('user/login/', views.login, name='login'),
     path('user/logout/', views.logout, name='logout'),
@@ -22,5 +22,5 @@ urlpatterns = [
     # path('allUser/', admin.get_all_user, name='all-user'),
 ]
 
-if settings.DEBUG:
+if not settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

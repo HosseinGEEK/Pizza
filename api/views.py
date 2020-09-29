@@ -4,7 +4,7 @@ from api.admin import *
 from api.models import User, FoodGroup, Food, FoodSize, Token, Favorite, Order, Option, Address, \
     OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress
 from django.core.mail import send_mail
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
 
@@ -17,6 +17,11 @@ def my_response(status, message, data):
         'message': message,
         'data': data,
     })
+
+
+@csrf_exempt
+def base(request):
+    return HttpResponse(content='<p1>this is server api for pizza project</p1>')
 
 
 @csrf_exempt
