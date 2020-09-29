@@ -1,3 +1,4 @@
 db.sqlite3
-api/migrations
+api/migrations/000*
 linux server.txt
+pizza/settings.py
