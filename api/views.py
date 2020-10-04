@@ -340,7 +340,8 @@ def insert_user_order(request):
                 foods = info['foods']
                 for f in foods:
                     size = FoodSize.objects.get(food_size_id=f['foodSizeId'])
-                    OrderFood(food_size=size, order=order, number=f['number'])
+                    _type = FoodType.objects.get(food_type_id=f['foodTypeId'])
+                    OrderFood(food_size=size, food_type=_type, order=order, number=f['number']).save()
 
                 order_options = info['optionsId']
                 for op in order_options:

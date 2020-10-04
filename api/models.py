@@ -211,14 +211,20 @@ class Order(models.Model):
 
 class OrderFood(models.Model):
     food_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE)
+    food_type = models.ForeignKey(FoodType, on_delete=models.CASCADE, blank=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     number = models.IntegerField()
 
     def to_json(self):
         food = Food.objects.get(food_id=self.food_size.food_id)
-        sizes = [self.food_size.to_json()]
+        if self.food_type is not None:
+            _type = self.food_type.to_json()
+        else:
+            _type = None
         return {
-            'food': food.to_json(sizes),
+            'food': food.to_json(),
+            'size': self.food_size.to_json(),
+            'type': _type,
             'number': self.number,
         }
 
