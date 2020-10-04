@@ -96,6 +96,7 @@ class Food(models.Model):
             'finalPrice': self.final_price,
             'rank': self.rank,
             'image': self.image,
+            'status': self.status,
         }
 
     def __str__(self):
@@ -153,7 +154,6 @@ class Option(models.Model):
         return self.name
 
 
-# todo option reference
 class FoodOption(models.Model):
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
     option = models.ForeignKey(Option, on_delete=models.CASCADE)
@@ -167,8 +167,7 @@ class Favorite(models.Model):
     def to_json(self):
         return {
             'favId': self.fav_id,
-            'food': self.food.to_json()
-        }
+        }.update(self.food.to_json())
 
 
 class Order(models.Model):
@@ -192,12 +191,16 @@ class Order(models.Model):
         options_list = []
         for o in ops:
             options_list.append(o.to_json())
+
+        address = None
+        if self.address is not None:
+            address = self.to_json()
         return {
             'orderId': self.order_id,
             'datetime': self.datetime,
             'totalPrice': self.total_price,
             'description': self.description,
-            'address': self.address.to_json(),
+            'address': address,
             'foods': foods_list,
             'options': options_list,
         }
@@ -294,7 +297,6 @@ class RestaurantAddress(models.Model):
     def to_json(self):
         return {
             'ResAddressId': self.res_address_id,
-            'name': self.restaurant.res_info_id,
             'address': self.address,
             'telephone': self.telephone,
             'orderAlert': self.order_alert,
@@ -311,6 +313,7 @@ class RestaurantTime(models.Model):
     day = models.CharField(max_length=10)
     start = models.TimeField()
     end = models.TimeField()
+    status = models.BooleanField(default=True)
 
     def to_json(self):
         return {
@@ -318,6 +321,7 @@ class RestaurantTime(models.Model):
             'day': self.day,
             'start': self.start,
             'end': self.end,
+            'status': self.status,
         }
 
     def __str__(self):

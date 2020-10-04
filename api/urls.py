@@ -1,5 +1,6 @@
+from django.conf.urls import url
 from django.urls import path
-from . import views
+from . import views, admin
 from . import admin
 from django.conf import settings
 from django.conf.urls.static import static
@@ -9,17 +10,31 @@ urlpatterns = [
     path('', views.base, name='home'),
     path('user/register/', views.register, name='register'),
     path('user/login/', views.login, name='login'),
+    path('admin/login/', admin.admin_login, name='login'),
     path('user/logout/', views.logout, name='logout'),
+    path('user/delete/', views.delete_account, name='delete-account'),
+    path('user/changePassword/', views.change_pass),
+    path('user/getFavFood/', views.get_fav_foods,),
+    path('user/getAddress/', views.get_user_address,),
+    path('user/address/', views.insert_user_address,),
+    path('user/order/', views.insert_user_order,),
     path('homeInfo/', views.get_home_info, name='home-info'),
-    path('getFood', views.get_food,),
-    path('insertOrder/', views.insert_user_order, name='home-info'),
-    # path('sendOtp/', views.send_otp, name='send-otp'),
-    # path('user/updateProfile/', views.update_profile, name='update-profile'),
-    # path('user/', views.get_user_and_profile, name='user-profile-info'),
-    # path('user/passwordReminder/', views.password_reminder, name='password-reminder'),
-
-
-    # path('allUser/', admin.get_all_user, name='all-user'),
+    path('getFood/', views.get_food,),
+    path('getOrder/', views.get_orders, ),
+    path('insertOrder/', views.insert_user_order),
+    path('resInfo/', views.get_res_info),
+    path('postCode/', admin.post_code),
+    path('offer/', admin.offer),
+    path('resLocation/', admin.res_location),
+    url(r'^resLocation/(?P<location_id>\w+)/$', admin.res_location),
+    path('resTime/', admin.res_times),
+    url(r'^resTime/(?P<time_id>\w+)/$', admin.res_times),
+    path('group/', admin.group),
+    url(r'^group/(?P<group_id>\w+)/$', admin.group),
+    path('food/', admin.food),
+    url(r'^food/(?P<food_id>\w+)/$', admin.food),
+    path('option/', admin.option),
+    url(r'^option/(?P<option_id>\w+)/$', admin.option),
 ]
 
 if not settings.DEBUG:

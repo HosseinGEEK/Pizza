@@ -1,12 +1,15 @@
+import datetime
 import random
 from json import loads
-from api.admin import *
+
+from api import admin
 from api.models import User, FoodGroup, Food, FoodSize, Token, Favorite, Order, Option, Address, \
     OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress
 from django.core.mail import send_mail
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
+from django.core.paginator import Paginator
 
 otp = None
 
@@ -91,8 +94,8 @@ def logout(request):
 
 
 @csrf_exempt
-def delete_user(request):
-    if request.method == 'GET':
+def delete_account(request):
+    if request.method == 'DELETE':
         try:
             token = request.headers.get('token')
             token = Token.objects.filter(token=token)
@@ -170,7 +173,7 @@ def change_pass(request):
                     return my_response(False, 'confirmation code invalid', None)
 
                 if user.password != old:
-                    return my_response(False, 'current password invalid', None)
+                    return my_response(False, 'old password invalid', None)
 
                 user = User.objects.filter(user_id=user.user_id)
                 user.update(password=new)
@@ -262,28 +265,6 @@ def get_fav_foods(request):
 
 
 @csrf_exempt
-def get_user_orders(request):
-    if request.method == 'GET':
-        token = request.headers.get('token')
-        token = Token.objects.filter(token=token)
-        if token.exists():
-            if token[0] == admin_token:
-                orders = Order.objects.all()
-            else:
-                user = token[0].user
-                orders = Order.objects.filter(user=user)
-            orders_list = []
-            for o in orders:
-                orders_list.append(o.to_json())
-
-            return my_response(True, 'success', orders_list)
-        else:
-            return my_response(False, 'token not exist', {})
-    else:
-        return my_response(False, 'invalid method', {})
-
-
-@csrf_exempt
 def get_user_address(request):
     if request.method == 'GET':
         token = request.headers.get('token')
@@ -303,7 +284,7 @@ def get_user_address(request):
 
 @csrf_exempt
 def insert_user_address(request):
-    if request.method == 'POST':
+    if request.method == 'POST' or request.method == 'PUT':
         try:
             token = request.headers.get('token')
             token = Token.objects.filter(token=token)
@@ -318,7 +299,10 @@ def insert_user_address(request):
                     lat=info['lat'],
                     long=info['long']
                 )
-                a.save()
+                if request.method == 'POST':
+                    a.save()
+                else:
+                    a.save(force_update=True)
                 return my_response(True, 'success', a.to_json())
 
             else:
@@ -373,6 +357,38 @@ def insert_user_order(request):
 
 
 @csrf_exempt
+def get_orders(request):
+    if request.method == 'GET':
+        token = request.headers.get('token')
+        token = Token.objects.filter(token=token)
+        if token.exists():
+            if token[0] == admin.admin_token:
+                orders = Order.objects.all()
+            else:
+                user = token[0].user
+                orders = Order.objects.filter(user=user)
+
+            paginator = Paginator(orders, 15)
+            try:
+                page = int(request.GET.get('page', '1'))
+            except:
+                page = 1
+
+            try:
+                orders = paginator.page(page)
+            except:
+                orders = paginator.page(paginator.num_pages)
+            orders_list = []
+            for o in orders.object_list:
+                orders_list.append(o.to_json())
+
+            return my_response(True, 'success', orders_list)
+        else:
+            return my_response(False, 'token not exist', {})
+    else:
+        return my_response(False, 'invalid method', {})
+
+@csrf_exempt
 def get_res_info(request):
     if request.method == 'GET':
         ress = RestaurantInfo.objects.all()
@@ -389,5 +405,15 @@ def get_res_info(request):
 
             return my_response(True, 'success', data)
 
+        return my_response(False, 'not exist any restaurant', {})
+
     else:
         return my_response(False, 'invalid method', {})
+
+
+def image_name():
+    name = datetime.datetime.now()
+    name = str(name).replace(' ', '_')
+    name = name.split('.')[0].replace(':', '-')
+
+    return name

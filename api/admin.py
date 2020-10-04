@@ -1,12 +1,14 @@
+import base64
 from json import loads
 
-from api.views import my_response
+from api.views import my_response, image_name
 from django.contrib import admin
 from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from .models import User, FoodGroup, Food, FoodSize, FoodType, Option, Token, Order, RestaurantInfo, RestaurantAddress, \
     PostCode, Offer, RestaurantTime
+from django.core.paginator import Paginator
 
 admin.site.register(User)
 admin.site.register(FoodGroup)
@@ -14,8 +16,10 @@ admin.site.register(Food)
 admin.site.register(FoodSize)
 admin.site.register(FoodType)
 admin.site.register(Option)
+admin.site.register(Order)
+admin.site.register(Token)
 
-admin_token = ''
+admin_token = '123'
 
 
 @csrf_exempt
@@ -137,135 +141,198 @@ def offer(request):
 
 
 @csrf_exempt
-def res_location(request):
-    if request.method == "POST":
-        try:
-            token = request.headers.get('token')
-            if token == admin_token:
+def res_location(request, location_id):
+    token = request.headers.get('token')
+    if token == admin_token:
+        if request.method == "POST" or request.method == 'PUT':
+            try:
                 info = loads(request.body.decode('utf-8'))
                 a = RestaurantAddress(
                     restaurant__res_info_id=info['resId'],
                     address=info['address'],
-                    telephone=info['tel'],
+                    telephone=info['telephone'],
                     order_alert=info['orderAlert'],
                     email=info['email'],
                 )
-                a.save()
+                if request.method == 'PUT':
+                    a.save(force_update=True)
+                else:
+                    a.save()
                 my_response(True, 'success', a.to_json())
 
+            except Exception as e:
+                return my_response(False, 'error in post res location, ' + str(e), {})
+        elif request.method == 'DELETE':
+            var = RestaurantAddress.objects.filter(res_address_id=location_id)
+            if var[0] == 1:
+                return my_response(True, 'success', {})
             else:
-                return my_response(False, 'token invalid', {})
+                return my_response(False, 'location id not exist', {})
+        elif request.method == 'GET':
+            _list = []
+            los = RestaurantAddress.objects.all()
+            for l in los:
+                _list.append(l.to_json())
 
-        except Exception as e:
-            return my_response(False, 'error in post res location, ' + str(e), {})
+            return my_response(True, 'success', _list)
+        else:
+            return my_response(False, 'invalid method', {})
     else:
-        return my_response(False, 'invalid method', {})
+        return my_response(False, 'token invalid', {})
 
 
 @csrf_exempt
-def get_location(request):
-    if request.method == "GET":
-        try:
-            token = request.headers.get('token')
-            if token == admin_token:
-                info = loads(request.body.decode('utf-8'))
-                res = info['resId']
-                locs = RestaurantAddress.objects.filter(restaurant__res_info_id=res)
-                locs_list = []
+def res_times(request, time_id):
+    token = request.headers.get('token')
+    if token == admin_token:
+        if request.method == 'POST' or request.method == 'PUT':
+            try:
 
-                for l in locs:
-                    locs_list.append(l.to_json())
-
-                my_response(True, 'success', locs_list)
-
-            else:
-                return my_response(False, 'token invalid', {})
-
-        except Exception as e:
-            return my_response(False, 'error in get res location, ' + str(e), {})
-    else:
-        return my_response(False, 'invalid method', {})
-
-
-@csrf_exempt
-def res_times(request):
-    if request.method == 'POST' or request.method == 'PUT':
-        try:
-            token = request.headers.get('token')
-            if token == admin_token:
                 info = loads(request.body.decode('utf-8'))
                 time = RestaurantTime(
                     restaurant__res_info_i=info['resId'],
                     day=info['day'],
                     start=info['start'],
                     end=info['end'],
+                    status=info['status'],
                 )
                 if request.method == 'POST':
                     time.save()
                 else:
                     time.save(force_update=True)
+                return my_response(True, 'success', time.to_json())
+
+            except Exception as e:
+                return my_response(False, 'error in times, ' + str(e), {})
+
+        elif request.method == 'DELETE':
+            var = RestaurantTime.objects.filter(time_id=time_id)
+            if var[0] == 1:
                 return my_response(True, 'success', {})
-
             else:
-                return my_response(False, 'token invalid', {})
+                return my_response(False, 'time id not exist', {})
+        elif request.method == 'GET':
+            _list = []
+            tis = RestaurantTime.objects.all()
+            for t in tis:
+                _list.append(t.to_json())
 
-        except Exception as e:
-            return my_response(False, 'error in times, ' + str(e), {})
-
+            return my_response(True, 'success', _list)
+        else:
+            return my_response(False, 'invalid method', {})
     else:
-        return my_response(False, 'invalid method', {})
+        return my_response(False, 'token invalid', {})
+
 
 @csrf_exempt
-def group(request):
-    if request.method == 'POST' or request.method == 'PUT':
-        try:
-            token = request.headers.get('token')
-            if token == admin_token:
+def group(request, group_id=None):
+    token = request.headers.get('token')
+    if token == admin_token:
+        if request.method == 'POST' or request.method == 'PUT':
+            try:
                 info = loads(request.body.decode('utf-8'))
                 name = info['name']
-                image = info['imageName']
-                # todo handle image
-                fg = FoodGroup(name=name, image=image)
+                image = info['image']
+                try:
+                    img_name = image_name()
+                    path = 'media/Images/' + img_name + '.png'
+                    img_data = base64.b64decode(image)
+                    with open(path, 'wb') as g:
+                        g.write(img_data)
+                except:
+                    img_name = image
+
+                fg = FoodGroup(name=name, image=img_name)
                 if request.method == 'POST':
                     fg.save()
                 else:
                     fg.save(force_update=True)
                 return my_response(True, 'success', {})
+
+            except Exception as e:
+                return my_response(False, 'error in group, ' + str(e), {})
+        elif request.method == 'DELETE':
+            var = FoodGroup.objects.filter(group_id=group_id).delete()
+            if var[0] == 1:
+                return my_response(True, 'success', {})
             else:
-                return my_response(False, 'token invalid', {})
+                return my_response(False, 'foodGroupId not exist!', {})
+        elif request.method == 'GET':
+            g_list = []
+            gs = FoodGroup.objects.all()
+            for g in gs:
+                g_list.append(g.to_json())
+            return my_response(True, 'success', g_list)
 
-        except Exception as e:
-            return my_response(False, 'error in group, ' + str(e), {})
-
+        else:
+            return my_response(False, 'invalid method', {})
     else:
-        return my_response(False, 'invalid method', {})
+        return my_response(False, 'token invalid', {})
 
 
 @csrf_exempt
-def food(request):
-    if request.method == 'POST' or request.method == 'PUT':
-        try:
-            token = request.headers.get('token')
-            if token == admin_token:
+def food(request, food_id=None):
+    token = request.headers.get('token')
+    if token == admin_token:
+        if request.method == 'POST' or request.method == 'PUT':
+            try:
                 info = loads(request.body.decode('utf-8'))
                 group_id = info['groupId']
                 name = info['name']
                 describ = info['description']
                 price = info['price']
-                image = info['imageName']
-                # todo handle image
-        except Exception as e:
-            return my_response(False, 'error in food, ' + str(e), {})
+                image = info['image']
+                status = info['status']
+                try:
+                    img_name = image_name()
+                    path = 'media/Images/' + img_name + '.png'
+                    img_data = base64.b64decode(image)
+                    with open(path, 'wb') as f:
+                        f.write(img_data)
+                except:
+                    img_name = image
+
+                f = Food(
+                    group__group_id=group_id,
+                    name=name,
+                    description=describ,
+                    price=price,
+                    image=img_name,
+                    status=status,
+                )
+                if request.method == 'PUT':
+                    f.save(force_update=True)
+                else:
+                    f.save()
+
+                return my_response(True, 'success', f.to_json())
+
+            except Exception as e:
+                return my_response(False, 'error in food, ' + str(e), {})
+        elif request.method == 'DELETE':
+            var = Food.objects.filter(food_id=food_id).delete()
+            if var[0] == 1:
+                return my_response(True, 'success', {})
+            else:
+                return my_response(False, 'foodId not exist!', {})
+        elif request.method == 'GET':
+            fo_list = []
+            fos = Food.objects.all()
+            for f in fos:
+                fo_list.append(f.to_json())
+            return my_response(True, 'success', fo_list)
+        else:
+            return my_response(False, 'invalid method', {})
     else:
-        return my_response(False, 'invalid method', {})
+        return my_response(False, 'token invalid', {})
 
 
 @csrf_exempt
-def option(request):
-    if request.method == 'POST' or request.method == 'PUT':
-        try:
-            token = request.headers.get('token')
-            if token == admin_token:
+def option(request, option_id=None):
+    token = request.headers.get('token')
+    if token == admin_token:
+        if request.method == 'POST' or request.method == 'PUT':
+            try:
                 info = loads(request.body.decode('utf-8'))
                 name = info['name']
                 price = info['price']
@@ -277,10 +344,22 @@ def option(request):
                     o.save()
 
                 return my_response(True, 'success', o.to_json())
-            else:
-                return my_response(False, 'token invalid', {})
 
-        except Exception as e:
-            return my_response(False, 'error in option, ' + str(e), {})
+            except Exception as e:
+                return my_response(False, 'error in option, ' + str(e), {})
+        elif request.method == 'DELETE':
+            var = Option.objects.filter(option_id=option_id).delete()
+            if var[0] == 1:
+                return my_response(True, 'success', {})
+            else:
+                return my_response(False, 'optionId not exist!', {})
+        elif request.method == 'GET':
+            op_list = []
+            ops = Option.objects.all()
+            for o in ops:
+                op_list.append(o.to_json())
+            return my_response(True, 'success', op_list)
+        else:
+            return my_response(False, 'invalid method', {})
     else:
-        return my_response(False, 'invalid method', {})
+        return my_response(False, 'token invalid', {})
