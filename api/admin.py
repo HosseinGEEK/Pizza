@@ -18,6 +18,7 @@ admin.site.register(FoodType)
 admin.site.register(Option)
 admin.site.register(Order)
 admin.site.register(Token)
+admin.site.register(RestaurantInfo)
 
 admin_token = '123'
 
@@ -82,7 +83,7 @@ def res_info(request):
                 else:
                     ri.save()
 
-                my_response(True, 'success', ri.to_json())
+                my_response(True, 'success', ri.to_json(None, None))
             else:
                 return my_response(False, 'token invalid', {})
 
@@ -234,20 +235,22 @@ def group(request, group_id=None):
                 name = info['name']
                 image = info['image']
                 try:
-                    img_name = image_name()
-                    path = 'media/Images/' + img_name + '.png'
+                    img_name = image_name() + '.png'
+                    path = 'media/Images/' + img_name
                     img_data = base64.b64decode(image)
                     with open(path, 'wb') as g:
                         g.write(img_data)
-                except:
+                except Exception as e:
                     img_name = image
 
-                fg = FoodGroup(name=name, image=img_name)
                 if request.method == 'POST':
+                    fg = FoodGroup(name=name, image=img_name)
                     fg.save()
                 else:
-                    fg.save(force_update=True)
-                return my_response(True, 'success', {})
+                    fg = FoodGroup.objects.filter(group_id=group_id)
+                    fg.update(name=name, image=img_name)
+                    fg = fg.first()
+                return my_response(True, 'success', fg.to_json(None))
 
             except Exception as e:
                 return my_response(False, 'error in group, ' + str(e), {})
@@ -261,7 +264,7 @@ def group(request, group_id=None):
             g_list = []
             gs = FoodGroup.objects.all()
             for g in gs:
-                g_list.append(g.to_json())
+                g_list.append(g.to_json(None))
             return my_response(True, 'success', g_list)
 
         else:
@@ -284,8 +287,8 @@ def food(request, food_id=None):
                 image = info['image']
                 status = info['status']
                 try:
-                    img_name = image_name()
-                    path = 'media/Images/' + img_name + '.png'
+                    img_name = image_name() + '.png'
+                    path = 'media/Images/' + img_name
                     img_data = base64.b64decode(image)
                     with open(path, 'wb') as f:
                         f.write(img_data)

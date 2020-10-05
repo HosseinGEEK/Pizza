@@ -267,7 +267,7 @@ class RestaurantInfo(models.Model):
     message_show = models.CharField(max_length=500)
     time_auto_reject = models.IntegerField()
 
-    def to_json(self, *args, **kwargs):
+    def to_json(self, times, address):
         return {
             'ResInfoId': self.res_info_id,
             'open': self.open,
@@ -287,8 +287,8 @@ class RestaurantInfo(models.Model):
             'enableAcceptReject': self.enable_accept_reject,
             'message': self.message_show,
             'timeAutoReject': self.time_auto_reject,
-            'times': args,
-            'address': kwargs,
+            'times': times,
+            'address': address,
         }
 
 
