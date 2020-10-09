@@ -3,7 +3,7 @@ import random
 from json import loads
 
 from api import admin
-from api.models import User, FoodGroup, Food, FoodSize, Token, Favorite, Order, Option, Address, \
+from api.models import User, Group, Food, FoodSize, Token, Favorite, Order, Option, Address, \
     OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress
 from django.core.mail import send_mail
 from django.http import JsonResponse, HttpResponse
@@ -50,8 +50,8 @@ def register(request):
 @csrf_exempt
 def login(request):
     if request.method == "POST":
+        info = loads(request.body.decode('utf-8'))
         try:
-            info = loads(request.body.decode('utf-8'))
             phone = info['phone']
             user = User.objects.filter(phone=phone)
 
@@ -69,7 +69,12 @@ def login(request):
             else:
                 return my_response(False, 'user not found', {})
         except Exception as e:
-            return my_response(False, 'error in login, check login body, ' + str(e), {})
+            e = str(e)
+            if e.__contains__('UNIQUE constraint'):
+                Token.objects.filter(user__phone=info['phone']).delete()
+                return login(request)
+            else:
+                return my_response(False, 'error in login, check login body, ' + e, {})
     else:
         return my_response(False, 'invalid method', {})
 
@@ -79,6 +84,8 @@ def logout(request):
     if request.method == 'GET':
         try:
             token = request.headers.get('token')
+            if token == admin.admin_token:
+                admin.admin_token = ''
             token = Token.objects.filter(token=token)
             if token.exists():
                 user = token[0].user
@@ -192,29 +199,32 @@ def get_home_info(request):
         try:
             all_foods_group = []
             popular_foods = []
-            groups = FoodGroup.objects.all()
+            groups = Group.objects.all()
             for g in groups:
-                foods = Food.objects.filter(group__group_id=g.group_id)
-                foods_list = []
-                for f in foods:
-                    foods_list.append(f.to_json())
+                if g.is_food_g:
+                    children = Food.objects.filter(group__group_id=g.group_id)
+                else:
+                    children = Option.objects.filter(group__group_id=g.group_id)
+                child_list = []
+                for f in children:
+                    child_list.append(f.to_json())
                     if f.rank > 4:
                         popular_foods.append(f.to_json())
-                all_foods_group.append(g.to_json(foods_list))
+                all_foods_group.append(g.to_json(child_list))
 
             context = {
-                'foodsWithGroup': all_foods_group,
+                'childrenWithGroup': all_foods_group,
                 'popularFoods': popular_foods,
             }
             return my_response(True, 'success', context)
         except Exception as e:
-            return my_response(False, 'error in all foods, ' + str(e), {})
+            return my_response(False, 'error in home info, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
 
 
 @csrf_exempt
-def get_food(request):
+def get_food_detail(request):
     if request.method == 'GET':
         food_id = request.GET.get('foodId')
         option_list = []
@@ -326,6 +336,7 @@ def insert_user_order(request):
                 total_price = info['totalPrice']
                 description = info['description']
                 address = info['addressId']
+                del_time = info['deliveryTime']
                 if address is not None:
                     address = Address.objects.get(address_id=address)
                 order = Order(
@@ -333,7 +344,8 @@ def insert_user_order(request):
                     datetime=time,
                     total_price=total_price,
                     description=description,
-                    address=address
+                    address=address,
+                    delivery_time=del_time,
                 )
                 order.save()
 
@@ -341,12 +353,13 @@ def insert_user_order(request):
                 for f in foods:
                     size = FoodSize.objects.get(food_size_id=f['foodSizeId'])
                     _type = FoodType.objects.get(food_type_id=f['foodTypeId'])
-                    OrderFood(food_size=size, food_type=_type, order=order, number=f['number']).save()
+                    of = OrderFood(food_size=size, food_type=_type, order=order, number=f['number'])
+                    of.save()
 
-                order_options = info['optionsId']
-                for op in order_options:
-                    o = Option.objects.get(option_id=op)
-                    OrderOption(order=order, option=o).save()
+                    order_options = info['options']
+                    for op in order_options:
+                        o = Option.objects.get(option_id=op)
+                        OrderOption(order=order, order_food=of, option=o).save()
 
                 return my_response(True, 'success', order.to_json())
             else:
@@ -408,6 +421,8 @@ def get_res_info(request):
 
         return my_response(False, 'not exist any restaurant', {})
 
+    elif request.method == 'POST' or request.method == 'PUT':
+        return admin.res_info(request)
     else:
         return my_response(False, 'invalid method', {})
 

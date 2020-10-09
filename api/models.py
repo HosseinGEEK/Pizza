@@ -59,16 +59,18 @@ class Address(models.Model):
         return self.user.name + ' ' + self.address
 
 
-class FoodGroup(models.Model):
+class Group(models.Model):
     group_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     image = models.CharField(max_length=100)
+    is_food_g = models.BooleanField(default=True)
 
     def to_json(self, foods):
         return {
             'groupId': self.group_id,
             'name': self.name,
             'image': self.image,
+            'isFoodGroup': self.is_food_g,
             'foods': foods,
         }
 
@@ -78,7 +80,7 @@ class FoodGroup(models.Model):
 
 class Food(models.Model):
     food_id = models.AutoField(primary_key=True)
-    group = models.ForeignKey(FoodGroup, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=200)
     price = models.FloatField(null=True, blank=True)
@@ -129,7 +131,7 @@ class FoodType(models.Model):
     def to_json(self):
         return {
             'foodTypeId': self.food_type_id,
-            'size': self.type,
+            'type': self.type,
             'price': self.price,
         }
 
@@ -139,15 +141,21 @@ class FoodType(models.Model):
 
 class Option(models.Model):
     option_id = models.AutoField(primary_key=True)
-    # option_group = models.ForeignKey(OptionGroup, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     price = models.FloatField()
+    rate = models.FloatField(default=1.0)
+    status = models.BooleanField(default=True)
+    image = models.CharField(max_length=100)
 
     def to_json(self):
         return {
             'optionId': self.option_id,
             'name': self.name,
             'price': self.price,
+            'rate': self.rate,
+            'status': self.status,
+            'image': self.image,
         }
 
     def __str__(self):
@@ -180,6 +188,7 @@ class Order(models.Model):
     order_type = models.BooleanField()  # if delivery is True else False
     description = models.CharField(max_length=200, blank=True, null=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
+    delivery_time = models.TimeField()
 
     def to_json(self):
         foods = OrderFood.objects.filter(order__order_id=self.order_id)
@@ -201,6 +210,7 @@ class Order(models.Model):
             'totalPrice': self.total_price,
             'description': self.description,
             'address': address,
+            'deliveryTime': self.delivery_time,
             'foods': foods_list,
             'options': options_list,
         }
@@ -234,6 +244,7 @@ class OrderFood(models.Model):
 
 class OrderOption(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order_food = models.ForeignKey(OrderFood, on_delete=models.CASCADE)
     option = models.ForeignKey(Option, on_delete=models.CASCADE)
 
     def to_json(self):
