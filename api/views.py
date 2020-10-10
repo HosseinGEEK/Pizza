@@ -415,6 +415,55 @@ def get_orders(request):
     else:
         return my_response(False, 'invalid method', {})
 
+
+@csrf_exempt
+def search_food(request):
+    if request.method == 'GET':
+        name = request.GET.get('name')
+        _list = []
+        foods = Food.objects.filter(name__contains=name)
+        for f in foods:
+            _list.append(f.to_json())
+
+        options = Option.objects.filter(name__contains=name)
+        for o in options:
+            _list.append(o.to_json())
+        return my_response(True, 'success', _list)
+    else:
+        return my_response(False, 'invalid method', {})
+
+
+@csrf_exempt
+def filter_food(request):
+    if request.method == 'POST':
+        try:
+            info = loads(request.body.decode('utf-8'))
+            food_list = []
+            min_p = info['minPrice']
+            max_p = info['maxPrice']
+            group_name = info['groupName']
+            size_name = info['sizeName']
+            min_r = info['minRate']
+            max_r = info['maxRate']
+
+            groups = Group.objects.filter(name=group_name)
+            for g in groups:
+                foods = Food.objects.filter(group=g, price__range=(min_p, max_p), rank__range=(min_r, max_r))
+                for f in foods:
+                    size = FoodSize.objects.filter(food=f, size=size_name)
+                    if size.exists():
+                        food_list.append(f.to_json())
+
+                options = Option.objects.filter(group=g, price__range=(min_p, max_p), rank__range=(min_r, max_r))
+                for o in options:
+                    food_list.append(o.to_json())
+
+            return my_response(True, 'success', food_list)
+        except Exception as e:
+            return my_response(False, 'error in filter food, check body send, ' + str(e), {})
+    else:
+        return my_response(False, 'invalid method', {})
+
 @csrf_exempt
 def get_res_info(request):
     if request.method == 'GET':

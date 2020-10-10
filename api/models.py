@@ -144,7 +144,7 @@ class Option(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     price = models.FloatField()
-    rate = models.FloatField(default=1.0)
+    rank = models.FloatField(default=1.0)
     status = models.BooleanField(default=True)
     image = models.CharField(max_length=100)
 
@@ -153,7 +153,7 @@ class Option(models.Model):
             'optionId': self.option_id,
             'name': self.name,
             'price': self.price,
-            'rate': self.rate,
+            'rate': self.rank,
             'status': self.status,
             'image': self.image,
         }

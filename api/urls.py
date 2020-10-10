@@ -22,6 +22,8 @@ urlpatterns = [
     path('getDetail/', views.get_food_detail, ),
     path('getOrder/', views.get_orders, ),
     path('insertOrder/', views.insert_user_order),
+    path('search/', views.search_food),
+    path('filter/', views.filter_food),
     path('resInfo/', views.get_res_info),
     url(r'^resInfo/(?P<res_id>\w+)/$', admin.res_info),
     path('postCode/', admin.post_code),
