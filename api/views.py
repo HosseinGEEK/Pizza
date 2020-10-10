@@ -353,19 +353,32 @@ def insert_user_order(request):
                 for f in foods:
                     size = FoodSize.objects.get(food_size_id=f['foodSizeId'])
                     _type = FoodType.objects.get(food_type_id=f['foodTypeId'])
+                    user_rate = f['rate']
+                    food_rate = size.food.rank
+                    food_rate = (user_rate + food_rate) / 2
+                    Food.objects.filter(food_id=size.food.food_id).update(rank=food_rate)
                     of = OrderFood(food_size=size, food_type=_type, order=order, number=f['number'])
                     of.save()
 
                     order_options = info['options']
-                    for op in order_options:
-                        o = Option.objects.get(option_id=op)
+                    for op_id in order_options:
+                        o = Option.objects.get(option_id=op_id)
                         OrderOption(order=order, order_food=of, option=o).save()
+                options = info['options']
+                for o in options:
+                    op_id = o['optionId']
+                    option = Option.objects.filter(option_id=op_id)
+                    rate = o['rate']
+                    op_rate = option.first().rate
+                    op_rate = (rate + op_rate) / 2
+                    option.update(rate=op_rate)
+                    OrderOption(order=order, option=option.first()).save()
 
                 return my_response(True, 'success', order.to_json())
             else:
                 return my_response(False, 'invalid token', {})
         except Exception as e:
-            return my_response(False, 'error in insert order, ' + str(e), {})
+            return my_response(False, 'error in insert order, check body send' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
 

@@ -196,7 +196,7 @@ class Order(models.Model):
         for f in foods:
             foods_list.append(f.to_json())
 
-        ops = OrderOption.objects.filter(order__order_id=self.order_id)
+        ops = OrderOption.objects.filter(order__order_id=self.order_id, order_food=None)
         options_list = []
         for o in ops:
             options_list.append(o.to_json())
@@ -231,11 +231,17 @@ class OrderFood(models.Model):
             _type = self.food_type.to_json()
         else:
             _type = None
+
+        op_list = []
+        ops = OrderOption.objects.filter(order=self.order, order_food=self)
+        for o in ops:
+            op_list.append(o.to_json())
         return {
             'food': food.to_json(),
             'size': self.food_size.to_json(),
             'type': _type,
             'number': self.number,
+            'options': op_list,
         }
 
     def __str__(self):
@@ -244,7 +250,7 @@ class OrderFood(models.Model):
 
 class OrderOption(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    order_food = models.ForeignKey(OrderFood, on_delete=models.CASCADE)
+    order_food = models.ForeignKey(OrderFood, on_delete=models.CASCADE, null=True, blank=True)
     option = models.ForeignKey(Option, on_delete=models.CASCADE)
 
     def to_json(self):
