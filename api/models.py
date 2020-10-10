@@ -170,12 +170,20 @@ class FoodOption(models.Model):
 class Favorite(models.Model):
     fav_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    food = models.ForeignKey(Food, on_delete=models.CASCADE)
+    food = models.ForeignKey(Food, on_delete=models.CASCADE, null=True, blank=True)
+    option = models.ForeignKey(Option, on_delete=models.CASCADE, null=True, blank=True)
 
     def to_json(self):
-        return {
+        if self.food is None:
+            var = self.option.to_json()
+        else:
+            var = self.food.to_json()
+
+        context = {
             'favId': self.fav_id,
-        }.update(self.food.to_json())
+        }
+        context.update(var)
+        return context
 
 
 class Order(models.Model):

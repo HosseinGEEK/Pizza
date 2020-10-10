@@ -38,7 +38,8 @@ def register(request):
 
             user.save(force_insert=True)
             tok = get_random_string(length=32)
-            tok = Token(user=user, token=tok).save(force_insert=True)
+            tok = Token(user=user, token=tok)
+            tok.save(force_insert=True)
 
             return my_response(True, 'user registered', tok.to_json())
         except Exception as e:
@@ -61,7 +62,8 @@ def login(request):
                     user.update(status=True)
 
                     tok = get_random_string(length=32)
-                    tok = Token(user=user, token=tok).save(force_insert=True)
+                    tok = Token(user=user, token=tok)
+                    tok.save(force_insert=True)
 
                     return my_response(True, 'success', tok.to_json())
                 else:
@@ -78,6 +80,22 @@ def login(request):
     else:
         return my_response(False, 'invalid method', {})
 
+
+@csrf_exempt
+def get_user_info(request):
+    if request.method == 'GET':
+        try:
+            token = request.headers.get('token')
+            token = Token.objects.filter(token=token)
+            if token.exists():
+                user = token[0].user
+                return my_response(True, 'success', user.to_json())
+            else:
+                return my_response(False, 'token not exist', {})
+        except Exception as e:
+            return my_response(False, 'error in getUserInfo, ' + str(e), {})
+    else:
+        return my_response(False, 'invalid method', {})
 
 @csrf_exempt
 def logout(request):
@@ -256,22 +274,48 @@ def get_food_detail(request):
 
 
 @csrf_exempt
-def get_fav_foods(request):
-    if request.method == 'GET':
-        token = request.headers.get('token')
-        token = Token.objects.filter(token=token)
-        if token.exists():
+def user_favorite_foods(request):
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
+    if token.exists():
+        try:
             user = token[0].user
-            favs = Favorite.objects.filter(user=user)
-            favs_list = []
-            for f in favs:
-                favs_list.append(f.to_json())
+            if request.method == 'GET':
+                favs = Favorite.objects.filter(user=user)
+                favs_list = []
+                for f in favs:
+                    favs_list.append(f.to_json())
 
-            return my_response(True, 'success', favs_list)
-        else:
-            return my_response(False, 'token not exist', {})
+                return my_response(True, 'success', favs_list)
+
+            elif request.method == 'POST':
+                is_food = request.GET.get('isFood')
+                _id = request.GET.get('id')
+                fav = request.GET.get('fav')
+                fav = int(fav)
+                is_food = int(is_food)
+                if fav == 1:
+                    if is_food == 1:
+                        f = Favorite(user=user, food_id=_id)
+                        f.save()
+                    else:
+                        f = Favorite(user=user, option_id=_id)
+                        f.save()
+                    return my_response(True, 'success', f.to_json())
+                else:
+                    if is_food == 1:
+                        Favorite.objects.filter(user=user, food_id=_id).delete()
+                    else:
+                        Favorite.objects.filter(user=user, option_id=_id).delete()
+                    return my_response(True, 'success', {})
+
+            else:
+                return my_response(False, 'invalid method', {})
+        except Exception as e:
+            return my_response(False, 'error in favorite, '+str(e), {})
+
     else:
-        return my_response(False, 'invalid method', {})
+        return my_response(False, 'token not exist', {})
 
 
 @csrf_exempt
@@ -463,6 +507,7 @@ def filter_food(request):
             return my_response(False, 'error in filter food, check body send, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
+
 
 @csrf_exempt
 def get_res_info(request):
