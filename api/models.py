@@ -64,13 +64,18 @@ class Group(models.Model):
     is_food_g = models.BooleanField(default=True)
 
     def to_json(self, children):
-        return {
+        context = {
             'groupId': self.group_id,
             'name': self.name,
             'image': self.image,
             'isFoodGroup': self.is_food_g,
             'children': children,
         }
+        if children is None:
+            del(context['name'])
+            del(context['children'])
+            context.update({'groupName': self.name})
+        return context
 
     def __str__(self):
         return self.name
@@ -87,7 +92,7 @@ class Food(models.Model):
     rank = models.FloatField(default=1.0)
     image = models.CharField(max_length=100)
 
-    def to_json(self, fav=None, is_food_group=None):
+    def to_json(self, fav=None, with_group=False):
         context = {
             'foodId': self.food_id,
             'name': self.name,
@@ -101,8 +106,8 @@ class Food(models.Model):
         if fav is not None:
             context.update({'favorite': fav})
 
-        if is_food_group is not None:
-            context.update({'isFoodGroup': is_food_group})
+        if with_group:
+            context.update(self.group.to_json(None))
         return context
 
     def __str__(self):
@@ -152,21 +157,20 @@ class Option(models.Model):
     status = models.BooleanField(default=True)
     image = models.CharField(max_length=100)
 
-    def to_json(self, fav=None, is_food_group=None):
+    def to_json(self, fav=None, with_group=False):
         context = {
             'optionId': self.option_id,
             'name': self.name,
             'price': self.price,
-            'rate': self.rank,
+            'rank': self.rank,
             'status': self.status,
             'image': self.image,
         }
 
         if fav is not None:
             context.update({'favorite': fav})
-
-        if is_food_group is not None:
-            context.update({'isFoodGroup': is_food_group})
+        if with_group:
+            context.update(self.group.to_json(None))
         return context
 
     def __str__(self):

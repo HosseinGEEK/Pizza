@@ -51,7 +51,7 @@ def register(request):
             if e.__contains__('UNIQUE constraint'):
                 return my_response(False, 'user exist! please sign in', {})
             else:
-                return my_response(False, 'error in register, check body send, '+e, {})
+                return my_response(False, 'error in register, check body send, ' + e, {})
     else:
         return my_response(False, 'invalid method', {})
 
@@ -230,6 +230,8 @@ def get_home_info(request):
             group_with_children = []
             popular_list = []
             groups = Group.objects.all()
+            fav_option = []
+            fav_food = []
             for g in groups:
                 if g.is_food_g:
                     children = Food.objects.filter(group__group_id=g.group_id)
@@ -243,20 +245,28 @@ def get_home_info(request):
                             food=c,
                             option=None,
                         )
+                        if fav.exists():
+                            fav_food.append(fav[0].food_id)
+                            child_list.append(c.to_json(fav=True))
+                        else:
+                            child_list.append(c.to_json())
                     else:
                         fav = Favorite.objects.filter(
                             user=user,
                             food=None,
                             option=c,
                         )
-                    if fav.exists():
-                        fav = True
-                    else:
-                        fav = False
-                    child_list.append(c.to_json(fav=fav))
-                    if c.rank > 4:
-                        popular_list.append(c.to_json(fav=fav, is_food_group=g.is_food_g))
+                        if fav.exists():
+                            fav_option.append(fav[0].option_id)
+                            child_list.append(c.to_json(fav=True))
+                        else:
+                            child_list.append(c.to_json())
+
                 group_with_children.append(g.to_json(child_list))
+
+            options = list(Option.objects.filter(rank__gt=4).order_by('rank'))
+            foods = list(Food.objects.filter(rank__gt=4).order_by('rank'))
+            popular_list = merge(foods, options, fav_option, fav_food)
 
             context = {
                 'childrenWithGroup': group_with_children,
@@ -340,7 +350,7 @@ def user_favorite_foods(request):
             else:
                 return my_response(False, 'invalid method', {})
         except Exception as e:
-            return my_response(False, 'error in favorite, '+str(e), {})
+            return my_response(False, 'error in favorite, ' + str(e), {})
 
     else:
         return my_response(False, 'token not exist', {})
@@ -572,3 +582,41 @@ def image_name():
     name = name.split('.')[0].replace(':', '-')
 
     return name
+
+
+def merge(foods, options, fav_op, fav_fo):
+    result = []
+    i = j = 0
+    total = len(foods) + len(options)
+    while len(result) != total:
+        if len(foods) == i:
+            while j < len(options):
+                if options[j].option_id in fav_op:
+                    result.append(options[j].to_json(fav=True, with_group=True))
+                else:
+                    result.append(options[j].to_json(with_group=True))
+                j += 1
+            # result += options[j:]
+            break
+        elif len(options) == j:
+            while i < len(foods):
+                if foods[i].food_id in fav_fo:
+                    result.append(foods[i].to_json(fav=True, with_group=True))
+                else:
+                    result.append(foods[i].to_json(with_group=True))
+                i += 1
+            # result += foods[i:]
+            break
+        elif foods[i].rank > options[j].rank:
+            if foods[i].food_id in fav_fo:
+                result.append(foods[i].to_json(fav=True, with_group=True))
+            else:
+                result.append(foods[i].to_json(with_group=True))
+            i += 1
+        else:
+            if options[j].option_id in fav_op:
+                result.append(options[j].to_json(fav=True, with_group=True))
+            else:
+                result.append(options[j].to_json(with_group=True))
+            j += 1
+    return result
