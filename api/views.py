@@ -32,9 +32,13 @@ def register(request):
     if request.method == "POST":
         try:
             info = loads(request.body.decode('utf-8'))
-            user = User()
-            for k in info.keys():
-                setattr(user, k, info[k])
+
+            user = User(
+                phone=info['phone'],
+                email=info['email'],
+                name=info['name'],
+                profile_image=info['profileImage']
+            )
 
             user.save(force_insert=True)
             tok = get_random_string(length=32)
@@ -43,7 +47,11 @@ def register(request):
 
             return my_response(True, 'user registered', tok.to_json())
         except Exception as e:
-            return my_response(False, 'user exist! please sign in, ' + str(e), {})
+            e = str(e)
+            if e.__contains__('UNIQUE constraint'):
+                return my_response(False, 'user exist! please sign in', {})
+            else:
+                return my_response(False, 'error in register, check body send, '+e, {})
     else:
         return my_response(False, 'invalid method', {})
 
@@ -62,7 +70,7 @@ def login(request):
                     user.update(status=True)
 
                     tok = get_random_string(length=32)
-                    tok = Token(user=user, token=tok)
+                    tok = Token(user=user[0], token=tok)
                     tok.save(force_insert=True)
 
                     return my_response(True, 'success', tok.to_json())
@@ -96,6 +104,7 @@ def get_user_info(request):
             return my_response(False, 'error in getUserInfo, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
+
 
 @csrf_exempt
 def logout(request):

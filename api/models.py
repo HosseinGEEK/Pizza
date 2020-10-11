@@ -2,8 +2,7 @@ from django.db import models
 
 
 class User(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    phone = models.CharField(max_length=11)
+    phone = models.CharField(max_length=11, primary_key=True)
     email = models.EmailField()
     name = models.CharField(max_length=50)
     password = models.CharField(max_length=100)
@@ -12,7 +11,6 @@ class User(models.Model):
 
     def to_json(self):
         return {
-            'userId': self.user_id,
             'phone': self.phone,
             'email': self.email,
             'name': self.name,
@@ -65,13 +63,13 @@ class Group(models.Model):
     image = models.CharField(max_length=100)
     is_food_g = models.BooleanField(default=True)
 
-    def to_json(self, foods):
+    def to_json(self, children):
         return {
             'groupId': self.group_id,
             'name': self.name,
             'image': self.image,
             'isFoodGroup': self.is_food_g,
-            'foods': foods,
+            'children': children,
         }
 
     def __str__(self):
@@ -113,7 +111,7 @@ class FoodSize(models.Model):
 
     def to_json(self):
         return {
-            'foodTypeId': self.food_size_id,
+            'foodSizeId': self.food_size_id,
             'size': self.size,
             'price': self.price,
         }
