@@ -87,7 +87,7 @@ class Food(models.Model):
     rank = models.FloatField(default=1.0)
     image = models.CharField(max_length=100)
 
-    def to_json(self, fav=None):
+    def to_json(self, fav=None, is_food_group=None):
         context = {
             'foodId': self.food_id,
             'name': self.name,
@@ -100,6 +100,9 @@ class Food(models.Model):
         }
         if fav is not None:
             context.update({'favorite': fav})
+
+        if is_food_group is not None:
+            context.update({'isFoodGroup': is_food_group})
         return context
 
     def __str__(self):
@@ -149,7 +152,7 @@ class Option(models.Model):
     status = models.BooleanField(default=True)
     image = models.CharField(max_length=100)
 
-    def to_json(self, fav=None):
+    def to_json(self, fav=None, is_food_group=None):
         context = {
             'optionId': self.option_id,
             'name': self.name,
@@ -162,6 +165,8 @@ class Option(models.Model):
         if fav is not None:
             context.update({'favorite': fav})
 
+        if is_food_group is not None:
+            context.update({'isFoodGroup': is_food_group})
         return context
 
     def __str__(self):
@@ -193,8 +198,9 @@ class Favorite(models.Model):
 
 
 class Order(models.Model):
-    order_id = models.CharField(max_length=50)
+    order_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    track_id = models.BigIntegerField(default=1)
     datetime = models.DateTimeField()
     total_price = models.FloatField()
     completed = models.BooleanField(default=False)
@@ -219,7 +225,7 @@ class Order(models.Model):
         if self.address is not None:
             address = self.to_json()
         return {
-            'orderId': self.order_id,
+            'trackId': self.track_id,
             'datetime': self.datetime,
             'totalPrice': self.total_price,
             'description': self.description,
@@ -230,7 +236,7 @@ class Order(models.Model):
         }
 
     def __str__(self):
-        return self.user.name + ' ' + str(self.datetime)
+        return str(self.track_id)+'-'+self.user.name + ' ' + str(self.datetime)
 
 
 class OrderFood(models.Model):

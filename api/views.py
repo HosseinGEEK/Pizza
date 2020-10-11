@@ -224,8 +224,11 @@ def change_pass(request):
 def get_home_info(request):
     if request.method == 'GET':
         try:
-            all_foods_group = []
-            popular_foods = []
+            user = request.headers.get('token')
+            if user is not None:
+                user = Token.objects.filter(token=user).first()
+            group_with_children = []
+            popular_list = []
             groups = Group.objects.all()
             for g in groups:
                 if g.is_food_g:
@@ -233,15 +236,31 @@ def get_home_info(request):
                 else:
                     children = Option.objects.filter(group__group_id=g.group_id)
                 child_list = []
-                for f in children:
-                    child_list.append(f.to_json())
-                    if f.rank > 4:
-                        popular_foods.append(f.to_json())
-                all_foods_group.append(g.to_json(child_list))
+                for c in children:
+                    if g.is_food_g:
+                        fav = Favorite.objects.filter(
+                            user=user,
+                            food=c,
+                            option=None,
+                        )
+                    else:
+                        fav = Favorite.objects.filter(
+                            user=user,
+                            food=None,
+                            option=c,
+                        )
+                    if fav.exists():
+                        fav = True
+                    else:
+                        fav = False
+                    child_list.append(c.to_json(fav=fav))
+                    if c.rank > 4:
+                        popular_list.append(c.to_json(fav=fav, is_food_group=g.is_food_g))
+                group_with_children.append(g.to_json(child_list))
 
             context = {
-                'childrenWithGroup': all_foods_group,
-                'popularFoods': popular_foods,
+                'childrenWithGroup': group_with_children,
+                'popularFoods': popular_list,
             }
             return my_response(True, 'success', context)
         except Exception as e:
@@ -391,10 +410,12 @@ def insert_user_order(request):
                 address = info['addressId']
                 del_time = info['deliveryTime']
                 order_type = info['orderType']
+                tr_id = random.randint(100000, 1000000000)
                 if address is not None:
                     address = Address.objects.get(address_id=address)
                 order = Order(
                     user=user,
+                    track_id=tr_id,
                     datetime=time,
                     total_price=total_price,
                     description=description,
