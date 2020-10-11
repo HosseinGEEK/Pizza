@@ -390,6 +390,7 @@ def insert_user_order(request):
                 description = info['description']
                 address = info['addressId']
                 del_time = info['deliveryTime']
+                order_type = info['orderType']
                 if address is not None:
                     address = Address.objects.get(address_id=address)
                 order = Order(
@@ -399,6 +400,7 @@ def insert_user_order(request):
                     description=description,
                     address=address,
                     delivery_time=del_time,
+                    order_type=order_type,
                 )
                 order.save()
 
@@ -431,7 +433,7 @@ def insert_user_order(request):
             else:
                 return my_response(False, 'invalid token', {})
         except Exception as e:
-            return my_response(False, 'error in insert order, check body send' + str(e), {})
+            return my_response(False, 'error in insert order, check body send, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
 

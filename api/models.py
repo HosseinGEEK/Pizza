@@ -87,8 +87,8 @@ class Food(models.Model):
     rank = models.FloatField(default=1.0)
     image = models.CharField(max_length=100)
 
-    def to_json(self):
-        return {
+    def to_json(self, fav=None):
+        context = {
             'foodId': self.food_id,
             'name': self.name,
             'description': self.description,
@@ -98,6 +98,9 @@ class Food(models.Model):
             'image': self.image,
             'status': self.status,
         }
+        if fav is not None:
+            context.update({'favorite': fav})
+        return context
 
     def __str__(self):
         return self.group.name + ' ' + self.name
@@ -146,8 +149,8 @@ class Option(models.Model):
     status = models.BooleanField(default=True)
     image = models.CharField(max_length=100)
 
-    def to_json(self):
-        return {
+    def to_json(self, fav=None):
+        context = {
             'optionId': self.option_id,
             'name': self.name,
             'price': self.price,
@@ -155,6 +158,11 @@ class Option(models.Model):
             'status': self.status,
             'image': self.image,
         }
+
+        if fav is not None:
+            context.update({'favorite': fav})
+
+        return context
 
     def __str__(self):
         return self.name
@@ -189,8 +197,8 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     datetime = models.DateTimeField()
     total_price = models.FloatField()
-    status = models.BooleanField()
-    payment_type = models.BooleanField()  # if with card is True else False
+    completed = models.BooleanField(default=False)
+    payment_type = models.BooleanField(default=True)  # if with card is True else False
     order_type = models.BooleanField()  # if delivery is True else False
     description = models.CharField(max_length=200, blank=True, null=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
