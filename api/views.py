@@ -468,19 +468,20 @@ def set_rate(request):
     if request.method == 'POST':
         try:
             info = loads(request.body.decode('utf-8'))
-            is_food = info['isFood']
-            _id = info['id']
-            user_rate = info['rate']
-            if is_food:
-                c = Food.objects.filter(food_id=_id)
-                rate = c[0].rank
-                rate = (user_rate + rate) / 2
-                c.update(rank=rate)
-            else:
-                c = Option.objects.filter(option_id=_id)
-                rate = c[0].rank
-                rate = (user_rate + rate) / 2
-                c.update(rank=rate)
+            for i in info:
+                is_food = i['isFood']
+                _id = i['id']
+                user_rate = i['rate']
+                if is_food:
+                    c = Food.objects.filter(food_id=_id)
+                    rate = c[0].rank
+                    rate = (user_rate + rate) / 2
+                    c.update(rank=rate)
+                else:
+                    c = Option.objects.filter(option_id=_id)
+                    rate = c[0].rank
+                    rate = (user_rate + rate) / 2
+                    c.update(rank=rate)
             return my_response(True, 'success', {})
         except Exception as e:
             return my_response(False, 'error in set rate, check body send, ' + str(e), {})
