@@ -40,7 +40,6 @@ def register(request):
                 password=info['password'],
                 profile_image=info['profileImage']
             )
-
             user.save(force_insert=True)
             tok = get_random_string(length=32)
             tok = Token(user=user, token=tok)
@@ -117,7 +116,7 @@ def logout(request):
             token = Token.objects.filter(token=token)
             if token.exists():
                 user = token[0].user
-                User.objects.filter(user_id=user.user_id).update(status=False)
+                User.objects.filter(phone=user.phone).update(status=False)
                 token.delete()
                 return my_response(True, 'success', {})
             else:
@@ -136,7 +135,7 @@ def delete_account(request):
             token = Token.objects.filter(token=token)
             if token.exists():
                 user = token[0].user
-                User.objects.filter(user_id=user.user_id).delete()
+                User.objects.filter(phone=user.phone).delete()
                 token.delete()
                 return my_response(True, 'success', {})
             else:
@@ -210,7 +209,7 @@ def change_pass(request):
                 if user.password != old:
                     return my_response(False, 'old password invalid', None)
 
-                user = User.objects.filter(user_id=user.user_id)
+                user = User.objects.filter(phone=user.phone)
                 user.update(password=new)
                 return my_response(True, 'success', {})
             else:
