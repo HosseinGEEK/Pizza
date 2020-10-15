@@ -383,7 +383,7 @@ def food(request, food_id=None):
                         size = s['size']
                         s_price = s['price']
                         FoodSize.objects.filter(food_size_id=s['id']).update(size=size, price=s_price)
-
+# todo for set option to food use FoodOption Table
                     for t in types:
                         _type = t['type']
                         t_price = t['price']
@@ -423,6 +423,7 @@ def option(request, option_id=None):
                 price = info['price']
                 g_id = info['groupId']
                 image = info['image']
+                # todo handle size option that into FoodSize table
                 try:
                     img_name = image_name() + '.png'
                     path = 'media/Images/' + img_name

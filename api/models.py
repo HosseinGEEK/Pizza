@@ -72,8 +72,8 @@ class Group(models.Model):
             'children': children,
         }
         if children is None:
-            del(context['name'])
-            del(context['children'])
+            del (context['name'])
+            del (context['children'])
             context.update({'groupName': self.name})
         return context
 
@@ -114,15 +114,56 @@ class Food(models.Model):
         return self.group.name + ' ' + self.name
 
 
+class Option(models.Model):
+    option_id = models.AutoField(primary_key=True)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    price = models.FloatField()
+    rank = models.FloatField(default=1.0)
+    status = models.BooleanField(default=True)
+    image = models.CharField(max_length=100)
+
+    def to_json(self, fav=None, with_group=False):
+        size_list = []
+        sizes = FoodSize.objects.filter(option__option_id=self.option_id)
+        for s in sizes:
+            size_list.append(s.to_json())
+
+        context = {
+            'optionId': self.option_id,
+            'name': self.name,
+            'price': self.price,
+            'rank': self.rank,
+            'status': self.status,
+            'image': self.image,
+            'sizes': size_list,
+        }
+
+        if fav is not None:
+            context.update({'favorite': fav})
+        if with_group:
+            context.update(self.group.to_json(None))
+        return context
+
+    def __str__(self):
+        return self.name
+
+
+class FoodOption(models.Model):
+    food = models.ForeignKey(Food, on_delete=models.CASCADE)
+    option = models.ForeignKey(Option, on_delete=models.CASCADE)
+
+
 class FoodSize(models.Model):
     food_size_id = models.AutoField(primary_key=True)
-    food = models.ForeignKey(Food, on_delete=models.CASCADE)
+    food = models.ForeignKey(Food, on_delete=models.CASCADE, null=True, blank=True)
+    option = models.ForeignKey(Option, on_delete=models.CASCADE, null=True, blank=True)
     size = models.CharField(max_length=50)
     price = models.FloatField()
 
     def to_json(self):
         return {
-            'foodSizeId': self.food_size_id,
+            'sizeId': self.food_size_id,
             'size': self.size,
             'price': self.price,
         }
@@ -146,40 +187,6 @@ class FoodType(models.Model):
 
     def __str__(self):
         return self.food.name + ' ' + self.type
-
-
-class Option(models.Model):
-    option_id = models.AutoField(primary_key=True)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    price = models.FloatField()
-    rank = models.FloatField(default=1.0)
-    status = models.BooleanField(default=True)
-    image = models.CharField(max_length=100)
-
-    def to_json(self, fav=None, with_group=False):
-        context = {
-            'optionId': self.option_id,
-            'name': self.name,
-            'price': self.price,
-            'rank': self.rank,
-            'status': self.status,
-            'image': self.image,
-        }
-
-        if fav is not None:
-            context.update({'favorite': fav})
-        if with_group:
-            context.update(self.group.to_json(None))
-        return context
-
-    def __str__(self):
-        return self.name
-
-
-class FoodOption(models.Model):
-    food = models.ForeignKey(Food, on_delete=models.CASCADE)
-    option = models.ForeignKey(Option, on_delete=models.CASCADE)
 
 
 class Favorite(models.Model):
@@ -240,7 +247,7 @@ class Order(models.Model):
         }
 
     def __str__(self):
-        return str(self.track_id)+'-'+self.user.name + ' ' + str(self.datetime)
+        return str(self.track_id) + '-' + self.user.name + ' ' + str(self.datetime)
 
 
 class OrderFood(models.Model):
