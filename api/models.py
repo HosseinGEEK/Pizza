@@ -169,7 +169,11 @@ class FoodSize(models.Model):
         }
 
     def __str__(self):
-        return self.food.name + ' ' + self.size
+        if self.food is None:
+            name = self.option.name
+        else:
+            name = self.food.name
+        return name + ' ' + self.size
 
 
 class FoodType(models.Model):
