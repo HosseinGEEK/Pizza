@@ -228,7 +228,6 @@ def get_home_info(request):
             if user is not None:
                 user = Token.objects.filter(token=user).first()
             group_with_children = []
-            popular_list = []
             groups = Group.objects.all()
             fav_option = []
             fav_food = []
@@ -439,13 +438,8 @@ def insert_user_order(request):
                 for f in foods:
                     size = FoodSize.objects.get(food_size_id=f['foodSizeId'])
                     _type = FoodType.objects.get(food_type_id=f['foodTypeId'])
-                    user_rate = f['rate']
-                    food_rate = size.food.rank
-                    food_rate = (user_rate + food_rate) / 2
-                    Food.objects.filter(food_id=size.food.food_id).update(rank=food_rate)
                     of = OrderFood(food_size=size, food_type=_type, order=order, number=f['number'])
                     of.save()
-
                     order_options = info['options']
                     for op_id in order_options:
                         o = Option.objects.get(option_id=op_id)
@@ -470,6 +464,31 @@ def insert_user_order(request):
 
 
 @csrf_exempt
+def set_rate(request):
+    if request.method == 'POST':
+        try:
+            info = loads(request.body.decode('utf-8'))
+            is_food = info['isFood']
+            _id = info['id']
+            user_rate = info['rate']
+            if is_food:
+                c = Food.objects.filter(food_id=_id)
+                rate = c[0].rank
+                rate = (user_rate + rate) / 2
+                c.update(rank=rate)
+            else:
+                c = Option.objects.filter(option_id=_id)
+                rate = c[0].rank
+                rate = (user_rate + rate) / 2
+                c.update(rank=rate)
+            return my_response(True, 'success', {})
+        except Exception as e:
+            return my_response(False, 'error in set rate, check body send, ' + str(e), {})
+    else:
+        return my_response(False, 'invalid method', {})
+
+
+@csrf_exempt
 def get_orders(request):
     if request.method == 'GET':
         token = request.headers.get('token')
@@ -481,7 +500,7 @@ def get_orders(request):
                 user = token[0].user
                 orders = Order.objects.filter(user=user)
 
-            paginator = Paginator(orders, 15)
+            paginator = Paginator(orders, 25)
             try:
                 page = int(request.GET.get('page', '1'))
             except:

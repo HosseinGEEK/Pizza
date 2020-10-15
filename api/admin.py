@@ -14,6 +14,7 @@ admin.site.register(User)
 admin.site.register(Group)
 admin.site.register(Food)
 admin.site.register(FoodSize)
+
 admin.site.register(FoodType)
 admin.site.register(Option)
 admin.site.register(Order)
@@ -334,6 +335,7 @@ def food(request, food_id=None):
                 name = info['name']
                 describ = info['description']
                 price = info['price']
+                final_price = info['finalPrice']
                 image = info['image']
                 status = info['status']
                 sizes = info['sizes']
@@ -353,6 +355,7 @@ def food(request, food_id=None):
                         name=name,
                         description=describ,
                         price=price,
+                        final_price=final_price,
                         image=img_name,
                         status=status,
                     )
@@ -372,6 +375,7 @@ def food(request, food_id=None):
                         name=name,
                         description=describ,
                         price=price,
+                        final_price=final_price,
                         image=img_name,
                         status=status,
                     )
@@ -417,13 +421,25 @@ def option(request, option_id=None):
                 info = loads(request.body.decode('utf-8'))
                 name = info['name']
                 price = info['price']
-                o = Option(name=name, price=price)
+                g_id = info['groupId']
+                image = info['image']
+                try:
+                    img_name = image_name() + '.png'
+                    path = 'media/Images/' + img_name
+                    img_data = base64.b64decode(image)
+                    with open(path, 'wb') as f:
+                        f.write(img_data)
+                except:
+                    img_name = image
 
-                if request.method == 'PUT':
-                    o.save(force_update=True)
-                else:
+                if request.method == 'POST':
+                    o = Option(group_id=g_id, name=name, price=price, image=img_name)
                     o.save()
-
+                else:
+                    st = info['status']
+                    o = Option.objects.filter(option_id=option_id)
+                    o.update(group_id=g_id, name=name, price=price, image=img_name, status=st)
+                    o = o.first()
                 return my_response(True, 'success', o.to_json())
 
             except Exception as e:
