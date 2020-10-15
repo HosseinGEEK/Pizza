@@ -226,7 +226,7 @@ def get_home_info(request):
         try:
             user = request.headers.get('token')
             if user is not None:
-                user = Token.objects.filter(token=user).first()
+                user = Token.objects.filter(token=user).first().user
             group_with_children = []
             groups = Group.objects.all()
             fav_option = []
