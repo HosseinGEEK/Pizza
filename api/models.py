@@ -190,9 +190,9 @@ class Favorite(models.Model):
 
     def to_json(self):
         if self.food is None:
-            var = self.option.to_json()
+            var = self.option.to_json(with_group=True)
         else:
-            var = self.food.to_json()
+            var = self.food.to_json(with_group=True)
 
         context = {
             'favId': self.fav_id,
@@ -261,7 +261,7 @@ class OrderFood(models.Model):
         for o in ops:
             op_list.append(o.to_json())
         return {
-            'food': food.to_json(),
+            'food': food.to_json(with_group=True),
             'size': self.food_size.to_json(),
             'type': _type,
             'number': self.number,
@@ -278,7 +278,7 @@ class OrderOption(models.Model):
     option = models.ForeignKey(Option, on_delete=models.CASCADE)
 
     def to_json(self):
-        return self.option.to_json()
+        return self.option.to_json(with_group=True)
 
     def __str__(self):
         return str(self.order.order_id) + ' ' + self.option.name
