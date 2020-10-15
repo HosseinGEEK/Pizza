@@ -37,6 +37,7 @@ def register(request):
                 phone=info['phone'],
                 email=info['email'],
                 name=info['name'],
+                password=info['password'],
                 profile_image=info['profileImage']
             )
 
