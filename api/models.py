@@ -289,7 +289,7 @@ class OrderFood(models.Model):
 
 class OrderOption(models.Model):
     order_food = models.ForeignKey(OrderFood, on_delete=models.CASCADE)
-    option_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE)
+    option_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE, default=None)
 
     def to_json(self):
         return self.option_size.to_json(with_option_name=True)

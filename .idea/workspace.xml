@@ -3,10 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="bd550058-432c-4847-bbe3-e289478094cd" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -40,8 +36,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="354">
-              <caret line="607" selection-start-line="607" selection-end-line="607" />
+            <state relative-caret-position="184">
+              <caret line="615" lean-forward="true" selection-start-line="615" selection-end-line="615" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -52,8 +48,8 @@
       <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/admin.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-527">
-              <caret line="47" column="56" lean-forward="true" selection-start-line="47" selection-start-column="56" selection-end-line="47" selection-end-column="56" />
+            <state relative-caret-position="238">
+              <caret line="26" column="26" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -76,8 +72,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="426" column="12" selection-start-line="426" selection-start-column="6" selection-end-line="426" selection-end-column="12" />
+            <state relative-caret-position="433">
+              <caret line="434" column="21" selection-start-line="434" selection-start-column="21" selection-end-line="434" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -114,9 +110,9 @@
         <option value="$PROJECT_DIR$/api/migrations/0002_auto_20201011_1608.py" />
         <option value="$PROJECT_DIR$/api/migrations/0003_auto_20201011_1626.py" />
         <option value="$PROJECT_DIR$/api/urls.py" />
+        <option value="$PROJECT_DIR$/api/models.py" />
         <option value="$PROJECT_DIR$/api/admin.py" />
         <option value="$PROJECT_DIR$/api/views.py" />
-        <option value="$PROJECT_DIR$/api/models.py" />
       </list>
     </option>
   </component>
@@ -416,11 +412,19 @@
       <option name="project" value="LOCAL" />
       <updated>1602790021015</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="modify models for order&#10;and modify view insert order&#10;and add feedback view">
+      <created>1602857162625</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1602857162625</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" />
@@ -478,7 +482,8 @@
     <MESSAGE value="change set rate to list" />
     <MESSAGE value="add size for options by use FoodSize table with add option field" />
     <MESSAGE value="modify FoodSize table bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="modify FoodSize table bug" />
+    <MESSAGE value="modify models for order&#10;and modify view insert order&#10;and add feedback view" />
+    <option name="LAST_COMMIT_MESSAGE" value="modify models for order&#10;and modify view insert order&#10;and add feedback view" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/api/views.py">
@@ -822,8 +827,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/admin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-527">
-          <caret line="47" column="56" lean-forward="true" selection-start-line="47" selection-start-column="56" selection-end-line="47" selection-end-column="56" />
+        <state relative-caret-position="238">
+          <caret line="26" column="26" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
@@ -832,8 +837,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="607" selection-start-line="607" selection-end-line="607" />
+        <state relative-caret-position="184">
+          <caret line="615" lean-forward="true" selection-start-line="615" selection-end-line="615" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
@@ -842,8 +847,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="426" column="12" selection-start-line="426" selection-start-column="6" selection-end-line="426" selection-end-column="12" />
+        <state relative-caret-position="433">
+          <caret line="434" column="21" selection-start-line="434" selection-start-column="21" selection-end-line="434" selection-end-column="21" />
         </state>
       </provider>
     </entry>
