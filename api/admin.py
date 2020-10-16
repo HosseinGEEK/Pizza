@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from .models import User, Group, Food, FoodSize, FoodType, Option, Token, Order, RestaurantInfo, RestaurantAddress, \
-    PostCode, Offer, RestaurantTime, OrderFood, OrderOption, Favorite, FoodOption
+    PostCode, Offer, RestaurantTime, OrderFood, OrderOption, Favorite, FoodOption, Ticket
 from django.core.paginator import Paginator
 
 admin.site.register(User)
@@ -24,6 +24,7 @@ admin.site.register(OrderFood)
 admin.site.register(OrderOption)
 admin.site.register(Favorite)
 admin.site.register(FoodOption)
+admin.site.register(Ticket)
 
 admin_token = ''
 
@@ -44,10 +45,8 @@ def admin_login(request):
                     tok = get_random_string(length=32)
                     global admin_token
                     admin_token = tok
-                    tok = Token(user=user.first(), token=tok)
-                    tok.save(force_insert=True)
 
-                    return my_response(True, 'success', tok.to_json())
+                    return my_response(True, 'success', {'token': admin_token})
                 else:
                     return my_response(False, 'invalid information', {})
             else:

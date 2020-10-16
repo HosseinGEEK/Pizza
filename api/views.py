@@ -4,7 +4,7 @@ from json import loads
 
 from api import admin
 from api.models import User, Group, Food, FoodSize, Token, Favorite, Order, Option, Address, \
-    OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress
+    OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress, Ticket
 from django.core.mail import send_mail
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -113,6 +113,7 @@ def logout(request):
             token = request.headers.get('token')
             if token == admin.admin_token:
                 admin.admin_token = ''
+                return my_response(True, 'success', {})
             token = Token.objects.filter(token=token)
             if token.exists():
                 user = token[0].user
@@ -440,51 +441,22 @@ def insert_user_order(request):
                     _type = FoodType.objects.get(food_type_id=f['foodTypeId'])
                     of = OrderFood(food_size=size, food_type=_type, order=order, number=f['number'])
                     of.save()
-                    order_options = info['options']
-                    for op_id in order_options:
-                        o = Option.objects.get(option_id=op_id)
-                        OrderOption(order=order, order_food=of, option=o).save()
+                    order_options = info['foodOptions']
+                    for op_size_id in order_options:
+                        s = FoodSize.objects.get(op_size_id)
+                        OrderOption(order_food=of, option_size=s).save()
                 options = info['options']
                 for o in options:
-                    op_id = o['optionId']
-                    option = Option.objects.filter(option_id=op_id)
-                    rate = o['rate']
-                    op_rate = option.first().rate
-                    op_rate = (rate + op_rate) / 2
-                    option.update(rate=op_rate)
-                    OrderOption(order=order, option=option.first()).save()
+                    op_size_id = o['optionSizeId']
+                    size = FoodSize.objects.get(op_size_id)
+                    of = OrderFood(food_size=size, order=order, number=o['number'])
+                    of.save()
 
                 return my_response(True, 'success', order.to_json())
             else:
                 return my_response(False, 'invalid token', {})
         except Exception as e:
             return my_response(False, 'error in insert order, check body send, ' + str(e), {})
-    else:
-        return my_response(False, 'invalid method', {})
-
-
-@csrf_exempt
-def set_rate(request):
-    if request.method == 'POST':
-        try:
-            info = loads(request.body.decode('utf-8'))
-            for i in info:
-                is_food = i['isFood']
-                _id = i['id']
-                user_rate = i['rate']
-                if is_food:
-                    c = Food.objects.filter(food_id=_id)
-                    rate = c[0].rank
-                    rate = (user_rate + rate) / 2
-                    c.update(rank=rate)
-                else:
-                    c = Option.objects.filter(option_id=_id)
-                    rate = c[0].rank
-                    rate = (user_rate + rate) / 2
-                    c.update(rank=rate)
-            return my_response(True, 'success', {})
-        except Exception as e:
-            return my_response(False, 'error in set rate, check body send, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
 
@@ -518,6 +490,32 @@ def get_orders(request):
             return my_response(True, 'success', orders_list)
         else:
             return my_response(False, 'token not exist', {})
+    else:
+        return my_response(False, 'invalid method', {})
+
+
+@csrf_exempt
+def set_food_rate(request):
+    if request.method == 'POST':
+        try:
+            info = loads(request.body.decode('utf-8'))
+            for i in info:
+                is_food = i['isFood']
+                _id = i['id']
+                user_rate = i['rate']
+                if is_food:
+                    c = Food.objects.filter(food_id=_id)
+                    rate = c[0].rank
+                    rate = (user_rate + rate) / 2
+                    c.update(rank=rate)
+                else:
+                    c = Option.objects.filter(option_id=_id)
+                    rate = c[0].rank
+                    rate = (user_rate + rate) / 2
+                    c.update(rank=rate)
+            return my_response(True, 'success', {})
+        except Exception as e:
+            return my_response(False, 'error in set rate, check body send, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
 
@@ -594,6 +592,26 @@ def get_res_info(request):
         return admin.res_info(request)
     else:
         return my_response(False, 'invalid method', {})
+
+
+@csrf_exempt
+def res_rate(request):
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
+    if token.exists():
+        user = token[0].user
+        if request.method == 'POST':
+            info = loads(request.body.decode('utf-8'))
+            mess = info['message']
+            rate = info['rate']
+
+            t = Ticket(user=user, message=mess, rate=rate)
+            return my_response(True, 'success', t.to_json())
+
+        else:
+            return my_response(False, 'invalid method', {})
+    else:
+        return my_response(False, 'token invalid', {})
 
 
 def image_name():
