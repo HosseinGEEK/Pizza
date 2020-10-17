@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from .models import User, Group, Food, FoodSize, FoodType, Option, Token, Order, RestaurantInfo, RestaurantAddress, \
-    PostCode, Offer, RestaurantTime, OrderFood, OrderOption, Favorite, FoodOption, Ticket
+    PostCode, Offer, RestaurantTime, OrderFood, OrderOption, Favorite, FoodOption, Ticket, Address
 from django.core.paginator import Paginator
 
 admin.site.register(User)
@@ -25,6 +25,7 @@ admin.site.register(OrderOption)
 admin.site.register(Favorite)
 admin.site.register(FoodOption)
 admin.site.register(Ticket)
+admin.site.register(Address)
 
 admin_token = ''
 

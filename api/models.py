@@ -237,7 +237,7 @@ class Order(models.Model):
 
         address = None
         if self.address is not None:
-            address = self.to_json()
+            address = self.address.to_json()
         return {
             'trackId': self.track_id,
             'datetime': self.datetime,
