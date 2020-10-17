@@ -422,7 +422,7 @@ def option(request, option_id=None):
                 price = info['price']
                 g_id = info['groupId']
                 image = info['image']
-                # todo handle size option that into FoodSize table
+                sizes = info['sizes']
                 try:
                     img_name = image_name() + '.png'
                     path = 'media/Images/' + img_name
@@ -435,11 +435,14 @@ def option(request, option_id=None):
                 if request.method == 'POST':
                     o = Option(group_id=g_id, name=name, price=price, image=img_name)
                     o.save()
+                    for s in sizes:
+                        FoodSize(option=o, size=s['size'], price=s['price']).save()
                 else:
                     st = info['status']
                     o = Option.objects.filter(option_id=option_id)
                     o.update(group_id=g_id, name=name, price=price, image=img_name, status=st)
                     o = o.first()
+
                 return my_response(True, 'success', o.to_json())
 
             except Exception as e:
@@ -456,6 +459,66 @@ def option(request, option_id=None):
             for o in ops:
                 op_list.append(o.to_json())
             return my_response(True, 'success', op_list)
+        else:
+            return my_response(False, 'invalid method', {})
+    else:
+        return my_response(False, 'token invalid', {})
+
+
+@csrf_exempt
+def food_size(request, is_food=True, id=None):
+    token = request.headers.get('token')
+    if token == admin_token:
+        if request.method == 'POST' or request.method == 'PUT':
+            try:
+                return my_response(True, 'success', {})
+
+            except Exception as e:
+                return my_response(False, 'error in option, check send body, ' + str(e), {})
+        elif request.method == 'DELETE':
+            pass
+        elif request.method == 'GET':
+            is_food = request.GET.get('isFood')
+            id = request.GET.get('id')
+
+            _list = []
+            if is_food:
+                sizes = FoodSize.objects.filter(food__food_id=id)
+                for s in sizes:
+                    _list.append(s.to_json())
+            else:
+                sizes = FoodSize.objects.filter(option__option_id=id)
+                for s in sizes:
+                    _list.append(s.to_json())
+
+            return my_response(True, 'success', _list)
+        else:
+            return my_response(False, 'invalid method', {})
+    else:
+        return my_response(False, 'token invalid', {})
+
+
+@csrf_exempt
+def food_size(request, id=None):
+    token = request.headers.get('token')
+    if token == admin_token:
+        if request.method == 'POST' or request.method == 'PUT':
+            try:
+                return my_response(True, 'success', {})
+
+            except Exception as e:
+                return my_response(False, 'error in option, check send body, ' + str(e), {})
+        elif request.method == 'DELETE':
+            pass
+        elif request.method == 'GET':
+            id = request.GET.get('foodId')
+
+            _list = []
+            types = FoodType.objects.filter(food__food_id=id)
+            for s in types:
+                _list.append(s.to_json())
+
+            return my_response(True, 'success', _list)
         else:
             return my_response(False, 'invalid method', {})
     else:

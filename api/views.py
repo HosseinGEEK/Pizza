@@ -421,15 +421,13 @@ def insert_user_order(request):
                 del_time = info['deliveryTime']
                 order_type = info['orderType']
                 tr_id = random.randint(100000, 1000000000)
-                if address is not None:
-                    address = Address.objects.get(address_id=address)
                 order = Order(
                     user=user,
                     track_id=tr_id,
                     datetime=time,
                     total_price=total_price,
                     description=description,
-                    address=address,
+                    address_id=address,
                     delivery_time=del_time,
                     order_type=order_type,
                 )
@@ -437,19 +435,19 @@ def insert_user_order(request):
 
                 foods = info['foods']
                 for f in foods:
-                    size = FoodSize.objects.get(food_size_id=f['foodSizeId'])
-                    _type = FoodType.objects.get(food_type_id=f['foodTypeId'])
-                    of = OrderFood(food_size=size, food_type=_type, order=order, number=f['number'])
+                    of = OrderFood(
+                        food_size_id=f['foodSizeId'],
+                        food_type_id=f['foodTypeId'],
+                        order=order,
+                        number=f['number']
+                    )
                     of.save()
-                    order_options = info['foodOptions']
-                    for op_size_id in order_options:
-                        s = FoodSize.objects.get(op_size_id)
-                        OrderOption(order_food=of, option_size=s).save()
+                    food_options = f['foodOptions']
+                    for op_size_id in food_options:
+                        OrderOption(order_food=of, option_size_id=op_size_id).save()
                 options = info['options']
                 for o in options:
-                    op_size_id = o['optionSizeId']
-                    size = FoodSize.objects.get(op_size_id)
-                    of = OrderFood(food_size=size, order=order, number=o['number'])
+                    of = OrderFood(food_size_id=o['optionSizeId'], order=order, number=o['number'])
                     of.save()
 
                 return my_response(True, 'success', order.to_json())
