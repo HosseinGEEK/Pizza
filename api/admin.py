@@ -31,6 +31,7 @@ admin.site.register(Ticket)
 admin.site.register(Address)
 admin.site.register(RestaurantTime)
 
+
 @csrf_exempt
 def admin_login(request):
     if request.method == "POST":
@@ -46,7 +47,7 @@ def admin_login(request):
 
                     tok = get_random_string(length=32)
                     Token(user=user[0], token=tok, is_admin=True).save()
-                    # Device(reg_id=phone, dev_id=info['deviceId'], name='appAdmin', is_active=True).save()
+                    Device(reg_id=phone, dev_id=info['deviceId'], name='appAdmin', is_active=True).save()
                     return my_response(True, 'success', {'token': tok})
                 else:
                     return my_response(False, 'invalid information', {})
@@ -56,6 +57,7 @@ def admin_login(request):
             e = str(e)
             if e.__contains__('UNIQUE constraint'):
                 Token.objects.filter(user__phone=info['phone']).delete()
+                Device.objects.filter(dev_id=info['deviceId'], name='appAdmin').delete()
                 return admin_login(request)
             else:
                 return my_response(False, 'error in login, check login body, ' + e, {})
@@ -338,6 +340,9 @@ def food(request, food_id=None):
                 final_price = info['finalPrice']
                 image = info['image']
                 status = info['status']
+                sizes = info['sizes']
+                types = info['types']
+                ops = info['options']
                 try:
                     img_name = image_name() + '.png'
                     path = 'media/Images/' + img_name
@@ -349,9 +354,6 @@ def food(request, food_id=None):
 
                 if request.method == 'POST':
                     group_id = info['groupId']
-                    sizes = info['sizes']
-                    types = info['types']
-                    ops = info['options']
                     f = Food(
                         group_id=group_id,
                         name=name,
@@ -362,7 +364,6 @@ def food(request, food_id=None):
                         status=status,
                     )
                     f.save()
-
                     for o in ops:
                         FoodOption(food=f, option_id=o).save()
                     for s in sizes:
@@ -384,19 +385,20 @@ def food(request, food_id=None):
                         image=img_name,
                         status=status,
                     )
-                    # for s in sizes:
-                    #     size = s['size']
-                    #     s_price = s['price']
-                    #     FoodSize.objects.filter(food_size_id=s['id']).update(size=size, price=s_price)
-                    # # todo for set option to food use FoodOption Table
-                    # for t in types:
-                    #     _type = t['type']
-                    #     t_price = t['price']
-                    #     FoodType.objects.filter(t['id']).update(type=_type, price=t_price)
                     f = f.first()
+                    for s in sizes:
+                        size = s['size']
+                        s_price = s['price']
+                        FoodSize.objects.filter(food=f, size=size).update(price=s_price)
+                    for t in types:
+                        _type = t['type']
+                        t_price = t['price']
+                        FoodType.objects.filter(food_type_id=t['id']).update(type=_type, price=t_price)
+                    FoodOption.objects.filter(food=f).delete()
+                    for o in ops:
+                        FoodOption(food=f, option_id=o).save()
 
                 return my_response(True, 'success', f.to_json())
-
             except Exception as e:
                 return my_response(False, 'error in food, check send body, ' + str(e), {})
         elif request.method == 'DELETE':
@@ -425,12 +427,11 @@ def option(request, option_id=None):
         if request.method == 'POST' or request.method == 'PUT':
             try:
                 info = loads(request.body.decode('utf-8'))
-                g_id = info['groupId']
                 name = info['name']
                 price = info['price']
                 image = info['image']
-                sizes = info['sizes']
                 st = info['status']
+                sizes = info['sizes']
                 try:
                     img_name = image_name() + '.png'
                     path = 'media/Images/' + img_name
@@ -441,14 +442,18 @@ def option(request, option_id=None):
                     img_name = image
 
                 if request.method == 'POST':
+                    g_id = info['groupId']
                     o = Option(group_id=g_id, name=name, price=price, image=img_name)
                     o.save()
                     for s in sizes:
                         FoodSize(option=o, size=s['size'], price=s['price']).save()
                 else:
                     o = Option.objects.filter(option_id=option_id)
-                    o.update(group_id=g_id, name=name, price=price, image=img_name, status=st)
+                    o.update(name=name, price=price, image=img_name, status=st)
                     o = o.first()
+                    FoodSize.objects.filter(option=o).delete()
+                    for s in sizes:
+                        FoodSize(option=o, size=s['size'], price=s['price']).save()
 
                 return my_response(True, 'success', o.to_json())
 
@@ -535,6 +540,51 @@ def food_type(request, id=None):
 
 
 @csrf_exempt
+def filter_order(request):
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
+        if request.method == 'GET':
+            orders = Order.objects.all()
+            tr_id = request.GET.get('trackId')
+            if tr_id is not None:
+                orders = orders.filter(track_id=tr_id)
+            date = request.GET.get('date')
+            if date is not None:
+                orders = orders.filter(datetime__date=date)
+
+            delivery = request.GET.get('delivery')
+            if delivery is not None:
+                if delivery == '0':
+                    delivery = False
+                else:
+                    delivery = True
+                orders = orders.filter(order_type=delivery)
+            st = request.GET.get('status')
+            if st is not None:
+                if st == '0':
+                    st = False
+                else:
+                    st = True
+                orders = orders.filter(completed=st)
+            p_type = request.GET.get('paymentType')
+            if p_type is not None:
+                if p_type == '0':
+                    p_type = False
+                else:
+                    p_type = True
+                orders = orders.filter(payment_type=p_type)
+            _list = []
+            for o in orders:
+                _list.append(o.to_json())
+            return my_response(True, 'success', _list)
+        else:
+            return my_response(False, 'invalid method', {})
+    else:
+        return my_response(False, 'token invalid', {})
+
+
+@csrf_exempt
 def orders_today(request):
     token = request.headers.get('token')
     token = Token.objects.filter(token=token)
@@ -544,6 +594,42 @@ def orders_today(request):
             _list = []
             for o in orders:
                 _list.append(o.to_json())
+            return my_response(True, 'success', _list)
+        else:
+            return my_response(False, 'invalid method', {})
+    else:
+        return my_response(False, 'token invalid', {})
+
+
+@csrf_exempt
+def invoice(request):
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
+        if request.method == 'GET':
+            orders = Order.objects.extra(select={'day': 'date(datetime)'}).values('day').distinct()
+            _list = []
+            for o in orders:
+                _list.append(o['day'])
+
+            return my_response(True, 'success', _list)
+        else:
+            return my_response(False, 'invalid method', {})
+    else:
+        return my_response(False, 'token invalid', {})
+
+
+@csrf_exempt
+def order_of_day(request):
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
+        if request.method == 'GET':
+            orders = Order.objects.filter(datetime__date=request.GET.get('day'))
+            _list = []
+            for o in orders:
+                _list.append(o.to_json(with_detail=False))
+
             return my_response(True, 'success', _list)
         else:
             return my_response(False, 'invalid method', {})

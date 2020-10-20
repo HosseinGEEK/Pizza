@@ -232,27 +232,33 @@ class Order(models.Model):
     address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
     delivery_time = models.TimeField()
 
-    def to_json(self):
-        foods = OrderFood.objects.filter(order__order_id=self.order_id)
-        foods_list = []
-        for f in foods:
-            foods_list.append(f.to_json())
-
-        address = None
-        if self.address is not None:
-            address = self.address.to_json()
-        return {
+    def to_json(self, with_detail=True):
+        context = {
             'trackId': self.track_id,
             'datetime': self.datetime,
             'totalPrice': self.total_price,
             'description': self.description,
-            'address': address,
             'status': self.completed,
             'paymentType': self.payment_type,
             'orderType': self.order_type,
             'deliveryTime': self.delivery_time,
-            'foods': foods_list,
         }
+        if with_detail:
+            foods = OrderFood.objects.filter(order__order_id=self.order_id)
+            foods_list = []
+            for f in foods:
+                foods_list.append(f.to_json())
+
+            address = None
+            if self.address is not None:
+                address = self.address.to_json()
+
+            context.update({
+                'address': address,
+                'foods': foods_list,
+            })
+
+        return context
 
     def __str__(self):
         return str(self.track_id) + '-' + self.user.name + ' ' + str(self.datetime)
@@ -441,4 +447,3 @@ class Ticket(models.Model):
 
     def __str__(self):
         return self.user.name
-
