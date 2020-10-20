@@ -346,16 +346,12 @@ def food(request, food_id=None):
         if request.method == 'POST' or request.method == 'PUT':
             try:
                 info = loads(request.body.decode('utf-8'))
-                group_id = info['groupId']
                 name = info['name']
                 describ = info['description']
                 price = info['price']
                 final_price = info['finalPrice']
                 image = info['image']
                 status = info['status']
-                sizes = info['sizes']
-                types = info['types']
-                ops = info['options']
                 try:
                     img_name = image_name() + '.png'
                     path = 'media/Images/' + img_name
@@ -366,6 +362,10 @@ def food(request, food_id=None):
                     img_name = image
 
                 if request.method == 'POST':
+                    group_id = info['groupId']
+                    sizes = info['sizes']
+                    types = info['types']
+                    ops = info['options']
                     f = Food(
                         group_id=group_id,
                         name=name,
