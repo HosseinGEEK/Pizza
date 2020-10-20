@@ -208,7 +208,7 @@ def res_location(request, address_id=None):
             except Exception as e:
                 return my_response(False, 'error in post res location, check send body, ' + str(e), {})
         elif request.method == 'DELETE':
-            var = RestaurantAddress.objects.filter(res_address_id=address_id)
+            var = RestaurantAddress.objects.filter(res_address_id=address_id).delete()
             if var[0] == 1:
                 return my_response(True, 'success', {})
             else:
@@ -231,39 +231,25 @@ def res_times(request, time_id=None):
     token = request.headers.get('token')
     token = Token.objects.filter(token=token)
     if token.exists() and token[0].is_admin:
-        if request.method == 'POST' or request.method == 'PUT':
+        if request.method == 'PUT':
             try:
 
                 info = loads(request.body.decode('utf-8'))
-                res = RestaurantInfo.objects.first().res_info_id
-
-                if request.method == 'POST':
-                    time = RestaurantTime(
-                        restaurant_id=res,
-                        day=info['day'],
-                        start=info['start'],
-                        end=info['end'],
-                        status=info['status'],
-                    )
-                    time.save()
-                else:
-                    time = RestaurantTime.objects.filter(res_time_id=time_id)
-                    time.update(
-                        res_time_id=time_id,
-                        day=info['day'],
-                        start=info['start'],
-                        end=info['end'],
-                        status=info['status'],
-                    )
-                    time = time.first()
-
+                time = RestaurantTime.objects.filter(res_time_id=time_id)
+                time.update(
+                    res_time_id=time_id,
+                    start=info['start'],
+                    end=info['end'],
+                    status=info['status'],
+                )
+                time = time.first()
                 return my_response(True, 'success', time.to_json())
 
             except Exception as e:
                 return my_response(False, 'error in times, check send body, ' + str(e), {})
 
         elif request.method == 'DELETE':
-            var = RestaurantTime.objects.filter(time_id=time_id)
+            var = RestaurantTime.objects.filter(time_id=time_id).delete()
             if var[0] == 1:
                 return my_response(True, 'success', {})
             else:

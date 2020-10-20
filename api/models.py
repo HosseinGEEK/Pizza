@@ -247,6 +247,9 @@ class Order(models.Model):
             'totalPrice': self.total_price,
             'description': self.description,
             'address': address,
+            'status': self.completed,
+            'paymentType': self.payment_type,
+            'orderType': self.order_type,
             'deliveryTime': self.delivery_time,
             'foods': foods_list,
         }
@@ -374,7 +377,6 @@ class RestaurantAddress(models.Model):
 class RestaurantTime(models.Model):
     res_time_id = models.AutoField(primary_key=True)
     restaurant = models.ForeignKey(RestaurantInfo, on_delete=models.CASCADE)
-    day = models.CharField(max_length=10)
     start = models.TimeField()
     end = models.TimeField()
     status = models.BooleanField(default=True)
@@ -382,14 +384,10 @@ class RestaurantTime(models.Model):
     def to_json(self):
         return {
             'resTimeId': self.res_time_id,
-            'day': self.day,
             'start': self.start,
             'end': self.end,
             'status': self.status,
         }
-
-    def __str__(self):
-        return self.day
 
 
 class PostCode(models.Model):
