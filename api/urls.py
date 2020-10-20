@@ -10,7 +10,7 @@ urlpatterns = [
     path('', views.base, name='home'),
     path('user/register/', views.register, name='register'),
     path('user/login/', views.login, name='login'),
-    path('user/getInfo/', views.get_user_info, name='getUserInfo'),
+    path('user/Info/', views.user_info, name='getUserInfo'),
     path('admin/login/app/', admin.admin_login, name='admin-login'),
     path('user/logout/', views.logout, name='logout'),
     path('user/delete/', views.delete_account, name='delete-account'),
@@ -27,7 +27,7 @@ urlpatterns = [
     path('search/', views.search_food),
     path('filter/', views.filter_food),
     path('resInfo/', views.get_res_info),
-    path('resRate/', views.res_rate),
+    path('ticket/', views.ticket),
     url(r'^resInfo/(?P<res_id>\w+)/$', admin.res_info),
     path('postCode/', admin.post_code),
     path('offer/', admin.offer),
@@ -41,6 +41,7 @@ urlpatterns = [
     url(r'^food/(?P<food_id>\w+)/$', admin.food),
     path('option/', admin.option),
     url(r'^option/(?P<option_id>\w+)/$', admin.option),
+    path('ordersToday/', admin.orders_today)
 ]
 
 if settings.DEBUG:

@@ -1,3 +1,4 @@
+import base64
 import datetime
 import random
 from json import loads
@@ -10,6 +11,8 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
 from django.core.paginator import Paginator
+from fcm.utils import get_device_model
+from fcm.models import *
 
 otp = None
 
@@ -33,17 +36,20 @@ def register(request):
         try:
             info = loads(request.body.decode('utf-8'))
 
+            n = info['name']
+            p = info['phone']
             user = User(
-                phone=info['phone'],
+                phone=p,
                 email=info['email'],
-                name=info['name'],
+                name=n,
                 password=info['password'],
-                profile_image=info['profileImage']
             )
             user.save(force_insert=True)
             tok = get_random_string(length=32)
             tok = Token(user=user, token=tok)
             tok.save(force_insert=True)
+
+            Device(dev_id=info['deviceId'], reg_id=p, name=n, is_active=True).save()
 
             return my_response(True, 'user registered', tok.to_json())
         except Exception as e:
@@ -63,7 +69,6 @@ def login(request):
         try:
             phone = info['phone']
             user = User.objects.filter(phone=phone)
-
             if user.exists():
                 password = info['password']
                 if user[0].password == password:
@@ -90,20 +95,38 @@ def login(request):
 
 
 @csrf_exempt
-def get_user_info(request):
-    if request.method == 'GET':
-        try:
-            token = request.headers.get('token')
-            token = Token.objects.filter(token=token)
-            if token.exists():
-                user = token[0].user
+def user_info(request):
+    try:
+        token = request.headers.get('token')
+        token = Token.objects.filter(token=token)
+        if token.exists():
+            user = token[0].user
+            info = loads(request.body.decode('utf-8'))
+            if request.method == 'GET':
                 return my_response(True, 'success', user.to_json())
+            elif request.method == 'PUT':
+                p_img = info['profileImage']
+                phone = user.phone
+                user = User.objects.filter(phone=phone)
+
+                try:
+                    img_name = phone + '.png'
+                    path = 'media/userImages/' + img_name
+                    img_data = base64.b64decode(p_img)
+                    with open(path, 'wb') as g:
+                        g.write(img_data)
+                except Exception as e:
+                    img_name = p_img
+
+                user.update(profile_image=img_name)
+
+                return my_response(True, 'success', {})
             else:
-                return my_response(False, 'token not exist', {})
-        except Exception as e:
-            return my_response(False, 'error in getUserInfo, ' + str(e), {})
-    else:
-        return my_response(False, 'invalid method', {})
+                return my_response(False, 'invalid method', {})
+        else:
+            return my_response(False, 'token not exist', {})
+    except Exception as e:
+        return my_response(False, 'error in userInfo, ' + str(e), {})
 
 
 @csrf_exempt
@@ -233,36 +256,38 @@ def get_home_info(request):
             fav_option = []
             fav_food = []
             for g in groups:
-                if g.is_food_g:
-                    children = Food.objects.filter(group__group_id=g.group_id)
-                else:
-                    children = Option.objects.filter(group__group_id=g.group_id)
-                child_list = []
-                for c in children:
+                if g.status:
                     if g.is_food_g:
-                        fav = Favorite.objects.filter(
-                            user=user,
-                            food=c,
-                            option=None,
-                        )
-                        if fav.exists():
-                            fav_food.append(fav[0].food_id)
-                            child_list.append(c.to_json(fav=True))
-                        else:
-                            child_list.append(c.to_json())
+                        children = Food.objects.filter(group__group_id=g.group_id)
                     else:
-                        fav = Favorite.objects.filter(
-                            user=user,
-                            food=None,
-                            option=c,
-                        )
-                        if fav.exists():
-                            fav_option.append(fav[0].option_id)
-                            child_list.append(c.to_json(fav=True))
-                        else:
-                            child_list.append(c.to_json())
+                        children = Option.objects.filter(group__group_id=g.group_id)
+                    child_list = []
+                    for c in children:
+                        if c.status:
+                            if g.is_food_g:
+                                fav = Favorite.objects.filter(
+                                    user=user,
+                                    food=c,
+                                    option=None,
+                                )
+                                if fav.exists():
+                                    fav_food.append(fav[0].food_id)
+                                    child_list.append(c.to_json(fav=True))
+                                else:
+                                    child_list.append(c.to_json())
+                            else:
+                                fav = Favorite.objects.filter(
+                                    user=user,
+                                    food=None,
+                                    option=c,
+                                )
+                                if fav.exists():
+                                    fav_option.append(fav[0].option_id)
+                                    child_list.append(c.to_json(fav=True))
+                                else:
+                                    child_list.append(c.to_json())
 
-                group_with_children.append(g.to_json(child_list))
+                    group_with_children.append(g.to_json(child_list))
 
             options = list(Option.objects.filter(rank__gt=4).order_by('rank'))
             foods = list(Food.objects.filter(rank__gt=4).order_by('rank'))
@@ -450,6 +475,8 @@ def insert_user_order(request):
                     of = OrderFood(food_size_id=o['optionSizeId'], order=order, number=o['number'])
                     of.save()
 
+                admin_notif = Device.objects.get(name='appAdmin')
+                admin_notif.send_message(data={'message': 'you have a order with trackId: '+str(tr_id)})
                 return my_response(True, 'success', order.to_json())
             else:
                 return my_response(False, 'invalid token', {})
@@ -525,11 +552,13 @@ def search_food(request):
         _list = []
         foods = Food.objects.filter(name__contains=name)
         for f in foods:
-            _list.append(f.to_json())
+            if f.status:
+                _list.append(f.to_json())
 
         options = Option.objects.filter(name__contains=name)
         for o in options:
-            _list.append(o.to_json())
+            if o.status:
+                _list.append(o.to_json())
         return my_response(True, 'success', _list)
     else:
         return my_response(False, 'invalid method', {})
@@ -554,11 +583,15 @@ def filter_food(request):
                 for f in foods:
                     size = FoodSize.objects.filter(food=f, size=size_name)
                     if size.exists():
-                        food_list.append(f.to_json())
+                        if f.status:
+                            food_list.append(f.to_json())
 
                 options = Option.objects.filter(group=g, price__range=(min_p, max_p), rank__range=(min_r, max_r))
                 for o in options:
-                    food_list.append(o.to_json())
+                    size = FoodSize.objects.filter(option=o, size=size_name)
+                    if size.exists():
+                        if o.status:
+                            food_list.append(o.to_json())
 
             return my_response(True, 'success', food_list)
         except Exception as e:
@@ -593,21 +626,34 @@ def get_res_info(request):
 
 
 @csrf_exempt
-def res_rate(request):
-    token = request.headers.get('token')
-    token = Token.objects.filter(token=token)
+def ticket(request):
+    t = request.headers.get('token')
+    token = Token.objects.filter(token=t)
     if token.exists():
         user = token[0].user
-        if request.method == 'POST':
-            info = loads(request.body.decode('utf-8'))
-            mess = info['message']
-            rate = info['rate']
+        try:
+            if request.method == 'POST':
+                info = loads(request.body.decode('utf-8'))
+                mess = info['message']
+                rate = info['rate']
 
-            t = Ticket(user=user, message=mess, rate=rate)
-            return my_response(True, 'success', t.to_json())
+                t = Ticket(user=user, message=mess, rate=rate)
+                t.save()
+                return my_response(True, 'success', t.to_json())
 
-        else:
-            return my_response(False, 'invalid method', {})
+            elif request.method == 'GET':
+                if t == admin.admin_token:
+                    ticks = Ticket.objects.all()
+                else:
+                    ticks = Ticket.objects.filter(user=user)
+                _list = []
+                for t in ticks:
+                    _list.append(t.to_json())
+                return my_response(True, 'success', _list)
+            else:
+                return my_response(False, 'invalid method', {})
+        except Exception as e:
+            return my_response(False, 'error in ticket, check body send, ' + str(e), {})
     else:
         return my_response(False, 'token invalid', {})
 
@@ -627,7 +673,7 @@ def merge(foods, options, fav_op, fav_fo):
     while len(result) != total:
         if len(foods) == i:
             while j < len(options):
-                if options[j].option_id in fav_op:
+                if options[j].option_id in fav_op and options[j].status:
                     result.append(options[j].to_json(fav=True, with_group=True))
                 else:
                     result.append(options[j].to_json(with_group=True))
@@ -636,7 +682,7 @@ def merge(foods, options, fav_op, fav_fo):
             break
         elif len(options) == j:
             while i < len(foods):
-                if foods[i].food_id in fav_fo:
+                if foods[i].food_id in fav_fo and foods[i].status:
                     result.append(foods[i].to_json(fav=True, with_group=True))
                 else:
                     result.append(foods[i].to_json(with_group=True))
@@ -644,13 +690,13 @@ def merge(foods, options, fav_op, fav_fo):
             # result += foods[i:]
             break
         elif foods[i].rank > options[j].rank:
-            if foods[i].food_id in fav_fo:
+            if foods[i].food_id in fav_fo and foods[i].status:
                 result.append(foods[i].to_json(fav=True, with_group=True))
             else:
                 result.append(foods[i].to_json(with_group=True))
             i += 1
         else:
-            if options[j].option_id in fav_op:
+            if options[j].option_id in fav_op and options[j].status:
                 result.append(options[j].to_json(fav=True, with_group=True))
             else:
                 result.append(options[j].to_json(with_group=True))

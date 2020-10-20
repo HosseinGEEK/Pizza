@@ -62,6 +62,7 @@ class Group(models.Model):
     name = models.CharField(max_length=50)
     image = models.CharField(max_length=100)
     is_food_g = models.BooleanField(default=True)
+    status = models.BooleanField(default=True)
 
     def to_json(self, children):
         context = {
@@ -69,6 +70,7 @@ class Group(models.Model):
             'name': self.name,
             'image': self.image,
             'isFoodGroup': self.is_food_g,
+            'status': self.status,
             'children': children,
         }
         if children is None:
@@ -299,12 +301,12 @@ class RestaurantInfo(models.Model):
     res_info_id = models.AutoField(primary_key=True)
     # name = models.CharField(max_length=50)
     open = models.BooleanField()
-    time_slot = models.CharField(max_length=50)
-    max_order_per_time_slot = models.CharField(max_length=25)
-    order_fulfilment = models.CharField(max_length=50)  # example collection, delivery
+    time_slot = models.IntegerField(null=True, blank=True)
+    max_order_per_time_slot = models.IntegerField(null=True, blank=True)
+    order_fulfilment = models.IntegerField()  # example collection=0, delivery=1, both=2
     # todo table service options
-    collection_time = models.CharField(max_length=25)
-    delivery_time = models.CharField(max_length=25)
+    collection_time = models.TimeField(null=True, blank=True)
+    delivery_time = models.TimeField(null=True, blank=True)
     delivery_post_codes = models.TextField(null=True, blank=True)
     collection_discount_amount = models.FloatField(default=0.0)
     delivery_cost = models.FloatField(default=0.0)
@@ -313,11 +315,11 @@ class RestaurantInfo(models.Model):
     sales_tax = models.FloatField(default=0.0)
     paypal_payment_fee = models.FloatField(default=0.0)
 
-    show_item_category_or_sub = models.BooleanField()  # if cat is True else False
+    show_item_category_or_sub = models.BooleanField(default=True)  # if cat is True else False
 
-    enable_accept_reject = models.BooleanField()
-    message_show = models.CharField(max_length=500)
-    time_auto_reject = models.IntegerField()
+    enable_accept_reject = models.BooleanField(default=True)
+    message_show = models.CharField(max_length=500, default="")
+    time_auto_reject = models.IntegerField(default=1)
 
     role = models.TextField(default="")
 
@@ -341,6 +343,7 @@ class RestaurantInfo(models.Model):
             'enableAcceptReject': self.enable_accept_reject,
             'message': self.message_show,
             'timeAutoReject': self.time_auto_reject,
+            'role': self.role,
             'times': times,
             'address': address,
         }
@@ -439,3 +442,4 @@ class Ticket(models.Model):
 
     def __str__(self):
         return self.user.name
+

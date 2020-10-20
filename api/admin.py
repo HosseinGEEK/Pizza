@@ -1,4 +1,5 @@
 import base64
+import datetime
 from json import loads
 
 from api.views import my_response, image_name
@@ -6,6 +7,8 @@ from django.contrib import admin
 from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
+from fcm.models import Device
+
 from .models import User, Group, Food, FoodSize, FoodType, Option, Token, Order, RestaurantInfo, RestaurantAddress, \
     PostCode, Offer, RestaurantTime, OrderFood, OrderOption, Favorite, FoodOption, Ticket, Address
 from django.core.paginator import Paginator
@@ -26,6 +29,7 @@ admin.site.register(Favorite)
 admin.site.register(FoodOption)
 admin.site.register(Ticket)
 admin.site.register(Address)
+admin.site.register(RestaurantTime)
 
 admin_token = ''
 
@@ -44,9 +48,10 @@ def admin_login(request):
                     user.update(status=True)
 
                     tok = get_random_string(length=32)
+                    Token(user=user[0], token=tok).save()
                     global admin_token
                     admin_token = tok
-
+                    Device(reg_id=phone, dev_id=info['deviceId'], name='appAdmin', is_active=True).save()
                     return my_response(True, 'success', {'token': admin_token})
                 else:
                     return my_response(False, 'invalid information', {})
@@ -56,6 +61,7 @@ def admin_login(request):
             e = str(e)
             if e.__contains__('UNIQUE constraint'):
                 Token.objects.filter(user__phone=info['phone']).delete()
+                Device.objects.filter(reg_id=info['phone'], name='appAdmin').delete()
                 return admin_login(request)
             else:
                 return my_response(False, 'error in login, check login body, ' + e, {})
@@ -80,15 +86,15 @@ def res_info(request, res_id=None):
                         delivery_time=info['deliveryTime'],
                         delivery_post_codes=info['deliveryPostCodes'],
                         collection_discount_amount=info['collectionDiscountAmount'],
-                        delivery_cost=info['deliveryCost'],
-                        free_delivery=info['freeDelivery'],
+                        cost=info['cost'],
+                        free=info['free'],
                         min_order_val=info['minOrderValue'],
                         sales_tax=info['salesTax'],
                         paypal_payment_fee=info['paypalPaymentFee'],
-                        show_item_category_or_sub=info['showItemCategory'],
-                        enable_accept_reject=info['enableAcceptReject'],
-                        message_show=info['message'],
-                        time_auto_reject=info['timeAutoReject'],
+                        # show_item_category_or_sub=info['showItemCategory'],
+                        # enable_accept_reject=info['enableAcceptReject'],
+                        # message_show=info['message'],
+                        # time_auto_reject=info['timeAutoReject'],
                     )
                     ri.save()
                 else:
@@ -102,15 +108,15 @@ def res_info(request, res_id=None):
                         delivery_time=info['deliveryTime'],
                         delivery_post_codes=info['deliveryPostCodes'],
                         collection_discount_amount=info['collectionDiscountAmount'],
-                        delivery_cost=info['deliveryCost'],
-                        free_delivery=info['freeDelivery'],
+                        cost=info['cost'],
+                        free=info['free'],
                         min_order_val=info['minOrderValue'],
                         sales_tax=info['salesTax'],
                         paypal_payment_fee=info['paypalPaymentFee'],
-                        show_item_category_or_sub=info['showItemCategory'],
-                        enable_accept_reject=info['enableAcceptReject'],
-                        message_show=info['message'],
-                        time_auto_reject=info['timeAutoReject'],
+                        # show_item_category_or_sub=info['showItemCategory'],
+                        # enable_accept_reject=info['enableAcceptReject'],
+                        # message_show=info['message'],
+                        # time_auto_reject=info['timeAutoReject'],
                     )
                     ri = ri.first()
 
@@ -173,33 +179,33 @@ def offer(request):
 
 
 @csrf_exempt
-def res_location(request, address_id):
+def res_location(request, address_id=None):
     token = request.headers.get('token')
     if token == admin_token:
         if request.method == "POST" or request.method == 'PUT':
             try:
                 info = loads(request.body.decode('utf-8'))
+                res = RestaurantInfo.objects.first().res_info_id
 
                 if request.method == 'POST':
                     a = RestaurantAddress(
-                        restaurant__res_info_id=info['resId'],
+                        restaurant_id=res,
                         address=info['address'],
                         telephone=info['telephone'],
                         order_alert=info['orderAlert'],
                         email=info['email'],
                     )
-                    a.save(force_update=True)
+                    a.save()
                 else:
                     a = RestaurantAddress.objects.filter(res_address_id=address_id)
                     a.update(
-                        restaurant__res_info_id=info['resId'],
                         address=info['address'],
                         telephone=info['telephone'],
                         order_alert=info['orderAlert'],
                         email=info['email'],
                     )
                     a = a.first()
-                my_response(True, 'success', a.to_json())
+                return my_response(True, 'success', a.to_json())
 
             except Exception as e:
                 return my_response(False, 'error in post res location, check send body, ' + str(e), {})
@@ -223,17 +229,18 @@ def res_location(request, address_id):
 
 
 @csrf_exempt
-def res_times(request, time_id):
+def res_times(request, time_id=None):
     token = request.headers.get('token')
     if token == admin_token:
         if request.method == 'POST' or request.method == 'PUT':
             try:
 
                 info = loads(request.body.decode('utf-8'))
+                res = RestaurantInfo.objects.first().res_info_id
 
                 if request.method == 'POST':
                     time = RestaurantTime(
-                        restaurant__res_info_i=info['resId'],
+                        restaurant_id=res,
                         day=info['day'],
                         start=info['start'],
                         end=info['end'],
@@ -243,7 +250,7 @@ def res_times(request, time_id):
                 else:
                     time = RestaurantTime.objects.filter(res_time_id=time_id)
                     time.update(
-                        restaurant__res_info_i=info['resId'],
+                        res_time_id=time_id,
                         day=info['day'],
                         start=info['start'],
                         end=info['end'],
@@ -299,7 +306,7 @@ def group(request, group_id=None):
                     fg.save()
                 else:
                     fg = Group.objects.filter(group_id=group_id)
-                    fg.update(name=name, image=img_name, is_food_g=is_food_g)
+                    fg.update(name=name, image=img_name, is_food_g=is_food_g, status=info['status'])
                     fg = fg.first()
                 return my_response(True, 'success', fg.to_json(None))
 
@@ -315,7 +322,14 @@ def group(request, group_id=None):
             g_list = []
             gs = Group.objects.all()
             for g in gs:
-                g_list.append(g.to_json(None))
+                if g.is_food_g:
+                    foods = Food.objects.filter(group=g)
+                else:
+                    foods = Option.objects.filter(group=g)
+                _list = []
+                for f in foods:
+                    _list.append(f.to_json())
+                g_list.append(g.to_json(_list))
             return my_response(True, 'success', g_list)
 
         else:
@@ -340,6 +354,7 @@ def food(request, food_id=None):
                 status = info['status']
                 sizes = info['sizes']
                 types = info['types']
+                ops = info['options']
                 try:
                     img_name = image_name() + '.png'
                     path = 'media/Images/' + img_name
@@ -351,7 +366,7 @@ def food(request, food_id=None):
 
                 if request.method == 'POST':
                     f = Food(
-                        group__group_id=group_id,
+                        group_id=group_id,
                         name=name,
                         description=describ,
                         price=price,
@@ -360,6 +375,9 @@ def food(request, food_id=None):
                         status=status,
                     )
                     f.save()
+
+                    for o in ops:
+                        FoodOption(food=f, option_id=o).save()
                     for s in sizes:
                         size = s['size']
                         s_price = s['price']
@@ -379,15 +397,15 @@ def food(request, food_id=None):
                         image=img_name,
                         status=status,
                     )
-                    for s in sizes:
-                        size = s['size']
-                        s_price = s['price']
-                        FoodSize.objects.filter(food_size_id=s['id']).update(size=size, price=s_price)
-# todo for set option to food use FoodOption Table
-                    for t in types:
-                        _type = t['type']
-                        t_price = t['price']
-                        FoodType.objects.filter(t['id']).update(type=_type, price=t_price)
+                    # for s in sizes:
+                    #     size = s['size']
+                    #     s_price = s['price']
+                    #     FoodSize.objects.filter(food_size_id=s['id']).update(size=size, price=s_price)
+                    # # todo for set option to food use FoodOption Table
+                    # for t in types:
+                    #     _type = t['type']
+                    #     t_price = t['price']
+                    #     FoodType.objects.filter(t['id']).update(type=_type, price=t_price)
                     f = f.first()
 
                 return my_response(True, 'success', f.to_json())
@@ -419,11 +437,12 @@ def option(request, option_id=None):
         if request.method == 'POST' or request.method == 'PUT':
             try:
                 info = loads(request.body.decode('utf-8'))
+                g_id = info['groupId']
                 name = info['name']
                 price = info['price']
-                g_id = info['groupId']
                 image = info['image']
                 sizes = info['sizes']
+                st = info['status']
                 try:
                     img_name = image_name() + '.png'
                     path = 'media/Images/' + img_name
@@ -439,7 +458,6 @@ def option(request, option_id=None):
                     for s in sizes:
                         FoodSize(option=o, size=s['size'], price=s['price']).save()
                 else:
-                    st = info['status']
                     o = Option.objects.filter(option_id=option_id)
                     o.update(group_id=g_id, name=name, price=price, image=img_name, status=st)
                     o = o.first()
@@ -500,7 +518,7 @@ def food_size(request, is_food=True, id=None):
 
 
 @csrf_exempt
-def food_size(request, id=None):
+def food_type(request, id=None):
     token = request.headers.get('token')
     if token == admin_token:
         if request.method == 'POST' or request.method == 'PUT':
@@ -519,6 +537,22 @@ def food_size(request, id=None):
             for s in types:
                 _list.append(s.to_json())
 
+            return my_response(True, 'success', _list)
+        else:
+            return my_response(False, 'invalid method', {})
+    else:
+        return my_response(False, 'token invalid', {})
+
+
+@csrf_exempt
+def orders_today(request):
+    token = request.headers.get('token')
+    if token == admin_token:
+        if request.method == 'GET':
+            orders = Order.objects.filter(datetime__day=datetime.datetime.now().day)
+            _list = []
+            for o in orders:
+                _list.append(o.to_json())
             return my_response(True, 'success', _list)
         else:
             return my_response(False, 'invalid method', {})
