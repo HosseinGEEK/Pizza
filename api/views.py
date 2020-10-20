@@ -14,8 +14,6 @@ from django.core.paginator import Paginator
 from fcm.utils import get_device_model
 from fcm.models import *
 
-otp = None
-
 
 def my_response(status, message, data):
     return JsonResponse({
@@ -134,10 +132,10 @@ def logout(request):
     if request.method == 'GET':
         try:
             token = request.headers.get('token')
-            if token == admin.admin_token:
+            token = Token.objects.filter(token=token)
+            if token.exists() and token[0].is_admin:
                 admin.admin_token = ''
                 return my_response(True, 'success', {})
-            token = Token.objects.filter(token=token)
             if token.exists():
                 user = token[0].user
                 User.objects.filter(phone=user.phone).update(status=False)
@@ -193,7 +191,6 @@ def my_send_mail(request):
             token = request.headers.get('token')
             token = Token.objects.filter(token=token)
             if token.exists():
-                global otp
                 otp = random.randint(10000, 99999)
                 send_mail(
                     'pizza app',
@@ -492,7 +489,7 @@ def get_orders(request):
         token = request.headers.get('token')
         token = Token.objects.filter(token=token)
         if token.exists():
-            if token[0] == admin.admin_token:
+            if token[0].is_admin:
                 orders = Order.objects.all()
             else:
                 user = token[0].user
@@ -501,12 +498,12 @@ def get_orders(request):
             paginator = Paginator(orders, 25)
             try:
                 page = int(request.GET.get('page', '1'))
-            except:
+            except Exception as e:
                 page = 1
 
             try:
                 orders = paginator.page(page)
-            except:
+            except Exception as e:
                 orders = paginator.page(paginator.num_pages)
             orders_list = []
             for o in orders.object_list:
@@ -627,8 +624,8 @@ def get_res_info(request):
 
 @csrf_exempt
 def ticket(request):
-    t = request.headers.get('token')
-    token = Token.objects.filter(token=t)
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
     if token.exists():
         user = token[0].user
         try:
@@ -642,7 +639,7 @@ def ticket(request):
                 return my_response(True, 'success', t.to_json())
 
             elif request.method == 'GET':
-                if t == admin.admin_token:
+                if token[0].is_admin:
                     ticks = Ticket.objects.all()
                 else:
                     ticks = Ticket.objects.filter(user=user)

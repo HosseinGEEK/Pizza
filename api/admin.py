@@ -31,9 +31,6 @@ admin.site.register(Ticket)
 admin.site.register(Address)
 admin.site.register(RestaurantTime)
 
-admin_token = ''
-
-
 @csrf_exempt
 def admin_login(request):
     if request.method == "POST":
@@ -48,11 +45,9 @@ def admin_login(request):
                     user.update(status=True)
 
                     tok = get_random_string(length=32)
-                    Token(user=user[0], token=tok).save()
-                    global admin_token
-                    admin_token = tok
-                    Device(reg_id=phone, dev_id=info['deviceId'], name='appAdmin', is_active=True).save()
-                    return my_response(True, 'success', {'token': admin_token})
+                    Token(user=user[0], token=tok, is_admin=True).save()
+                    # Device(reg_id=phone, dev_id=info['deviceId'], name='appAdmin', is_active=True).save()
+                    return my_response(True, 'success', {'token': tok})
                 else:
                     return my_response(False, 'invalid information', {})
             else:
@@ -61,7 +56,6 @@ def admin_login(request):
             e = str(e)
             if e.__contains__('UNIQUE constraint'):
                 Token.objects.filter(user__phone=info['phone']).delete()
-                Device.objects.filter(reg_id=info['phone'], name='appAdmin').delete()
                 return admin_login(request)
             else:
                 return my_response(False, 'error in login, check login body, ' + e, {})
@@ -72,7 +66,8 @@ def admin_login(request):
 @csrf_exempt
 def res_info(request, res_id=None):
     token = request.headers.get('token')
-    if token == admin_token:
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
         if request.method == "POST" or request.method == "PUT":
             try:
                 info = loads(request.body.decode('utf-8'))
@@ -135,7 +130,8 @@ def post_code(request):
     if request.method == "POST":
         try:
             token = request.headers.get('token')
-            if token == admin_token:
+            token = Token.objects.filter(token=token)
+            if token.exists() and token[0].is_admin:
                 info = loads(request.body.decode('utf-8'))
                 pc = PostCode(
                     post_code=info['postCode'],
@@ -159,7 +155,8 @@ def offer(request):
     if request.method == "POST":
         try:
             token = request.headers.get('token')
-            if token == admin_token:
+            token = Token.objects.filter(token=token)
+            if token.exists() and token[0].is_admin:
                 info = loads(request.body.decode('utf-8'))
                 o = Offer(
                     percent=info['percent'],
@@ -181,7 +178,8 @@ def offer(request):
 @csrf_exempt
 def res_location(request, address_id=None):
     token = request.headers.get('token')
-    if token == admin_token:
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
         if request.method == "POST" or request.method == 'PUT':
             try:
                 info = loads(request.body.decode('utf-8'))
@@ -231,7 +229,8 @@ def res_location(request, address_id=None):
 @csrf_exempt
 def res_times(request, time_id=None):
     token = request.headers.get('token')
-    if token == admin_token:
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
         if request.method == 'POST' or request.method == 'PUT':
             try:
 
@@ -285,7 +284,8 @@ def res_times(request, time_id=None):
 @csrf_exempt
 def group(request, group_id=None):
     token = request.headers.get('token')
-    if token == admin_token:
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
         if request.method == 'POST' or request.method == 'PUT':
             try:
                 info = loads(request.body.decode('utf-8'))
@@ -341,7 +341,8 @@ def group(request, group_id=None):
 @csrf_exempt
 def food(request, food_id=None):
     token = request.headers.get('token')
-    if token == admin_token:
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
         if request.method == 'POST' or request.method == 'PUT':
             try:
                 info = loads(request.body.decode('utf-8'))
@@ -433,7 +434,8 @@ def food(request, food_id=None):
 @csrf_exempt
 def option(request, option_id=None):
     token = request.headers.get('token')
-    if token == admin_token:
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
         if request.method == 'POST' or request.method == 'PUT':
             try:
                 info = loads(request.body.decode('utf-8'))
@@ -487,7 +489,8 @@ def option(request, option_id=None):
 @csrf_exempt
 def food_size(request, is_food=True, id=None):
     token = request.headers.get('token')
-    if token == admin_token:
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
         if request.method == 'POST' or request.method == 'PUT':
             try:
                 return my_response(True, 'success', {})
@@ -520,7 +523,8 @@ def food_size(request, is_food=True, id=None):
 @csrf_exempt
 def food_type(request, id=None):
     token = request.headers.get('token')
-    if token == admin_token:
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
         if request.method == 'POST' or request.method == 'PUT':
             try:
                 return my_response(True, 'success', {})
@@ -547,7 +551,8 @@ def food_type(request, id=None):
 @csrf_exempt
 def orders_today(request):
     token = request.headers.get('token')
-    if token == admin_token:
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
         if request.method == 'GET':
             orders = Order.objects.filter(datetime__day=datetime.datetime.now().day)
             _list = []
