@@ -505,9 +505,13 @@ def get_orders(request):
                 orders = paginator.page(page)
             except Exception as e:
                 orders = paginator.page(paginator.num_pages)
+            if token[0].is_admin:
+                w_d=False
+            else:
+                w_d=True
             orders_list = []
             for o in orders.object_list:
-                orders_list.append(o.to_json())
+                orders_list.append(o.to_json(with_detail=w_d))
 
             return my_response(True, 'success', orders_list)
         else:

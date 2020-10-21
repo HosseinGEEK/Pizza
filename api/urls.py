@@ -31,6 +31,7 @@ urlpatterns = [
     path('invoice/', admin.invoice),
     path('filterOrder', admin.filter_order),
     path('orderOfDay', admin.order_of_day),
+    path('orderWithDetail', admin.order_with_detail),
     url(r'^resInfo/(?P<res_id>\w+)/$', admin.res_info),
     path('postCode/', admin.post_code),
     path('offer/', admin.offer),
@@ -44,7 +45,9 @@ urlpatterns = [
     url(r'^food/(?P<food_id>\w+)/$', admin.food),
     path('option/', admin.option),
     url(r'^option/(?P<option_id>\w+)/$', admin.option),
-    path('ordersToday/', admin.orders_today)
+    path('ordersToday/', admin.orders_today),
+    path('resRole/', admin.res_role),
+    path('acceptRejectOrder/', admin.accept_reject_order),
 ]
 
 if settings.DEBUG:

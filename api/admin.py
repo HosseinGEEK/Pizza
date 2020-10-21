@@ -84,7 +84,7 @@ def res_info(request, res_id=None):
                         delivery_post_codes=info['deliveryPostCodes'],
                         collection_discount_amount=info['collectionDiscountAmount'],
                         cost=info['cost'],
-                        free=info['free'],
+                        free_delivery=info['freeDelivery'],
                         min_order_val=info['minOrderValue'],
                         sales_tax=info['salesTax'],
                         paypal_payment_fee=info['paypalPaymentFee'],
@@ -106,7 +106,7 @@ def res_info(request, res_id=None):
                         delivery_post_codes=info['deliveryPostCodes'],
                         collection_discount_amount=info['collectionDiscountAmount'],
                         cost=info['cost'],
-                        free=info['free'],
+                        free_delivery=info['freeDelivery'],
                         min_order_val=info['minOrderValue'],
                         sales_tax=info['salesTax'],
                         paypal_payment_fee=info['paypalPaymentFee'],
@@ -117,7 +117,7 @@ def res_info(request, res_id=None):
                     )
                     ri = ri.first()
 
-                my_response(True, 'success', ri.to_json(None, None))
+                return my_response(True, 'success', ri.to_json(None, None))
 
             except Exception as e:
                 return my_response(False, 'error in res info, check send body, ' + str(e), {})
@@ -125,6 +125,32 @@ def res_info(request, res_id=None):
             return my_response(False, 'invalid method', {})
     else:
         return my_response(False, 'token invalid', {})
+
+
+@csrf_exempt
+def res_role(request):
+    if request.method == "PUT":
+        try:
+            token = request.headers.get('token')
+            token = Token.objects.filter(token=token)
+            if token.exists() and token[0].is_admin:
+                info = loads(request.body.decode('utf-8'))
+
+                if 'resId' in info:
+                    res_id = info['resId']
+                else:
+                    res_id = RestaurantInfo.objects.first().res_info_id
+
+                RestaurantInfo.objects.filter(res_info_id=res_id).update(role=info['role'])
+
+                return my_response(True, 'success', {'role': info['role']})
+            else:
+                return my_response(False, 'token invalid', {})
+
+        except Exception as e:
+            return my_response(False, 'error in res role code, check send body, ' + str(e), {})
+    else:
+        return my_response(False, 'invalid method', {})
 
 
 @csrf_exempt
@@ -142,7 +168,7 @@ def post_code(request):
                 )
 
                 pc.save()
-                my_response(True, 'success', pc.to_json())
+                return my_response(True, 'success', pc.to_json())
             else:
                 return my_response(False, 'token invalid', {})
 
@@ -167,7 +193,7 @@ def offer(request):
                 )
 
                 o.save()
-                my_response(True, 'success', o.to_json())
+                return my_response(True, 'success', o.to_json())
             else:
                 return my_response(False, 'token invalid', {})
 
@@ -540,6 +566,20 @@ def food_type(request, id=None):
 
 
 @csrf_exempt
+def order_with_detail(request):
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
+        if request.method == 'GET':
+            o = Order.objects.get(order_id=request.GET.get('orderId'))
+            return my_response(True, 'success', o.to_json())
+        else:
+            return my_response(False, 'invalid method', {})
+    else:
+        return my_response(False, 'token invalid', {})
+
+
+@csrf_exempt
 def filter_order(request):
     token = request.headers.get('token')
     token = Token.objects.filter(token=token)
@@ -631,6 +671,35 @@ def order_of_day(request):
                 _list.append(o.to_json(with_detail=False))
 
             return my_response(True, 'success', _list)
+        else:
+            return my_response(False, 'invalid method', {})
+    else:
+        return my_response(False, 'token invalid', {})
+
+
+@csrf_exempt
+def accept_reject_order(request):
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
+        if request.method == 'POST':
+            try:
+                info = loads(request.body.decode('utf-8'))
+                acc_rej = info['acceptOrReject']
+                o_id = info['orderId']
+                mess = info['message']
+                order = Order.objects.filter(order_id=o_id)
+                if acc_rej:
+                    order.update(status=True)
+
+                order = order.first()
+                user_notif = Device.objects.get(reg_id=order.user.phone, name=order.user.name)
+                user_notif.send_message(data={'message': mess})
+
+                return my_response(True, 'success', {})
+
+            except Exception as e:
+                return my_response(False, 'error in acceptRejectOrder, check send body, ' + str(e), {})
         else:
             return my_response(False, 'invalid method', {})
     else:

@@ -226,6 +226,7 @@ class Order(models.Model):
     datetime = models.DateTimeField()
     total_price = models.FloatField()
     completed = models.BooleanField(default=False)
+    status = models.BooleanField(default=False)
     payment_type = models.BooleanField(default=True)  # if with card is True else False
     order_type = models.BooleanField()  # if delivery is True else False
     description = models.CharField(max_length=200, blank=True, null=True)
@@ -238,10 +239,12 @@ class Order(models.Model):
             'datetime': self.datetime,
             'totalPrice': self.total_price,
             'description': self.description,
-            'status': self.completed,
+            'status': self.status,
+            'completed': self.completed,
             'paymentType': self.payment_type,
             'orderType': self.order_type,
             'deliveryTime': self.delivery_time,
+            'nameOfCustomer': self.user.name
         }
         if with_detail:
             foods = OrderFood.objects.filter(order__order_id=self.order_id)
@@ -319,7 +322,7 @@ class RestaurantInfo(models.Model):
     delivery_time = models.TimeField(null=True, blank=True)
     delivery_post_codes = models.TextField(null=True, blank=True)
     collection_discount_amount = models.FloatField(default=0.0)
-    delivery_cost = models.FloatField(default=0.0)
+    cost = models.FloatField(default=0.0)
     free_delivery = models.FloatField(default=0.0)
     min_order_val = models.FloatField(default=0.0)
     sales_tax = models.FloatField(default=0.0)
@@ -344,7 +347,7 @@ class RestaurantInfo(models.Model):
             'deliveryTime': self.delivery_time,
             'deliveryPostCodes': self.delivery_post_codes,
             'collectionDiscountAmount': self.collection_discount_amount,
-            'deliveryCost': self.delivery_cost,
+            'deliveryCost': self.cost,
             'freeDelivery': self.free_delivery,
             'minOrderValue': self.min_order_val,
             'salesTax': self.sales_tax,
