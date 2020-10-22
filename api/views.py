@@ -472,8 +472,7 @@ def insert_user_order(request):
                     of = OrderFood(food_size_id=o['optionSizeId'], order=order, number=o['number'])
                     of.save()
 
-                admin_notif = Device.objects.get(name='appAdmin')
-                admin_notif.send_message(data={'message': 'you have a order with trackId: '+str(tr_id)})
+                notif_to_admin(track_id=order.track_id)
                 return my_response(True, 'success', order.to_json())
             else:
                 return my_response(False, 'invalid token', {})
@@ -519,6 +518,27 @@ def get_orders(request):
     else:
         return my_response(False, 'invalid method', {})
 
+
+@csrf_exempt
+def complete_order(request):
+    if request.method == 'POST':
+        try:
+            token = request.headers.get('token')
+            token = Token.objects.filter(token=token)
+            if token.exists():
+                info = loads(request.body.decode('utf-8'))
+                o_id = info['orderId']
+
+                o = Order.objects.filter(order_id=o_id)
+                o.update(completed=True)
+                o = o.first()
+                notif_to_admin(track_id=o.track_id)
+
+                return my_response(True, 'success', {})
+        except Exception as e:
+            return my_response(False, 'error in complete order, check body send, ' + str(e), {})
+    else:
+        return my_response(False, 'invalid method', {})
 
 @csrf_exempt
 def set_food_rate(request):
@@ -657,6 +677,15 @@ def ticket(request):
             return my_response(False, 'error in ticket, check body send, ' + str(e), {})
     else:
         return my_response(False, 'token invalid', {})
+
+
+def notif_to_admin(**kwargs):
+    temp = ''
+    if 'track_id' in kwargs:
+        temp = kwargs['track_id']
+
+    admin_notif = Device.objects.get(name='appAdmin')
+    admin_notif.send_message({'message': 'you have a order with trackId: ' + str(temp)})
 
 
 def image_name():

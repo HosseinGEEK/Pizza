@@ -57,7 +57,7 @@ def admin_login(request):
             e = str(e)
             if e.__contains__('UNIQUE constraint'):
                 Token.objects.filter(user__phone=info['phone']).delete()
-                Device.objects.filter(dev_id=info['deviceId'], name='appAdmin').delete()
+                Device.objects.filter(reg_id=info['phone'], name='appAdmin').delete()
                 return admin_login(request)
             else:
                 return my_response(False, 'error in login, check login body, ' + e, {})
@@ -694,7 +694,7 @@ def accept_reject_order(request):
 
                 order = order.first()
                 user_notif = Device.objects.get(reg_id=order.user.phone, name=order.user.name)
-                user_notif.send_message(data={'message': mess})
+                user_notif.send_message({'message': mess})
 
                 return my_response(True, 'success', {})
 
