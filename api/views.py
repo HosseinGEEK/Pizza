@@ -25,14 +25,16 @@ def my_response(status, message, data):
 
 @csrf_exempt
 def base(request):
-    # # Device(dev_id='bb6122c11c95b105', reg_id='fTO8xN5XRoqiryxI0dKkGL:APA91bH8OjfWQxBbZr95fKkHUzZbGKczj1PP1f4t_osvlF7XMIAxgROqEAbpIZNPrajf5qkI75YZAb4lII3pfh2Fs1xdVqGSSkOxScjBnLcKB1atOrSokTeittEmIKbJfo_H50gxVrKo', name='appAdmin', is_active=True).save()
-    # try:
-    #     n_a = Device.objects.get(name='appAdmin')
-    #     print(n_a)
-    #     x = n_a.send_message({'ss': 'ss'})
-    #     print(x)
-    # except Exception as e:
-    #     print(str(e))
+    # Device(
+    #     dev_id='bb6122c11c95b105',
+    #     reg_id='d-48xCvuQre-i-F23ZrJvO:APA91bH5RqKtlRR8-5Y-symL_bDpVnM8F-CyMgqMCV7TpzxgdcMMH2OVydylKcE5hlBtO36C5QDR6jNGryYVLPDMMJsuX1S2d6cXDk17cNCaz3dauUwRs8RVXYWhNO4_dAd_NfWOIfzJ', name='appAdmin', is_active=True).save()
+    try:
+        n_a = Device.objects.get(name='appAdmin')
+        print(n_a)
+        x = n_a.send_message({'message': 'a'})
+        print(x)
+    except Exception as e:
+        print(str(e))
     return HttpResponse(content='<p1>this is server api for pizza project</p1>')
 
 
