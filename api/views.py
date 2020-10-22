@@ -25,16 +25,6 @@ def my_response(status, message, data):
 
 @csrf_exempt
 def base(request):
-    # Device(
-    #     dev_id='bb6122c11c95b105',
-    #     reg_id='d-48xCvuQre-i-F23ZrJvO:APA91bH5RqKtlRR8-5Y-symL_bDpVnM8F-CyMgqMCV7TpzxgdcMMH2OVydylKcE5hlBtO36C5QDR6jNGryYVLPDMMJsuX1S2d6cXDk17cNCaz3dauUwRs8RVXYWhNO4_dAd_NfWOIfzJ', name='appAdmin', is_active=True).save()
-    try:
-        n_a = Device.objects.get(name='appAdmin')
-        print(n_a)
-        x = n_a.send_message({'message': 'a'})
-        print(x)
-    except Exception as e:
-        print(str(e))
     return HttpResponse(content='<p1>this is server api for pizza project</p1>')
 
 
@@ -515,9 +505,9 @@ def get_orders(request):
             except Exception as e:
                 orders = paginator.page(paginator.num_pages)
             if token[0].is_admin:
-                w_d=False
+                w_d = False
             else:
-                w_d=True
+                w_d = True
             orders_list = []
             for o in orders.object_list:
                 orders_list.append(o.to_json(with_detail=w_d))
@@ -549,6 +539,7 @@ def complete_order(request):
             return my_response(False, 'error in complete order, check body send, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
+
 
 @csrf_exempt
 def set_food_rate(request):
@@ -695,7 +686,13 @@ def notif_to_admin(**kwargs):
         temp = kwargs['track_id']
 
     admin_notif = Device.objects.get(name='appAdmin')
-    admin_notif.send_message({'message': 'you have a order with trackId: ' + str(temp)})
+    admin_notif.send_message(
+        {'trackId': temp},
+        notification={
+            'title': 'order',
+            'body': 'you have a order with trackId: ' + str(temp)
+        }
+    )
 
 
 def image_name():

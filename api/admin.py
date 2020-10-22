@@ -694,7 +694,13 @@ def accept_reject_order(request):
 
                 order = order.first()
                 user_notif = Device.objects.get(reg_id=order.user.phone, name=order.user.name)
-                user_notif.send_message({'message': mess})
+                user_notif.send_message(
+                    {'orderId': order.order_id},
+                    notification={
+                        'title': 'order',
+                        'body': mess
+                    }
+                )
 
                 return my_response(True, 'success', {})
 
