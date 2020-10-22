@@ -47,7 +47,7 @@ def admin_login(request):
 
                     tok = get_random_string(length=32)
                     Token(user=user[0], token=tok, is_admin=True).save()
-                    Device(reg_id=phone, dev_id=info['deviceId'], name='appAdmin', is_active=True).save()
+                    Device(reg_id=info['deviceToken'], dev_id=info['deviceId'], name='appAdmin', is_active=True).save()
                     return my_response(True, 'success', {'token': tok})
                 else:
                     return my_response(False, 'invalid information', {})

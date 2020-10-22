@@ -25,6 +25,14 @@ def my_response(status, message, data):
 
 @csrf_exempt
 def base(request):
+    # # Device(dev_id='bb6122c11c95b105', reg_id='fTO8xN5XRoqiryxI0dKkGL:APA91bH8OjfWQxBbZr95fKkHUzZbGKczj1PP1f4t_osvlF7XMIAxgROqEAbpIZNPrajf5qkI75YZAb4lII3pfh2Fs1xdVqGSSkOxScjBnLcKB1atOrSokTeittEmIKbJfo_H50gxVrKo', name='appAdmin', is_active=True).save()
+    # try:
+    #     n_a = Device.objects.get(name='appAdmin')
+    #     print(n_a)
+    #     x = n_a.send_message({'ss': 'ss'})
+    #     print(x)
+    # except Exception as e:
+    #     print(str(e))
     return HttpResponse(content='<p1>this is server api for pizza project</p1>')
 
 
@@ -47,7 +55,7 @@ def register(request):
             tok = Token(user=user, token=tok)
             tok.save(force_insert=True)
 
-            Device(dev_id=info['deviceId'], reg_id=p, name=n, is_active=True).save()
+            Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=n, is_active=True).save()
 
             return my_response(True, 'user registered', tok.to_json())
         except Exception as e:
