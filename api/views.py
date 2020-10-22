@@ -107,10 +107,10 @@ def user_info(request):
         token = Token.objects.filter(token=token)
         if token.exists():
             user = token[0].user
-            info = loads(request.body.decode('utf-8'))
             if request.method == 'GET':
                 return my_response(True, 'success', user.to_json())
             elif request.method == 'PUT':
+                info = loads(request.body.decode('utf-8'))
                 p_img = info['profileImage']
                 phone = user.phone
                 user = User.objects.filter(phone=phone)
