@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.urls import path
-from . import views, admin
+from . import views
 from . import admin
 from django.conf import settings
 from django.conf.urls.static import static
