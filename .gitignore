@@ -2,3 +2,5 @@ db.sqlite3
 api/migrations/000*
 linux server.txt
 pizza/settings.py
+media/Images/*
+media/userImages/*

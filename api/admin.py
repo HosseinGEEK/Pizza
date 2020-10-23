@@ -237,7 +237,7 @@ def res_location(request, address_id=None):
                 return my_response(False, 'error in post res location, check send body, ' + str(e), {})
         elif request.method == 'DELETE':
             var = RestaurantAddress.objects.filter(res_address_id=address_id).delete()
-            if var[0] == 1:
+            if var[0] != 0:
                 return my_response(True, 'success', {})
             else:
                 return my_response(False, 'location id not exist', {})
@@ -278,7 +278,7 @@ def res_times(request, time_id=None):
 
         elif request.method == 'DELETE':
             var = RestaurantTime.objects.filter(time_id=time_id).delete()
-            if var[0] == 1:
+            if var[0] != 0:
                 return my_response(True, 'success', {})
             else:
                 return my_response(False, 'time id not exist', {})
@@ -328,7 +328,7 @@ def group(request, group_id=None):
                 return my_response(False, 'error in group check body send, ' + str(e), {})
         elif request.method == 'DELETE':
             var = Group.objects.filter(group_id=group_id).delete()
-            if var[0] == 1:
+            if var[0] != 0:
                 return my_response(True, 'success', {})
             else:
                 return my_response(False, 'foodGroupId not exist!', {})
@@ -431,7 +431,7 @@ def food(request, food_id=None):
                 return my_response(False, 'error in food, check send body, ' + str(e), {})
         elif request.method == 'DELETE':
             var = Food.objects.filter(food_id=food_id).delete()
-            if var[0] == 1:
+            if var[0] != 0:
                 return my_response(True, 'success', {})
             else:
                 return my_response(False, 'foodId not exist!', {})
@@ -489,7 +489,7 @@ def option(request, option_id=None):
                 return my_response(False, 'error in option, check send body, ' + str(e), {})
         elif request.method == 'DELETE':
             var = Option.objects.filter(option_id=option_id).delete()
-            if var[0] == 1:
+            if var[0] != 0:
                 return my_response(True, 'success', {})
             else:
                 return my_response(False, 'optionId not exist!', {})
