@@ -587,39 +587,42 @@ def filter_order(request):
     token = Token.objects.filter(token=token)
     if token.exists() and token[0].is_admin:
         if request.method == 'GET':
-            orders = Order.objects.all()
-            tr_id = request.GET.get('trackId')
-            if tr_id is not None:
-                orders = orders.filter(track_id=tr_id)
-            date = request.GET.get('date')
-            if date is not None:
-                orders = orders.filter(datetime__date=date)
+            try:
+                orders = Order.objects.all()
+                tr_id = request.GET.get('trackId')
+                if tr_id is not None:
+                    orders = orders.filter(track_id=tr_id)
+                date = request.GET.get('date')
+                if date is not None:
+                    orders = orders.filter(datetime__date=date)
 
-            delivery = request.GET.get('delivery')
-            if delivery is not None:
-                if delivery == '0':
-                    delivery = False
-                else:
-                    delivery = True
-                orders = orders.filter(order_type=delivery)
-            st = request.GET.get('status')
-            if st is not None:
-                if st == '0':
-                    st = False
-                else:
-                    st = True
-                orders = orders.filter(completed=st)
-            p_type = request.GET.get('paymentType')
-            if p_type is not None:
-                if p_type == '0':
-                    p_type = False
-                else:
-                    p_type = True
-                orders = orders.filter(payment_type=p_type)
-            _list = []
-            for o in orders:
-                _list.append(o.to_json())
-            return my_response(True, 'success', _list)
+                delivery = request.GET.get('delivery')
+                if delivery is not None:
+                    if delivery == '0':
+                        delivery = False
+                    else:
+                        delivery = True
+                    orders = orders.filter(order_type=delivery)
+                st = request.GET.get('status')
+                if st is not None:
+                    if st == '0':
+                        st = False
+                    else:
+                        st = True
+                    orders = orders.filter(completed=st)
+                p_type = request.GET.get('paymentType')
+                if p_type is not None:
+                    if p_type == '0':
+                        p_type = False
+                    else:
+                        p_type = True
+                    orders = orders.filter(payment_type=p_type)
+                _list = []
+                for o in orders:
+                    _list.append(o.to_json())
+                return my_response(True, 'success', _list)
+            except Exception as e:
+                return my_response(False, 'error in filter order, check send query params, '+ str(e), {})
         else:
             return my_response(False, 'invalid method', {})
     else:
