@@ -412,14 +412,16 @@ def food(request, food_id=None):
                         status=status,
                     )
                     f = f.first()
+                    FoodSize.objects.filter(food=f).delete()
                     for s in sizes:
                         size = s['size']
                         s_price = s['price']
-                        FoodSize.objects.filter(food=f, size=size).update(price=s_price)
+                        FoodSize(food=f, size=size, price=s_price).save()
+                    FoodType.objects.filter(food=f).delete()
                     for t in types:
                         _type = t['type']
                         t_price = t['price']
-                        FoodType.objects.filter(food_type_id=t['id']).update(type=_type, price=t_price)
+                        FoodType(food=f, type=_type, price=t_price).save()
                     FoodOption.objects.filter(food=f).delete()
                     for o in ops:
                         FoodOption(food=f, option_id=o).save()
@@ -428,19 +430,11 @@ def food(request, food_id=None):
             except Exception as e:
                 return my_response(False, 'error in food, check send body, ' + str(e), {})
         elif request.method == 'DELETE':
-            info = loads(request.body.decode('utf-8'))
-            if 'sizes' in info or 'types' in info:
-                for s in info['sizes']:
-                    FoodSize.objects.filter(food_size_id=s).delete()
-                for t in info['types']:
-                    FoodType.objects.filter(food_type_id=t).delete()
+            var = Food.objects.filter(food_id=food_id).delete()
+            if var[0] == 1:
                 return my_response(True, 'success', {})
             else:
-                var = Food.objects.filter(food_id=food_id).delete()
-                if var[0] == 1:
-                    return my_response(True, 'success', {})
-                else:
-                    return my_response(False, 'foodId not exist!', {})
+                return my_response(False, 'foodId not exist!', {})
         elif request.method == 'GET':
             fo_list = []
             fos = Food.objects.all()
@@ -494,17 +488,11 @@ def option(request, option_id=None):
             except Exception as e:
                 return my_response(False, 'error in option, check send body, ' + str(e), {})
         elif request.method == 'DELETE':
-            info = loads(request.body.decode('utf-8'))
-            if 'sizes' in info:
-                for s in info['sizes']:
-                    FoodSize.objects.filter(food_size_id=s).delete()
+            var = Option.objects.filter(option_id=option_id).delete()
+            if var[0] == 1:
                 return my_response(True, 'success', {})
             else:
-                var = Option.objects.filter(option_id=option_id).delete()
-                if var[0] == 1:
-                    return my_response(True, 'success', {})
-                else:
-                    return my_response(False, 'optionId not exist!', {})
+                return my_response(False, 'optionId not exist!', {})
         elif request.method == 'GET':
             op_list = []
             ops = Option.objects.all()
