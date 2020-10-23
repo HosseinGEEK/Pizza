@@ -150,7 +150,7 @@ class Option(models.Model):
         return context
 
     def __str__(self):
-        return self.name
+        return self.name + '({})'.format(str(self.option_id))
 
 
 class FoodOption(models.Model):
@@ -175,13 +175,6 @@ class FoodSize(models.Model):
             context.update({'name': self.option.name})
         return context
 
-    def __str__(self):
-        if self.food is None:
-            name = self.option.name
-        else:
-            name = self.food.name
-        return name + ' ' + self.size
-
 
 class FoodType(models.Model):
     food_type_id = models.AutoField(primary_key=True)
@@ -195,9 +188,6 @@ class FoodType(models.Model):
             'type': self.type,
             'price': self.price,
         }
-
-    def __str__(self):
-        return self.food.name + ' ' + self.type
 
 
 class Favorite(models.Model):
@@ -263,30 +253,28 @@ class Order(models.Model):
 
         return context
 
-    def __str__(self):
-        return str(self.track_id) + '-' + self.user.name + ' ' + str(self.datetime)
-
 
 class OrderFood(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    food_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE)
-    food_type = models.ForeignKey(FoodType, on_delete=models.CASCADE, blank=True, null=True)
+    food_size = models.IntegerField()
+    food_type = models.IntegerField(blank=True, null=True)
     number = models.IntegerField()
 
     def to_json(self):
+        fs = FoodSize.objects.get(food_size_id=self.food_size)
         context = {
-            'size': self.food_size.to_json(),
+            'size': fs.to_json(),
             'number': self.number,
         }
-        if self.food_size.food is not None:
-            food = Food.objects.get(food_id=self.food_size.food_id)
+        if fs.food is not None:
+            food = Food.objects.get(food_id=fs.food_id)
             context.update({'food': food.to_json(with_group=True)})
         else:
-            food = Option.objects.get(option_id=self.food_size.option_id)
+            food = Option.objects.get(option_id=fs.option_id)
             context.update({'food': food.to_json(with_group=True, with_sizes=False)})
 
         if self.food_type is not None:
-            _type = self.food_type.to_json()
+            _type = FoodType.objects.get(food_type_id=self.food_type)
             context.update({'type': _type})
 
         ops = OrderOption.objects.filter(order_food=self)
@@ -298,16 +286,13 @@ class OrderFood(models.Model):
             context.update({'options': op_list})
         return context
 
-    def __str__(self):
-        return str(self.order.order_id) + ' ' + self.food_size.size
-
 
 class OrderOption(models.Model):
     order_food = models.ForeignKey(OrderFood, on_delete=models.CASCADE)
-    option_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE, default=None)
+    option_size = models.IntegerField(default=None)
 
     def to_json(self):
-        return self.option_size.to_json(with_option_name=True)
+        return FoodSize.objects.get(option_id=self.option_size).to_json(with_option_name=True)
 
 
 class RestaurantInfo(models.Model):
@@ -379,9 +364,6 @@ class RestaurantAddress(models.Model):
             'email': self.email,
         }
 
-    def __str__(self):
-        return str(self.restaurant.res_info_id) + ' ' + self.address
-
 
 class RestaurantTime(models.Model):
     res_time_id = models.AutoField(primary_key=True)
@@ -447,6 +429,3 @@ class Ticket(models.Model):
             'message': self.message,
             'rate': self.rate,
         }
-
-    def __str__(self):
-        return self.user.name

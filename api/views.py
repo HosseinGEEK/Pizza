@@ -458,18 +458,18 @@ def insert_user_order(request):
                 foods = info['foods']
                 for f in foods:
                     of = OrderFood(
-                        food_size_id=f['foodSizeId'],
-                        food_type_id=f['foodTypeId'],
+                        food_size=f['foodSizeId'],
+                        food_type=f['foodTypeId'],
                         order=order,
                         number=f['number']
                     )
                     of.save()
                     food_options = f['foodOptions']
                     for op_size_id in food_options:
-                        OrderOption(order_food=of, option_size_id=op_size_id).save()
+                        OrderOption(order_food=of, option_size=op_size_id).save()
                 options = info['options']
                 for o in options:
-                    of = OrderFood(food_size_id=o['optionSizeId'], order=order, number=o['number'])
+                    of = OrderFood(food_size=o['optionSizeId'], order=order, number=o['number'])
                     of.save()
 
                 notif_to_admin(track_id=order.track_id)
