@@ -213,7 +213,7 @@ class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     track_id = models.BigIntegerField(default=1)
-    datetime = models.CharField(max_length=50)
+    datetime = models.DateTimeField()
     total_price = models.FloatField()
     completed = models.BooleanField(default=False)
     status = models.BooleanField(default=False)
@@ -221,7 +221,7 @@ class Order(models.Model):
     order_type = models.BooleanField()  # if delivery is True else False
     description = models.CharField(max_length=200, blank=True, null=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
-    delivery_time = models.CharField(max_length=10)
+    delivery_time = models.TimeField()
 
     def to_json(self, with_detail=True):
         context = {
@@ -304,8 +304,8 @@ class RestaurantInfo(models.Model):
     max_order_per_time_slot = models.IntegerField(null=True, blank=True)
     order_fulfilment = models.IntegerField()  # example collection=0, delivery=1, both=2
     # todo table service options
-    collection_time = models.TimeField(null=True, blank=True)
-    delivery_time = models.TimeField(null=True, blank=True)
+    collection_time = models.CharField(max_length=10, null=True, blank=True)
+    delivery_time = models.TimeField(max_length=10, null=True, blank=True)
     delivery_post_codes = models.TextField(null=True, blank=True)
     collection_discount_amount = models.FloatField(default=0.0)
     cost = models.FloatField(default=0.0)
