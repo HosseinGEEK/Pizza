@@ -34,12 +34,12 @@ def register(request):
         try:
             info = loads(request.body.decode('utf-8'))
 
-            n = info['name']
             p = info['phone']
+            e = info['email']
             user = User(
                 phone=p,
-                email=info['email'],
-                name=n,
+                email=e,
+                name=info['name'],
                 password=info['password'],
             )
             user.save(force_insert=True)
@@ -47,7 +47,7 @@ def register(request):
             tok = Token(user=user, token=tok)
             tok.save(force_insert=True)
 
-            Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=n, is_active=True).save()
+            Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=p+e, is_active=True).save()
 
             return my_response(True, 'user registered', tok.to_json())
         except Exception as e:
@@ -134,7 +134,6 @@ def logout(request):
             token = request.headers.get('token')
             token = Token.objects.filter(token=token)
             if token.exists() and token[0].is_admin:
-                admin.admin_token = ''
                 return my_response(True, 'success', {})
             if token.exists():
                 user = token[0].user
