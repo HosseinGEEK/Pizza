@@ -293,7 +293,7 @@ class OrderOption(models.Model):
     option_size = models.IntegerField(default=None)
 
     def to_json(self):
-        return FoodSize.objects.get(option_id=self.option_size).to_json(with_option_name=True)
+        return FoodSize.objects.get(food_size_id=self.option_size).to_json(with_option_name=True)
 
 
 class RestaurantInfo(models.Model):
