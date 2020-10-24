@@ -139,12 +139,12 @@ def logout(request):
         try:
             token = request.headers.get('token')
             token = Token.objects.filter(token=token)
-            if token.exists() and token[0].is_admin:
-                return my_response(True, 'success', {})
             if token.exists():
                 user = token[0].user
                 User.objects.filter(phone=user.phone).update(status=False)
                 token.delete()
+                if token[0].is_admin:
+                    Device.objects.filter(name='appAdmin').delete()
                 return my_response(True, 'success', {})
             else:
                 return my_response(False, 'token not exist', {})
@@ -477,7 +477,7 @@ def insert_user_order(request):
                     of = OrderFood(food_size=o['optionSizeId'], order=order, number=o['number'])
                     of.save()
 
-                notif_to_admin(track_id=order.track_id)
+                notif_to_admin(orderId=order.order_id)
                 return my_response(True, 'success', order.to_json())
             else:
                 return my_response(False, 'invalid token', {})
@@ -687,12 +687,12 @@ def ticket(request):
 
 def notif_to_admin(**kwargs):
     temp = ''
-    if 'track_id' in kwargs:
-        temp = kwargs['track_id']
+    if 'orderId' in kwargs:
+        temp = kwargs['orderId']
 
     admin_notif = Device.objects.get(name='appAdmin')
     admin_notif.send_message(
-        {'trackId': temp},
+        {'orderId': temp},
         notification={
             'title': 'order',
             'body': 'you have a order with trackId: ' + str(temp)

@@ -20,7 +20,7 @@ urlpatterns = [
     path('user/address/', views.insert_user_address,),
     path('user/order/', views.insert_user_order,),
     path('homeInfo/', views.get_home_info, name='home-info'),
-    path('getDetail/', views.get_food_detail, ),
+    path('getDetail', views.get_food_detail, ),
     path('getOrder/', views.get_orders, ),
     path('insertOrder/', views.insert_user_order),
     path('setRate/', views.set_food_rate),
