@@ -276,7 +276,7 @@ class OrderFood(models.Model):
 
         if self.food_type is not None:
             _type = FoodType.objects.get(food_type_id=self.food_type)
-            context.update({'type': _type})
+            context.update({'type': _type.to_json()})
 
         ops = OrderOption.objects.filter(order_food=self)
         if ops.exists():
