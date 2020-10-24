@@ -305,7 +305,7 @@ class RestaurantInfo(models.Model):
     order_fulfilment = models.IntegerField()  # example collection=0, delivery=1, both=2
     # todo table service options
     collection_time = models.CharField(max_length=10, null=True, blank=True)
-    delivery_time = models.TimeField(max_length=10, null=True, blank=True)
+    delivery_time = models.CharField(max_length=10, null=True, blank=True)
     delivery_post_codes = models.TextField(null=True, blank=True)
     collection_discount_amount = models.FloatField(default=0.0)
     cost = models.FloatField(default=0.0)
