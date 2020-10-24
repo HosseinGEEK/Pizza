@@ -477,7 +477,7 @@ def insert_user_order(request):
                     of = OrderFood(food_size=o['optionSizeId'], order=order, number=o['number'])
                     of.save()
 
-                notif_to_admin(orderId=order.order_id)
+                notif_to_admin(orderId=order.order_id, trackId=order.track_id)
                 return my_response(True, 'success', order.to_json())
             else:
                 return my_response(False, 'invalid token', {})
@@ -686,16 +686,13 @@ def ticket(request):
 
 
 def notif_to_admin(**kwargs):
-    temp = ''
-    if 'orderId' in kwargs:
-        temp = kwargs['orderId']
 
     admin_notif = Device.objects.get(name='appAdmin')
     admin_notif.send_message(
-        {'orderId': temp},
+        {'orderId': kwargs['orderId']},
         notification={
             'title': 'order',
-            'body': 'you have a order with trackId: ' + str(temp)
+            'body': 'you have a order with trackId: ' + str(kwargs['trackId'])
         }
     )
 
