@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="bd550058-432c-4847-bbe3-e289478094cd" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -38,8 +39,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="257">
-              <caret line="473" column="32" lean-forward="true" selection-start-line="473" selection-start-column="32" selection-end-line="473" selection-end-column="32" />
+            <state relative-caret-position="281">
+              <caret line="199" column="21" selection-start-line="199" selection-start-column="21" selection-end-line="199" selection-end-column="21" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -47,11 +48,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pizza/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2057">
-              <caret line="122" column="31" selection-start-line="122" selection-start-column="31" selection-end-line="122" selection-end-column="31" />
+            <state relative-caret-position="586">
+              <caret line="125" column="41" lean-forward="true" selection-start-line="125" selection-start-column="41" selection-end-line="125" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -59,8 +60,8 @@
       <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="263">
-              <caret line="34" column="25" selection-start-line="34" selection-start-column="10" selection-end-line="34" selection-end-column="25" />
+            <state relative-caret-position="297">
+              <caret line="21" column="34" lean-forward="true" selection-start-line="21" selection-start-column="34" selection-end-line="21" selection-end-column="34" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -71,8 +72,8 @@
       <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/admin.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="49" column="46" selection-start-line="49" selection-start-column="46" selection-end-line="49" selection-end-column="46" />
+            <state relative-caret-position="359">
+              <caret line="48" column="67" selection-start-line="48" selection-start-column="67" selection-end-line="48" selection-end-column="67" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -80,7 +81,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="409">
@@ -124,13 +125,13 @@
         <option value="$PROJECT_DIR$/linux server.txt" />
         <option value="$PROJECT_DIR$/pizza/urls.py" />
         <option value="$PROJECT_DIR$/api/love.py" />
-        <option value="$PROJECT_DIR$/pizza/settings.py" />
         <option value="$PROJECT_DIR$/../Lib/site-packages/fcm/utils.py" />
-        <option value="$PROJECT_DIR$/api/urls.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/api/admin.py" />
-        <option value="$PROJECT_DIR$/api/views.py" />
         <option value="$PROJECT_DIR$/api/models.py" />
+        <option value="$PROJECT_DIR$/api/urls.py" />
+        <option value="$PROJECT_DIR$/api/views.py" />
+        <option value="$PROJECT_DIR$/pizza/settings.py" />
       </list>
     </option>
   </component>
@@ -144,9 +145,9 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="width" value="977" />
-    <option name="height" value="1038" />
+    <option name="x" value="-9" />
+    <option name="width" value="978" />
+    <option name="height" value="1039" />
   </component>
   <component name="ProjectId" id="1i9AMXFPcUe2fnOlF4R8rVBi2BK" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -281,27 +282,6 @@
       <option name="presentableId" value="Default" />
       <updated>1600244553792</updated>
       <workItem from="1602259249823" duration="8000" />
-    </task>
-    <task id="LOCAL-00001" summary="init commit">
-      <created>1601312843774</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1601312843774</updated>
-    </task>
-    <task id="LOCAL-00002" summary="init commit">
-      <created>1601314222253</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1601314222253</updated>
-    </task>
-    <task id="LOCAL-00003" summary="init commit">
-      <created>1601314552336</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1601314552336</updated>
     </task>
     <task id="LOCAL-00004" summary="handle two bugs">
       <created>1601321751725</created>
@@ -625,11 +605,33 @@
       <option name="project" value="LOCAL" />
       <updated>1603540314128</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="modify api">
+      <created>1603540834081</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1603540834082</updated>
+    </task>
+    <task id="LOCAL-00051" summary="modify api">
+      <created>1603553138829</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1603553138829</updated>
+    </task>
+    <task id="LOCAL-00052" summary="modify api">
+      <created>1603553221925</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1603553221925</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" weight="0.32905984" />
@@ -637,10 +639,11 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32905984" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.54131055" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.27065527" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12818792" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.27065527" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12818792" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="4" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32905984" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -651,7 +654,6 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32905984" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -687,7 +689,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="modify food type" />
     <MESSAGE value="modify models and image decoding" />
     <MESSAGE value="modify models and views and admin" />
     <MESSAGE value="modify models and views orders" />
@@ -712,19 +713,10 @@
     <MESSAGE value="modify admin token with Token table" />
     <MESSAGE value="modify orderFood and orderOption table" />
     <MESSAGE value="modify admin api" />
-    <option name="LAST_COMMIT_MESSAGE" value="modify admin api" />
+    <MESSAGE value="modify api" />
+    <option name="LAST_COMMIT_MESSAGE" value="modify api" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/api/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="23" column="13" lean-forward="true" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/api/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8585">
@@ -977,6 +969,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3281">
           <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+          <folding>
+            <element signature="e#247#263#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -997,6 +992,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="30" lean-forward="true" selection-start-line="6" selection-start-column="30" selection-end-line="6" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1020,27 +1018,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pizza/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2057">
-          <caret line="122" column="31" selection-start-line="122" selection-start-column="31" selection-end-line="122" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="5" column="18" lean-forward="true" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/api/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="34" column="25" selection-start-line="34" selection-start-column="10" selection-end-line="34" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1054,30 +1035,54 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/api/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="295" column="48" selection-start-line="295" selection-start-column="48" selection-end-line="295" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/api/admin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="49" column="46" selection-start-line="49" selection-start-column="46" selection-end-line="49" selection-end-column="46" />
+        <state relative-caret-position="359">
+          <caret line="48" column="67" selection-start-line="48" selection-start-column="67" selection-end-line="48" selection-end-column="67" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="21" column="34" lean-forward="true" selection-start-line="21" selection-start-column="34" selection-end-line="21" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Lib/site-packages/django/core/mail/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="37" column="4" selection-start-line="37" selection-start-column="4" selection-end-line="37" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/api/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="257">
-          <caret line="473" column="32" lean-forward="true" selection-start-line="473" selection-start-column="32" selection-end-line="473" selection-end-column="32" />
+        <state relative-caret-position="281">
+          <caret line="199" column="21" selection-start-line="199" selection-start-column="21" selection-end-line="199" selection-end-column="21" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/models.py">
+    <entry file="file://$PROJECT_DIR$/pizza/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="409">
-          <caret line="295" column="48" selection-start-line="295" selection-start-column="48" selection-end-line="295" selection-end-column="48" />
+        <state relative-caret-position="586">
+          <caret line="125" column="41" lean-forward="true" selection-start-line="125" selection-start-column="41" selection-end-line="125" selection-end-column="41" />
         </state>
       </provider>
     </entry>

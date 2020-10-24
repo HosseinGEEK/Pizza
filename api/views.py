@@ -200,8 +200,10 @@ def my_send_mail(request):
                 send_mail(
                     'pizza app',
                     'confirmation code ' + str(otp) + 'for change password in pizza app',
-                    'from@example.com',
-                    ['to@example.com'],
+                    # 'from@example.com',
+                    'HosseinA.9876@gmail.com',
+                    # ['to@example.com'],
+                    ['haviking76@gmail.com'],
                     fail_silently=False,
                 )
 
