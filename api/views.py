@@ -6,13 +6,14 @@ from json import loads
 from api import admin
 from api.models import User, Group, Food, FoodSize, Token, Favorite, Order, Option, Address, \
     OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress, Ticket
-from django.core.mail import send_mail
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
 from django.core.paginator import Paginator
-from fcm.utils import get_device_model
 from fcm.models import *
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 
 def my_response(status, message, data):
@@ -53,7 +54,7 @@ def register(request):
             tok = Token(user=user, token=tok)
             tok.save(force_insert=True)
 
-            Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=p+e, is_active=True).save()
+            Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=p + e, is_active=True).save()
 
             return my_response(True, 'user registered', tok.to_json())
         except Exception as e:
@@ -94,6 +95,28 @@ def login(request):
                 return login(request)
             else:
                 return my_response(False, 'error in login, check login body, ' + e, {})
+    else:
+        return my_response(False, 'invalid method', {})
+
+
+@csrf_exempt
+def check_expiry_token(request):
+    if request.method == "GET":
+        # try:
+        token = request.headers.get('token')
+        token = Token.objects.filter(token=token)
+        if token.exists():
+            _now = datetime.datetime.now().date()
+            print(token[0].expiry_date)
+            print(token[0].expiry_date.date())
+            dif = (_now - token[0].expiry_date.date())
+
+            print(dif.total_seconds())
+
+            return my_response(True, 'success', {})
+
+    # except Exception as e:
+    #     return my_response(False, 'error in check_expiry_token, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
 
@@ -142,9 +165,9 @@ def logout(request):
             if token.exists():
                 user = token[0].user
                 User.objects.filter(phone=user.phone).update(status=False)
-                token.delete()
                 if token[0].is_admin:
                     Device.objects.filter(name='appAdmin').delete()
+                token.delete()
                 return my_response(True, 'success', {})
             else:
                 return my_response(False, 'token not exist', {})
@@ -197,16 +220,21 @@ def my_send_mail(request):
             token = Token.objects.filter(token=token)
             if token.exists():
                 otp = random.randint(10000, 99999)
-                send_mail(
-                    'pizza app',
-                    'confirmation code ' + str(otp) + 'for change password in pizza app',
-                    # 'from@example.com',
-                    'HosseinA.9876@gmail.com',
-                    # ['to@example.com'],
-                    ['haviking76@gmail.com'],
-                    fail_silently=False,
-                )
-
+                mail_content = 'confirmation code ' + str(otp) + ' for change password in pizza app'
+                sender_gmail = 'pizzariaamicos@gmail.com'
+                sender_pass = 'Cisco2020'
+                receiver_email = 'haviking76@gmail.com'
+                message = MIMEMultipart()
+                message['From'] = sender_gmail
+                message['To'] = receiver_email
+                message['Subject'] = 'Test'
+                message.attach(MIMEText(mail_content, 'plain'))
+                session = smtplib.SMTP('smtp.gmail.com', 587)
+                session.starttls()
+                session.login(sender_gmail, sender_pass)
+                text = message.as_string()
+                session.sendmail(sender_gmail, receiver_email, text)
+                session.quit()
                 return my_response(True, 'success', {})
             else:
                 return my_response(False, 'token not exist', {})
@@ -452,7 +480,7 @@ def insert_user_order(request):
                 tr_id = random.randint(100000, 100000000)
                 order = Order(
                     user=user,
-                    track_id=tr_id,
+                    track_id=str(tr_id),
                     datetime=time,
                     total_price=total_price,
                     description=description,
@@ -688,7 +716,6 @@ def ticket(request):
 
 
 def notif_to_admin(**kwargs):
-
     admin_notif = Device.objects.get(name='appAdmin')
     admin_notif.send_message(
         {'orderId': kwargs['orderId']},

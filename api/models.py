@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 
@@ -26,6 +28,7 @@ class Token(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=32)
     is_admin = models.BooleanField(default=False)
+    expiry_date = models.DateTimeField(default=datetime.datetime.now())
 
     def to_json(self):
         return {
@@ -212,7 +215,7 @@ class Favorite(models.Model):
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    track_id = models.BigIntegerField(default=1)
+    track_id = models.CharField(max_length=10)
     datetime = models.DateTimeField()
     total_price = models.FloatField()
     completed = models.BooleanField(default=False)

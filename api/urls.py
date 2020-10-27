@@ -19,6 +19,7 @@ urlpatterns = [
     path('user/getAddress/', views.get_user_address,),
     path('user/address/', views.insert_user_address,),
     path('user/order/', views.insert_user_order,),
+    path('user/refreshToken/', views.check_expiry_token,),
     path('sendMail/', views.my_send_mail,),
     path('homeInfo/', views.get_home_info, name='home-info'),
     path('getDetail', views.get_food_detail, ),

@@ -529,7 +529,7 @@ def filter_order(request):
                 orders = Order.objects.all()
                 tr_id = request.GET.get('trackId')
                 if tr_id is not None:
-                    orders = orders.filter(track_id=tr_id)
+                    orders = orders.filter(track_id__contains=tr_id)
                 date = request.GET.get('date')
                 if date is not None:
                     orders = orders.filter(datetime__date=date)
