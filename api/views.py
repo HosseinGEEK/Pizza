@@ -718,7 +718,10 @@ def ticket(request):
 def notif_to_admin(**kwargs):
     admin_notif = Device.objects.get(name='appAdmin')
     admin_notif.send_message(
-        {'orderId': kwargs['orderId']},
+        {
+            'orderId': kwargs['orderId'],
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK'
+        },
         notification={
             'title': 'order',
             'body': 'you have a order with trackId: ' + str(kwargs['trackId'])

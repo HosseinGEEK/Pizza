@@ -640,7 +640,10 @@ def accept_reject_order(request):
                 e = order.user.email
                 user_notif = Device.objects.get(name=p+e)
                 user_notif.send_message(
-                    {'orderId': order.order_id},
+                    {
+                        'orderId': order.order_id,
+                        'click_action': 'FLUTTER_NOTIFICATION_CLICK'
+                    },
                     notification={
                         'title': 'order',
                         'body': mess
