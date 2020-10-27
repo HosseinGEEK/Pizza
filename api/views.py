@@ -14,6 +14,7 @@ from fcm.models import *
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from django.utils import timezone as tz
 
 
 def my_response(status, message, data):
@@ -102,21 +103,21 @@ def login(request):
 @csrf_exempt
 def check_expiry_token(request):
     if request.method == "GET":
-        # try:
-        token = request.headers.get('token')
-        token = Token.objects.filter(token=token)
-        if token.exists():
-            _now = datetime.datetime.now().date()
-            print(token[0].expiry_date)
-            print(token[0].expiry_date.date())
-            dif = (_now - token[0].expiry_date.date())
+        try:
+            token = request.headers.get('token')
+            token = Token.objects.filter(token=token)
+            if token.exists():
+                _now = datetime.datetime.now().date()
+                dif = (_now - token[0].expiry_date.date())
 
-            print(dif.total_seconds())
-
-            return my_response(True, 'success', {})
-
-    # except Exception as e:
-    #     return my_response(False, 'error in check_expiry_token, ' + str(e), {})
+                if dif.days < 3:
+                    token.update(expiry_date=tz.now())
+                    return my_response(True, 'success', {})
+                else:
+                    token.delete()
+                    return my_response(False, 'token invalid', {})
+        except Exception as e:
+            return my_response(False, 'error in check_expiry_token, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
 
