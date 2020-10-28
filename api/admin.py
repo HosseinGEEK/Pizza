@@ -642,7 +642,8 @@ def accept_reject_order(request):
                 user_notif.send_message(
                     {
                         'orderId': order.order_id,
-                        'click_action': 'FLUTTER_NOTIFICATION_CLICK'
+                        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                        'state': acc_rej,
                     },
                     notification={
                         'title': 'order',

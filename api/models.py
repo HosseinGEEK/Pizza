@@ -39,6 +39,12 @@ class Token(models.Model):
         return self.user.name + ' token'
 
 
+class Otp(models.Model):
+    email = models.EmailField()
+    otp = models.CharField(max_length=10)
+    expiry = models.CharField(max_length=5)
+
+
 class Address(models.Model):
     address_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -1,11 +1,11 @@
-import base64
 import datetime
+import base64
 import random
 from json import loads
 
 from api import admin
 from api.models import User, Group, Food, FoodSize, Token, Favorite, Order, Option, Address, \
-    OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress, Ticket
+    OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress, Ticket, Otp
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
@@ -44,6 +44,15 @@ def register(request):
 
             p = info['phone']
             e = info['email']
+            this_otp = info['otp']
+            o = Otp.objects.get(email=e)
+            if o.otp != this_otp:
+                return my_response(False, 'confirmation code invalid', None)
+
+            if time_diff(get_hour_minute(), o.expiry) > 5:
+                o.delete()
+                return my_response(False, 'confirmation code invalid, try from first', None)
+
             user = User(
                 phone=p,
                 email=e,
@@ -54,9 +63,8 @@ def register(request):
             tok = get_random_string(length=32)
             tok = Token(user=user, token=tok)
             tok.save(force_insert=True)
-
+            o.delete()
             Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=p + e, is_active=True).save()
-
             return my_response(True, 'user registered', tok.to_json())
         except Exception as e:
             e = str(e)
@@ -220,25 +228,32 @@ def my_send_mail(request):
             token = request.headers.get('token')
             token = Token.objects.filter(token=token)
             if token.exists():
-                otp = random.randint(10000, 99999)
-                mail_content = 'confirmation code ' + str(otp) + ' for change password in pizza app'
-                sender_gmail = 'pizzariaamicos@gmail.com'
-                sender_pass = 'Cisco2020'
-                receiver_email = 'haviking76@gmail.com'
-                message = MIMEMultipart()
-                message['From'] = sender_gmail
-                message['To'] = receiver_email
-                message['Subject'] = 'Test'
-                message.attach(MIMEText(mail_content, 'plain'))
-                session = smtplib.SMTP('smtp.gmail.com', 587)
-                session.starttls()
-                session.login(sender_gmail, sender_pass)
-                text = message.as_string()
-                session.sendmail(sender_gmail, receiver_email, text)
-                session.quit()
-                return my_response(True, 'success', {})
+                receiver_email = token[0].user.email
             else:
-                return my_response(False, 'token not exist', {})
+                e = request.GET.get('email')
+                if e is not None:
+                    receiver_email = e
+                else:
+                    return my_response(False, 'token or email not exist', {})
+
+            otp = random.randint(10000, 99999)
+            otp = str(otp)
+            mail_content = 'confirmation code: ' + otp + ' for pizza app'
+            sender_gmail = 'pizzariaamicos@gmail.com'
+            sender_pass = 'Cisco2020'
+            message = MIMEMultipart()
+            message['From'] = sender_gmail
+            message['To'] = receiver_email
+            message['Subject'] = 'Pizza App'
+            message.attach(MIMEText(mail_content, 'plain'))
+            session = smtplib.SMTP('smtp.gmail.com', 587)
+            session.starttls()
+            session.login(sender_gmail, sender_pass)
+            text = message.as_string()
+            session.sendmail(sender_gmail, receiver_email, text)
+            session.quit()
+            Otp(email=receiver_email, otp=otp, expiry=get_hour_minute()).save()
+            return my_response(True, 'success', {})
         except Exception as e:
             return my_response(False, 'error in send mail, ' + str(e), {})
     else:
@@ -258,16 +273,20 @@ def change_pass(request):
                 this_otp = info['otp']
                 old = info['old']
                 new = info['new']
-
-                global otp
-                if this_otp != otp:
+                o = Otp.objects.get(email=user.email)
+                if o.otp != this_otp:
                     return my_response(False, 'confirmation code invalid', None)
+
+                if time_diff(get_hour_minute(), o.expiry) > 5:
+                    o.delete()
+                    return my_response(False, 'confirmation code invalid, try from first', None)
 
                 if user.password != old:
                     return my_response(False, 'old password invalid', None)
 
                 user = User.objects.filter(phone=user.phone)
                 user.update(password=new)
+                o.delete()
                 return my_response(True, 'success', {})
             else:
                 return my_response(False, 'token not exist', {})
@@ -774,3 +793,15 @@ def merge(foods, options, fav_op, fav_fo):
                 result.append(options[j].to_json(with_group=True))
             j += 1
     return result
+
+
+def get_hour_minute():
+    return datetime.datetime.now().time().strftime('%H:%M')
+
+
+def time_diff(time1, time2):
+    time_a = datetime.datetime.strptime(time1, "%H:%M")
+    time_b = datetime.datetime.strptime(time2, "%H:%M")
+    new_time = time_a - time_b
+    return new_time.seconds / 60
+
