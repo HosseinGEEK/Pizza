@@ -229,7 +229,7 @@ class Order(models.Model):
     order_type = models.BooleanField()  # if delivery is True else False
     description = models.CharField(max_length=200, blank=True, null=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
-    delivery_time = models.TimeField()
+    delivery_time = models.CharField(max_length=10)
 
     def to_json(self, with_detail=True):
         context = {

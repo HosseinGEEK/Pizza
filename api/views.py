@@ -252,6 +252,7 @@ def my_send_mail(request):
             text = message.as_string()
             session.sendmail(sender_gmail, receiver_email, text)
             session.quit()
+            Otp.objects.filter(email=receiver_email).delete()
             Otp(email=receiver_email, otp=otp, expiry=get_hour_minute()).save()
             return my_response(True, 'success', {})
         except Exception as e:
