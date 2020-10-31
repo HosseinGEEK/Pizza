@@ -2,6 +2,7 @@ import datetime
 import base64
 import random
 from json import loads
+import hashlib
 
 from api import admin
 from api.models import User, Group, Food, FoodSize, Token, Favorite, Order, Option, Address, \
@@ -119,8 +120,11 @@ def check_expiry_token(request):
                 dif = (_now - token[0].expiry_date.date())
 
                 if dif.days < 3:
-                    token.update(expiry_date=tz.now())
-                    return my_response(True, 'success', {})
+                    # new_token = token[0].user.email + str(datetime.datetime.now())
+                    # new_token = hashlib.md5(new_token.encode())
+                    # new_token = new_token.hexdigest()
+                    # token.update(token=new_token, expiry_date=tz.now())
+                    return my_response(True, 'success', {'token': ''})
                 else:
                     token.delete()
                     return my_response(False, 'token invalid', {})
@@ -741,11 +745,12 @@ def notif_to_admin(**kwargs):
     admin_notif.send_message(
         {
             'orderId': kwargs['orderId'],
-            'click_action': 'FLUTTER_NOTIFICATION_CLICK'
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
         },
         notification={
             'title': 'order',
-            'body': 'you have a order with trackId: ' + str(kwargs['trackId'])
+            'body': 'you have a order with trackId: ' + str(kwargs['trackId']),
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK'
         }
     )
 

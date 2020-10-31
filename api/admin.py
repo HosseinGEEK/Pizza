@@ -36,31 +36,31 @@ admin.site.register(RestaurantTime)
 def admin_login(request):
     if request.method == "POST":
         info = loads(request.body.decode('utf-8'))
-        try:
-            phone = info['phone']
-            user = User.objects.filter(phone=phone)
+        # try:
+        phone = info['phone']
+        user = User.objects.filter(phone=phone)
 
-            if user.exists():
-                password = info['password']
-                if user.first().password == password:
-                    user.update(status=True)
+        if user.exists():
+            password = info['password']
+            if user.first().password == password:
+                user.update(status=True)
 
-                    tok = get_random_string(length=32)
-                    Token(user=user[0], token=tok, is_admin=True).save()
-                    Device(reg_id=info['deviceToken'], dev_id=info['deviceId'], name='appAdmin', is_active=True).save()
-                    return my_response(True, 'success', {'token': tok})
-                else:
-                    return my_response(False, 'invalid information', {})
+                tok = get_random_string(length=32)
+                Token(user=user[0], token=tok, is_admin=True).save()
+                Device(reg_id=info['deviceToken'], dev_id=info['deviceId'], name='appAdmin', is_active=True).save()
+                return my_response(True, 'success', {'token': tok})
             else:
-                return my_response(False, 'user not found', {})
-        except Exception as e:
-            e = str(e)
-            if e.__contains__('UNIQUE constraint'):
-                Token.objects.filter(user__phone=info['phone']).delete()
-                Device.objects.filter(name='appAdmin').delete()
-                return admin_login(request)
-            else:
-                return my_response(False, 'error in login, check login body, ' + e, {})
+                return my_response(False, 'invalid information', {})
+        else:
+            return my_response(False, 'user not found', {})
+        # except Exception as e:
+        #     e = str(e)
+        #     if e.__contains__('UNIQUE constraint'):
+        #         Token.objects.filter(user__phone=info['phone']).delete()
+        #         Device.objects.filter(name='appAdmin').delete()
+        #         return admin_login(request)
+        #     else:
+        #         return my_response(False, 'error in login, check login body, ' + e, {})
     else:
         return my_response(False, 'invalid method', {})
 
@@ -642,12 +642,13 @@ def accept_reject_order(request):
                 user_notif.send_message(
                     {
                         'orderId': order.order_id,
-                        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
                         'state': acc_rej,
+                        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
                     },
                     notification={
                         'title': 'order',
-                        'body': mess
+                        'body': mess,
+                        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
                     }
                 )
 
