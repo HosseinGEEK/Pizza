@@ -594,7 +594,7 @@ def invoice(request):
             _list = []
             for o in orders:
                 _list.append(o['day'])
-
+            _list.reverse()
             return my_response(True, 'success', _list)
         else:
             return my_response(False, 'invalid method', {})
@@ -637,20 +637,20 @@ def accept_reject_order(request):
 
                 order = order.first()
                 p = order.user.phone
-                e = order.user.email
-                user_notif = Device.objects.get(name=p+e)
-                user_notif.send_message(
-                    {
-                        'orderId': order.order_id,
-                        'state': acc_rej,
-                        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                    },
-                    notification={
-                        'title': 'order',
-                        'body': mess,
-                        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                    }
-                )
+                users_notif = Device.objects.get(name=p)
+                for un in users_notif:
+                    un.send_message(
+                        {
+                            'orderId': order.order_id,
+                            'state': acc_rej,
+                            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                        },
+                        notification={
+                            'title': 'order',
+                            'body': mess,
+                            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                        }
+                    )
 
                 return my_response(True, 'success', {})
 
