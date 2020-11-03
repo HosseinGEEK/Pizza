@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from fcm.models import Device
 
 from .models import User, Group, Food, FoodSize, FoodType, Option, Token, Order, RestaurantInfo, RestaurantAddress, \
-    PostCode, Offer, RestaurantTime, OrderFood, OrderOption, Favorite, FoodOption, Ticket, Address
+    PostCode, Offer, RestaurantTime, OrderFood, OrderOption, Favorite, FoodOption, Ticket, Address, Otp
 from django.core.paginator import Paginator
 
 admin.site.register(User)
@@ -30,6 +30,7 @@ admin.site.register(FoodOption)
 admin.site.register(Ticket)
 admin.site.register(Address)
 admin.site.register(RestaurantTime)
+admin.site.register(Otp)
 
 
 @csrf_exempt

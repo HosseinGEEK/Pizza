@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="bd550058-432c-4847-bbe3-e289478094cd" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/admin.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -42,8 +41,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7210">
-              <caret line="533" column="63" selection-start-line="533" selection-start-column="51" selection-end-line="533" selection-end-column="63" />
+            <state relative-caret-position="104">
+              <caret line="46" column="13" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="13" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -75,8 +74,8 @@
       <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/admin.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1504">
-              <caret line="119" column="54" selection-start-line="119" selection-start-column="52" selection-end-line="119" selection-end-column="54" />
+            <state relative-caret-position="229">
+              <caret line="32" column="23" selection-start-line="32" selection-start-column="23" selection-end-line="32" selection-end-column="23" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -137,9 +136,9 @@
         <option value="$PROJECT_DIR$/api/urls.py" />
         <option value="$PROJECT_DIR$/api/test.dart.py" />
         <option value="$PROJECT_DIR$/api/t.py" />
-        <option value="$PROJECT_DIR$/api/admin.py" />
         <option value="$PROJECT_DIR$/api/models.py" />
         <option value="$PROJECT_DIR$/api/views.py" />
+        <option value="$PROJECT_DIR$/api/admin.py" />
       </list>
     </option>
   </component>
@@ -353,13 +352,6 @@
       <option name="presentableId" value="Default" />
       <updated>1600244553792</updated>
       <workItem from="1602259249823" duration="8000" />
-    </task>
-    <task id="LOCAL-00014" summary="change primary key user and error handle register">
-      <created>1602404199788</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1602404199788</updated>
     </task>
     <task id="LOCAL-00015" summary="modify insert order view and add fav to food and option">
       <created>1602415354441</created>
@@ -697,7 +689,14 @@
       <option name="project" value="LOCAL" />
       <updated>1604153143071</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="modify order&#10;and refresh token">
+      <created>1604389213688</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1604389213689</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -760,7 +759,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="modify model and homeInfo view" />
     <MESSAGE value="add rate api and modify urls" />
     <MESSAGE value="modify bug of register" />
     <MESSAGE value="change user_id to phone" />
@@ -785,7 +783,8 @@
     <MESSAGE value="modify apis" />
     <MESSAGE value="admin login test" />
     <MESSAGE value="modify api" />
-    <option name="LAST_COMMIT_MESSAGE" value="modify api" />
+    <MESSAGE value="modify order&#10;and refresh token" />
+    <option name="LAST_COMMIT_MESSAGE" value="modify order&#10;and refresh token" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/api/urls.py">
@@ -1099,16 +1098,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1504">
-          <caret line="119" column="54" selection-start-line="119" selection-start-column="52" selection-end-line="119" selection-end-column="54" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/api/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="99">
@@ -1119,10 +1108,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/api/admin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="32" column="23" selection-start-line="32" selection-start-column="23" selection-end-line="32" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/api/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7210">
-          <caret line="533" column="63" selection-start-line="533" selection-start-column="51" selection-end-line="533" selection-end-column="63" />
+        <state relative-caret-position="104">
+          <caret line="46" column="13" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="13" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
