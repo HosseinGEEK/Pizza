@@ -24,7 +24,7 @@ class User(models.Model):
 
 
 class Token(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=32)
     is_admin = models.BooleanField(default=False)
     expiry_date = models.DateTimeField(default=tz.now())

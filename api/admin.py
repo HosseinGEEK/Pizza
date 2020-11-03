@@ -57,8 +57,7 @@ def admin_login(request):
         except Exception as e:
             e = str(e)
             if e.__contains__('UNIQUE constraint'):
-                Token.objects.filter(user__phone=info['phone']).delete()
-                Device.objects.filter(name='appAdmin').delete()
+                Device.objects.filter(dev_id=info['deviceId']).delete()
                 return admin_login(request)
             else:
                 return my_response(False, 'error in login, check login body, ' + e, {})

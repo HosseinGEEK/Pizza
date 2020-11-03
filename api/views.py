@@ -100,11 +100,7 @@ def login(request):
                 return my_response(False, 'user not found', {})
         except Exception as e:
             e = str(e)
-            if e.__contains__('UNIQUE constraint'):
-                Token.objects.filter(user__phone=info['phone']).delete()
-                return login(request)
-            else:
-                return my_response(False, 'error in login, check login body, ' + e, {})
+            return my_response(False, 'error in login, check login body, ' + e, {})
     else:
         return my_response(False, 'invalid method', {})
 
@@ -551,10 +547,10 @@ def get_orders(request):
         token = Token.objects.filter(token=token)
         if token.exists():
             if token[0].is_admin:
-                orders = Order.objects.all()
+                orders = Order.objects.all().reverse()
             else:
                 user = token[0].user
-                orders = Order.objects.filter(user=user)
+                orders = Order.objects.filter(user=user).reverse()
 
             paginator = Paginator(orders, 25)
             try:
