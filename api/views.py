@@ -65,7 +65,7 @@ def register(request):
             tok = Token(user=user, token=tok)
             tok.save(force_insert=True)
             o.delete()
-            Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=p + e, is_active=True).save()
+            Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=p, is_active=True).save()
             return my_response(True, 'user registered', tok.to_json())
         except Exception as e:
             e = str(e)
@@ -87,12 +87,11 @@ def login(request):
             if user.exists():
                 password = info['password']
                 if user[0].password == password:
+                    Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=phone, is_active=True).save()
                     user.update(status=True)
-
                     tok = get_random_string(length=32)
                     tok = Token(user=user[0], token=tok)
                     tok.save(force_insert=True)
-
                     return my_response(True, 'success', tok.to_json())
                 else:
                     return my_response(False, 'invalid information', {})
@@ -100,6 +99,9 @@ def login(request):
                 return my_response(False, 'user not found', {})
         except Exception as e:
             e = str(e)
+            if e.__contains__('UNIQUE constraint'):
+                Device.objects.filter(dev_id=info['deviceId']).delete()
+                return login(request)
             return my_response(False, 'error in login, check login body, ' + e, {})
     else:
         return my_response(False, 'invalid method', {})
