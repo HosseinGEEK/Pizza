@@ -29,11 +29,11 @@ def my_response(status, message, data):
 @csrf_exempt
 def base(request):
     # Device.objects.filter(name='appAdmin').delete()
-    # Device(name='appAdmin',
-    #        reg_id='eFmE_2J5SAaO4nWxbIZBwz:APA91bFRCFIdxS9JSX5KkfEQ_kjFHPcKPvHYcu3OhxaSAimxwdtLYH8t3l4ZWRqHZFdkOfqeCJm3F0tNtSj1ohCMCoqvWzStSuKXhiyL0avmlLQRyqke17Jzw1MEgdmGKCwYwfJ7BJOd',
-    #        dev_id='c39b69f4adb5a02f', is_active=True).save()
+    # Device(name='test',
+    #        reg_id='dgoUA-AXTlSPMBWssTvE2W:APA91bFLk03xgF9XetiA7D3idLy2UZULbcGiudyqpK3PE5AwZtR19VmnaBnXfIcGb2Fd59XtNUCjKvVs5S8ROlO0lKHTqBmteyMhICholU13turuq0VUpic3Q1rjbfOeEmfN_cxKKoqx',
+    #        dev_id='1af09455bf22d117', is_active=True).save()
 
-    # print(Device.objects.get(name='appAdmin').send_message({'ss':"ss"}))
+    # print(Device.objects.get(name='test').send_message({'ss':"ss"}))
     return HttpResponse(content='<p1>this is server api for pizza project</p1>')
 
 

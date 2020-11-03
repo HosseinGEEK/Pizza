@@ -637,7 +637,7 @@ def accept_reject_order(request):
 
                 order = order.first()
                 p = order.user.phone
-                users_notif = Device.objects.get(name=p)
+                users_notif = Device.objects.filter(name=p)
                 for un in users_notif:
                     un.send_message(
                         {
