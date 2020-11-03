@@ -120,14 +120,16 @@ def check_expiry_token(request):
                 dif = (_now - token[0].expiry_date.date())
 
                 if dif.days < 3:
-                    # new_token = token[0].user.email + str(datetime.datetime.now())
-                    # new_token = hashlib.md5(new_token.encode())
-                    # new_token = new_token.hexdigest()
-                    # token.update(token=new_token, expiry_date=tz.now())
-                    return my_response(True, 'success', {'token': ''})
+                    new_token = token[0].user.email + str(datetime.datetime.now())
+                    new_token = hashlib.md5(new_token.encode())
+                    new_token = new_token.hexdigest()
+                    token.update(token=new_token, expiry_date=tz.now())
+                    return my_response(True, 'success', {'token': new_token})
                 else:
                     token.delete()
                     return my_response(False, 'token invalid', {})
+            else:
+                return my_response(False, 'token not exist', {})
         except Exception as e:
             return my_response(False, 'error in check_expiry_token, ' + str(e), {})
     else:
@@ -518,18 +520,18 @@ def insert_user_order(request):
                 foods = info['foods']
                 for f in foods:
                     of = OrderFood(
-                        food_size=f['foodSizeId'],
-                        food_type=f['foodTypeId'],
+                        food_size_id=f['foodSizeId'],
+                        food_type_id=f['foodTypeId'],
                         order=order,
                         number=f['number']
                     )
                     of.save()
                     food_options = f['foodOptions']
                     for op_size_id in food_options:
-                        OrderOption(order_food=of, option_size=op_size_id).save()
+                        OrderOption(order_food=of, option_size_id=op_size_id).save()
                 options = info['options']
                 for o in options:
-                    of = OrderFood(food_size=o['optionSizeId'], order=order, number=o['number'])
+                    of = OrderFood(food_size_id=o['optionSizeId'], order=order, number=o['number'])
                     of.save()
 
                 notif_to_admin(orderId=order.order_id, trackId=order.track_id)

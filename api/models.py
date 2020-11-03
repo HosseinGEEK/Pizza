@@ -265,26 +265,24 @@ class Order(models.Model):
 
 class OrderFood(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    food_size = models.IntegerField()
-    food_type = models.IntegerField(blank=True, null=True)
+    food_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE)
+    food_type = models.ForeignKey(FoodType, on_delete=models.CASCADE, blank=True, null=True)
     number = models.IntegerField()
 
     def to_json(self):
-        fs = FoodSize.objects.get(food_size_id=self.food_size)
         context = {
-            'size': fs.to_json(),
+            'size': self.food_size.to_json(),
             'number': self.number,
         }
-        if fs.food is not None:
-            food = Food.objects.get(food_id=fs.food_id)
+        if self.food_size.food is not None:
+            food = Food.objects.get(food_id=self.food_size.food_id)
             context.update({'food': food.to_json(with_group=True)})
         else:
-            food = Option.objects.get(option_id=fs.option_id)
+            food = Option.objects.get(option_id=self.food_size.option_id)
             context.update({'food': food.to_json(with_group=True, with_sizes=False)})
 
         if self.food_type is not None:
-            _type = FoodType.objects.get(food_type_id=self.food_type)
-            context.update({'type': _type.to_json()})
+            context.update({'type': self.food_type.to_json()})
 
         ops = OrderOption.objects.filter(order_food=self)
         if ops.exists():
@@ -298,10 +296,10 @@ class OrderFood(models.Model):
 
 class OrderOption(models.Model):
     order_food = models.ForeignKey(OrderFood, on_delete=models.CASCADE)
-    option_size = models.IntegerField(default=None)
+    option_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE, default=None)
 
     def to_json(self):
-        return FoodSize.objects.get(food_size_id=self.option_size).to_json(with_option_name=True)
+        return self.option_size.to_json(with_option_name=True)
 
 
 class RestaurantInfo(models.Model):
