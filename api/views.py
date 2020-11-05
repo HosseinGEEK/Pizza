@@ -6,7 +6,8 @@ import hashlib
 
 from api import admin
 from api.models import User, Group, Food, FoodSize, Token, Favorite, Order, Option, Address, \
-    OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress, Ticket, Otp
+    OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress, Ticket, Otp, \
+    Payment
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
@@ -532,7 +533,10 @@ def insert_user_order(request):
                     of = OrderFood(food_size_id=o['optionSizeId'], order=order, number=o['number'])
                     of.save()
 
-                notif_to_admin(orderId=order.order_id, trackId=order.track_id)
+                notif_to_admin(
+                    orderId=order.order_id,
+                    message='you have a order with trackId: ' + str(order.track_id)
+                )
                 return my_response(True, 'success', order.to_json())
             else:
                 return my_response(False, 'invalid token', {})
@@ -580,21 +584,42 @@ def get_orders(request):
 
 
 @csrf_exempt
-def complete_order(request):
+def order_payment(request):
     if request.method == 'POST':
         try:
             token = request.headers.get('token')
             token = Token.objects.filter(token=token)
             if token.exists():
                 info = loads(request.body.decode('utf-8'))
+                user = token[0].user
                 o_id = info['orderId']
+                trans_id = info['transactionId']
+                trans_time = info['transactionTime']
+                st = info['status']
+                amount = info['amount']
 
-                o = Order.objects.filter(order_id=o_id)
-                o.update(completed=True)
-                o = o.first()
-                notif_to_admin(track_id=o.track_id)
+                payment = Payment(
+                    user=user,
+                    order_id=o_id,
+                    trans_id=trans_id,
+                    status=st,
+                    amount=amount,
+                    trans_time=trans_time
+                )
+                payment.save()
 
-                return my_response(True, 'success', {})
+                if st == 'FAILED':
+                    return my_response(False, 'transaction failed', payment.to_json())
+                else:
+                    o = Order.objects.filter(order_id=o_id)
+                    o.update(completed=True)
+                    o = o.first()
+                    notif_to_admin(
+                        orderId=o_id,
+                        message='user paid for his order with trackId: '+str(o.track_id)
+                    )
+                    return my_response(True, 'success', payment.to_json())
+
         except Exception as e:
             return my_response(False, 'error in complete order, check body send, ' + str(e), {})
     else:
@@ -606,20 +631,21 @@ def set_food_rate(request):
     if request.method == 'POST':
         try:
             info = loads(request.body.decode('utf-8'))
-            for i in info:
-                is_food = i['isFood']
-                _id = i['id']
-                user_rate = i['rate']
-                if is_food:
-                    c = Food.objects.filter(food_id=_id)
-                    rate = c[0].rank
-                    rate = (user_rate + rate) / 2
-                    c.update(rank=rate)
-                else:
-                    c = Option.objects.filter(option_id=_id)
-                    rate = c[0].rank
-                    rate = (user_rate + rate) / 2
-                    c.update(rank=rate)
+            order_f_id = info['orderFoodId'],
+            OrderFood.objects.filter(id=order_f_id).update(is_rated=True)
+            is_food = info['isFood']
+            _id = info['id']
+            user_rate = info['rate']
+            if is_food:
+                c = Food.objects.filter(food_id=_id)
+                rate = c[0].rank
+                rate = (user_rate + rate) / 2
+                c.update(rank=rate)
+            else:
+                c = Option.objects.filter(option_id=_id)
+                rate = c[0].rank
+                rate = (user_rate + rate) / 2
+                c.update(rank=rate)
             return my_response(True, 'success', {})
         except Exception as e:
             return my_response(False, 'error in set rate, check body send, ' + str(e), {})
@@ -750,8 +776,9 @@ def notif_to_admin(**kwargs):
             },
             notification={
                 'title': 'order',
-                'body': 'you have a order with trackId: ' + str(kwargs['trackId']),
-                'click_action': 'FLUTTER_NOTIFICATION_CLICK'
+                'body': kwargs['message'],
+                'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                "sound": "default",
             }
         )
 
@@ -811,4 +838,3 @@ def time_diff(time1, time2):
     time_b = datetime.datetime.strptime(time2, "%H:%M")
     new_time = time_a - time_b
     return new_time.seconds / 60
-

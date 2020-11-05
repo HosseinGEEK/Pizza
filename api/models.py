@@ -223,8 +223,8 @@ class Order(models.Model):
     track_id = models.CharField(max_length=10)
     datetime = models.DateTimeField()
     total_price = models.FloatField()
-    completed = models.BooleanField(default=False)
-    status = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False)  # for payment
+    status = models.BooleanField(default=False)  # for accept reject admin
     payment_type = models.BooleanField(default=True)  # if with card is True else False
     order_type = models.BooleanField()  # if delivery is True else False
     description = models.CharField(max_length=200, blank=True, null=True)
@@ -243,7 +243,7 @@ class Order(models.Model):
             'paymentType': self.payment_type,
             'orderType': self.order_type,
             'deliveryTime': self.delivery_time,
-            'nameOfCustomer': self.user.name
+            'nameOfCustomer': self.user.name,
         }
         if with_detail:
             foods = OrderFood.objects.filter(order__order_id=self.order_id)
@@ -268,11 +268,14 @@ class OrderFood(models.Model):
     food_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE)
     food_type = models.ForeignKey(FoodType, on_delete=models.CASCADE, blank=True, null=True)
     number = models.IntegerField()
+    is_rated = models.BooleanField(default=False)
 
     def to_json(self):
         context = {
+            'orderFoodId': self.id,
             'size': self.food_size.to_json(),
             'number': self.number,
+            'isRated': self.is_rated,
         }
         if self.food_size.food is not None:
             food = Food.objects.get(food_id=self.food_size.food_id)
@@ -418,10 +421,23 @@ class Offer(models.Model):
         }
 
 
-class PaymentGateway(models.Model):
-    payment_gateway_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
-    # todo pay code
+class Payment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True)
+    trans_id = models.CharField(max_length=25)
+    status = models.CharField(max_length=10)
+    amount = models.FloatField()
+    trans_time = models.DateTimeField()
+
+    def to_json(self):
+        return {
+            'paymentId': self.id,
+            'user': self.user.to_json(),
+            'transactionId': self.trans_id,
+            'status': self.status,
+            'amount': self.amount,
+            'transactionTime': self.trans_time,
+        }
 
 
 class Ticket(models.Model):

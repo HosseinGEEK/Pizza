@@ -639,19 +639,18 @@ def accept_reject_order(request):
                 p = order.user.phone
                 users_notif = Device.objects.filter(name=p)
                 for un in users_notif:
-                    print(
-                        un.send_message(
-                            {
-                                'orderId': order.order_id,
-                                'state': acc_rej,
-                                'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                            },
-                            notification={
-                                'title': 'order',
-                                'body': mess,
-                                'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                            }
-                        )
+                    un.send_message(
+                        {
+                            'orderId': order.order_id,
+                            'state': acc_rej,
+                            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                        },
+                        notification={
+                            'title': 'order',
+                            'body': mess,
+                            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                            "sound": "default",
+                        }
                     )
 
                 return my_response(True, 'success', {})
