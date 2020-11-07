@@ -643,6 +643,7 @@ def accept_reject_order(request):
                         {
                             'orderId': order.order_id,
                             'state': acc_rej,
+                            'orderType': order.order_type,
                             'click_action': 'FLUTTER_NOTIFICATION_CLICK',
                         },
                         notification={

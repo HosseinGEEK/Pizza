@@ -535,6 +535,7 @@ def insert_user_order(request):
 
                 notif_to_admin(
                     orderId=order.order_id,
+                    title='order',
                     message='you have a order with trackId: ' + str(order.track_id)
                 )
                 return my_response(True, 'success', order.to_json())
@@ -585,11 +586,11 @@ def get_orders(request):
 
 @csrf_exempt
 def order_payment(request):
-    if request.method == 'POST':
-        try:
-            token = request.headers.get('token')
-            token = Token.objects.filter(token=token)
-            if token.exists():
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
+    if token.exists():
+        if request.method == 'POST':
+            try:
                 info = loads(request.body.decode('utf-8'))
                 user = token[0].user
                 o_id = info['orderId']
@@ -616,14 +617,26 @@ def order_payment(request):
                     o = o.first()
                     notif_to_admin(
                         orderId=o_id,
-                        message='user paid for his order with trackId: '+str(o.track_id)
+                        title='order payment',
+                        message='user paid for his order with trackId: ' + str(o.track_id)
                     )
                     return my_response(True, 'success', payment.to_json())
 
-        except Exception as e:
-            return my_response(False, 'error in complete order, check body send, ' + str(e), {})
+            except Exception as e:
+                return my_response(False, 'error in payment order, check body send, ' + str(e), {})
+        elif request.method == 'GET':
+            if token[0].is_admin:
+                pays = Payment.objects.all()
+            else:
+                pays = Payment.objects.filter(user=token[0].user)
+            _list = []
+            for p in pays:
+                _list.append(p.to_json())
+            return my_response(True, 'success', _list)
+        else:
+            return my_response(False, 'invalid method', {})
     else:
-        return my_response(False, 'invalid method', {})
+        return my_response(False, 'token not exist', {})
 
 
 @csrf_exempt
@@ -775,7 +788,7 @@ def notif_to_admin(**kwargs):
                 'click_action': 'FLUTTER_NOTIFICATION_CLICK',
             },
             notification={
-                'title': 'order',
+                'title': kwargs['title'],
                 'body': kwargs['message'],
                 'click_action': 'FLUTTER_NOTIFICATION_CLICK',
                 "sound": "default",
