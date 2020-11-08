@@ -322,6 +322,11 @@ def group(request, group_id=None):
                     fg = Group.objects.filter(group_id=group_id)
                     fg.update(name=name, image=img_name, is_food_g=is_food_g, status=info['status'])
                     fg = fg.first()
+                    if not info['status']:
+                        if fg.is_food_g:
+                            Food.objects.filter(group=fg, rank__gt=4).update(status=False)
+                        else:
+                            Option.objects.filter(group=fg, rank__gt=4).update(status=False)
                 return my_response(True, 'success', fg.to_json(None))
 
             except Exception as e:

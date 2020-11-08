@@ -310,45 +310,44 @@ def get_home_info(request):
             if user is not None:
                 user = Token.objects.filter(token=user).first().user
             group_with_children = []
-            groups = Group.objects.all()
+            groups = Group.objects.filter(status=True)
             fav_option = []
             fav_food = []
             for g in groups:
-                if g.status:
+                if g.is_food_g:
+                    children = Food.objects.filter(group__group_id=g.group_id, status=True)
+                else:
+                    children = Option.objects.filter(group__group_id=g.group_id, status=True)
+                child_list = []
+                for c in children:
                     if g.is_food_g:
-                        children = Food.objects.filter(group__group_id=g.group_id)
+                        fav = Favorite.objects.filter(
+                            user=user,
+                            food=c,
+                            option=None,
+                        )
+                        if fav.exists():
+                            fav_food.append(fav[0].food_id)
+                            child_list.append(c.to_json(fav=True))
+                        else:
+                            child_list.append(c.to_json())
                     else:
-                        children = Option.objects.filter(group__group_id=g.group_id)
-                    child_list = []
-                    for c in children:
-                        if c.status:
-                            if g.is_food_g:
-                                fav = Favorite.objects.filter(
-                                    user=user,
-                                    food=c,
-                                    option=None,
-                                )
-                                if fav.exists():
-                                    fav_food.append(fav[0].food_id)
-                                    child_list.append(c.to_json(fav=True))
-                                else:
-                                    child_list.append(c.to_json())
-                            else:
-                                fav = Favorite.objects.filter(
-                                    user=user,
-                                    food=None,
-                                    option=c,
-                                )
-                                if fav.exists():
-                                    fav_option.append(fav[0].option_id)
-                                    child_list.append(c.to_json(fav=True))
-                                else:
-                                    child_list.append(c.to_json())
+                        fav = Favorite.objects.filter(
+                            user=user,
+                            food=None,
+                            option=c,
+                        )
+                        if fav.exists():
+                            fav_option.append(fav[0].option_id)
+                            child_list.append(c.to_json(fav=True))
+                        else:
+                            child_list.append(c.to_json())
 
-                    group_with_children.append(g.to_json(child_list))
+                group_with_children.append(g.to_json(child_list))
 
-            options = list(Option.objects.filter(rank__gt=4).order_by('rank'))
-            foods = list(Food.objects.filter(rank__gt=4).order_by('rank'))
+            # if rate number changed go to update food group api and change that
+            options = list(Option.objects.filter(rank__gt=4, status=True).order_by('rank'))
+            foods = list(Food.objects.filter(rank__gt=4, status=True).order_by('rank'))
             popular_list = merge(foods, options, fav_option, fav_food)
 
             context = {
