@@ -502,6 +502,7 @@ def insert_user_order(request):
                 address = info['addressId']
                 del_time = info['deliveryTime']
                 order_type = info['orderType']
+                ser_charge = info['serviceCharge']
                 tr_id = random.randint(100000, 100000000)
                 order = Order(
                     user=user,
@@ -512,6 +513,7 @@ def insert_user_order(request):
                     address_id=address,
                     delivery_time=del_time,
                     order_type=order_type,
+                    service_charge=ser_charge,
                 )
                 order.save()
 

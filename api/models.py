@@ -230,6 +230,7 @@ class Order(models.Model):
     description = models.CharField(max_length=200, blank=True, null=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
     delivery_time = models.CharField(max_length=10)
+    service_charge = models.FloatField(default=1.0)
 
     def to_json(self, with_detail=True):
         context = {
