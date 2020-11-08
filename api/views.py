@@ -644,11 +644,12 @@ def set_food_rate(request):
     if request.method == 'POST':
         try:
             info = loads(request.body.decode('utf-8'))
-            order_f_id = info['orderFoodId'],
-            OrderFood.objects.filter(id=order_f_id).update(is_rated=True)
+            order_f_id = info['orderFoodId']
             is_food = info['isFood']
             _id = info['id']
             user_rate = info['rate']
+            OrderFood.objects.filter(id=order_f_id).update(is_rated=True)
+
             if is_food:
                 c = Food.objects.filter(food_id=_id)
                 rate = c[0].rank
