@@ -649,6 +649,8 @@ def accept_reject_order(request):
                             'orderId': order.order_id,
                             'state': acc_rej,
                             'orderType': order.order_type,
+                            'paymentType': order.payment_type,
+                            'totalPrice': order.total_price+order.service_charge,
                             'click_action': 'FLUTTER_NOTIFICATION_CLICK',
                         },
                         notification={
