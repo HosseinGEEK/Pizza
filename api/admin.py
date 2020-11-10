@@ -395,17 +395,6 @@ def food(request, food_id=None):
                         status=status,
                     )
                     f.save()
-                    for o in ops:
-                        FoodOption(food=f, option_id=o).save()
-                    for s in sizes:
-                        size = s['size']
-                        s_price = s['price']
-                        FoodSize(food=f, size=size, price=s_price).save()
-
-                    for t in types:
-                        _type = t['type']
-                        t_price = t['price']
-                        FoodType(food=f, type=_type, price=t_price).save()
                 else:
                     f = Food.objects.filter(food_id=food_id)
                     f.update(
@@ -418,18 +407,20 @@ def food(request, food_id=None):
                     )
                     f = f.first()
                     FoodSize.objects.filter(food=f).delete()
-                    for s in sizes:
-                        size = s['size']
-                        s_price = s['price']
-                        FoodSize(food=f, size=size, price=s_price).save()
                     FoodType.objects.filter(food=f).delete()
-                    for t in types:
-                        _type = t['type']
-                        t_price = t['price']
-                        FoodType(food=f, type=_type, price=t_price).save()
                     FoodOption.objects.filter(food=f).delete()
-                    for o in ops:
-                        FoodOption(food=f, option_id=o).save()
+
+                for o in ops:
+                    op = FoodSize.objects.get(food_size_id=o)
+                    FoodOption(food=f, option=op.option).save()
+                for s in sizes:
+                    size = s['size']
+                    s_price = s['price']
+                    FoodSize(food=f, size=size, price=s_price).save()
+                for t in types:
+                    _type = t['type']
+                    t_price = t['price']
+                    FoodType(food=f, type=_type, price=t_price).save()
 
                 return my_response(True, 'success', f.to_json())
             except Exception as e:
@@ -478,15 +469,14 @@ def option(request, option_id=None):
                     g_id = info['groupId']
                     o = Option(group_id=g_id, name=name, price=price, image=img_name)
                     o.save()
-                    for s in sizes:
-                        FoodSize(option=o, size=s['size'], price=s['price']).save()
                 else:
                     o = Option.objects.filter(option_id=option_id)
                     o.update(name=name, price=price, image=img_name, status=st)
                     o = o.first()
                     FoodSize.objects.filter(option=o).delete()
-                    for s in sizes:
-                        FoodSize(option=o, size=s['size'], price=s['price']).save()
+                    
+                for s in sizes:
+                    FoodSize(option=o, size=s['size'], price=s['price']).save()
 
                 return my_response(True, 'success', o.to_json())
 
