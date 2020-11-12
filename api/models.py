@@ -404,10 +404,10 @@ class PostCode(models.Model):
 
     def to_json(self):
         return {
-            'post_code_id': self.post_code_id,
-            'post_code': self.post_code,
-            'delivery_cost': self.delivery_cost,
-            'free_delivery': self.free_delivery,
+            'postCodeId': self.post_code_id,
+            'postCode': self.post_code,
+            'deliveryCost': self.delivery_cost,
+            'freeDelivery': self.free_delivery,
             'isOverriding': self.is_over_ride,
         }
 
