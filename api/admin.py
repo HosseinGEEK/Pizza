@@ -153,6 +153,12 @@ def res_role(request):
 
 @csrf_exempt
 def post_code(request):
+    if request.method == 'GET':
+        _list = []
+        posts = PostCode.objects.all()
+        for p in posts:
+            _list.append(p.to_json())
+        return my_response(True, 'success', _list)
     token = request.headers.get('token')
     token = Token.objects.filter(token=token)
     if token.exists() and token[0].is_admin:
@@ -184,12 +190,6 @@ def post_code(request):
                 return my_response(True, 'success', {})
             except Exception as e:
                 return my_response(False, 'error in post code, check send body, ' + str(e), {})
-        elif request.method == 'GET':
-            _list = []
-            posts = PostCode.objects.all()
-            for p in posts:
-                _list.append(p.to_json())
-            return my_response(True, 'success', _list)
         else:
             return my_response(False, 'invalid method', {})
     else:
