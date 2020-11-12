@@ -400,6 +400,7 @@ class PostCode(models.Model):
     post_code = models.CharField(max_length=25)
     delivery_cost = models.FloatField()
     free_delivery = models.FloatField()
+    is_over_ride = models.BooleanField(default=False)
 
     def to_json(self):
         return {
@@ -407,6 +408,7 @@ class PostCode(models.Model):
             'post_code': self.post_code,
             'delivery_cost': self.delivery_cost,
             'free_delivery': self.free_delivery,
+            'isOverriding': self.is_over_ride,
         }
 
 

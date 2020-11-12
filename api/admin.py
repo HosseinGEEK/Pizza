@@ -163,19 +163,21 @@ def post_code(request):
                 res = RestaurantInfo.objects.first()
                 delivery_cost = res.cost
                 free_del = res.free_delivery
-                for pc in info:
-                    if pc['deliveryCost'] == 0:
-                        d = delivery_cost
-                    else:
+                datas = info['data']
+                for pc in datas:
+                    if pc['isOverriding']:
                         d = pc['deliveryCost']
-                    if pc['freeDelivery'] == 0:
-                        f = free_del
                     else:
+                        d = delivery_cost
+                    if pc['isOverriding']:
                         f = pc['freeDelivery']
+                    else:
+                        f = free_del
                     pc = PostCode(
                         post_code=pc['postCode'],
                         delivery_cost=d,
                         free_delivery=f,
+                        is_over_ride=pc['isOverriding']
                     )
 
                     pc.save()
