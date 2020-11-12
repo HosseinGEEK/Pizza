@@ -232,7 +232,7 @@ class Order(models.Model):
     delivery_time = models.CharField(max_length=10)
     service_charge = models.FloatField(default=1.0)
 
-    def to_json(self, with_detail=True):
+    def to_json(self, with_detail=True, with_customer=False):
         context = {
             'orderId': self.order_id,
             'trackId': self.track_id,
@@ -244,8 +244,13 @@ class Order(models.Model):
             'paymentType': self.payment_type,
             'orderType': self.order_type,
             'deliveryTime': self.delivery_time,
-            'nameOfCustomer': self.user.name,
         }
+
+        if with_customer:
+            context.update(
+                {'customer': self.user.to_json()}
+            )
+
         if with_detail:
             foods = OrderFood.objects.filter(order__order_id=self.order_id)
             foods_list = []
@@ -316,7 +321,6 @@ class RestaurantInfo(models.Model):
     # todo table service options
     collection_time = models.CharField(max_length=10, null=True, blank=True)
     delivery_time = models.CharField(max_length=10, null=True, blank=True)
-    delivery_post_codes = models.TextField(null=True, blank=True)
     collection_discount_amount = models.FloatField(default=0.0)
     cost = models.FloatField(default=0.0)
     free_delivery = models.FloatField(default=0.0)
@@ -341,7 +345,6 @@ class RestaurantInfo(models.Model):
             'orderFulfilment': self.order_fulfilment,
             'collectionTime': self.collection_time,
             'deliveryTime': self.delivery_time,
-            'deliveryPostCodes': self.delivery_post_codes,
             'collectionDiscountAmount': self.collection_discount_amount,
             'deliveryCost': self.cost,
             'freeDelivery': self.free_delivery,
@@ -395,8 +398,8 @@ class RestaurantTime(models.Model):
 class PostCode(models.Model):
     post_code_id = models.AutoField(primary_key=True)
     post_code = models.CharField(max_length=25)
-    delivery_cost = models.FloatField(default=7.0)
-    free_delivery = models.FloatField(default=40.0)
+    delivery_cost = models.FloatField()
+    free_delivery = models.FloatField()
 
     def to_json(self):
         return {

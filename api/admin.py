@@ -81,7 +81,6 @@ def res_info(request, res_id=None):
                         order_fulfilment=info['orderFulfilment'],
                         collection_time=info['collectionTime'],
                         delivery_time=info['deliveryTime'],
-                        delivery_post_codes=info['deliveryPostCodes'],
                         collection_discount_amount=info['collectionDiscountAmount'],
                         cost=info['cost'],
                         free_delivery=info['freeDelivery'],
@@ -103,7 +102,6 @@ def res_info(request, res_id=None):
                         order_fulfilment=info['orderFulfilment'],
                         collection_time=info['collectionTime'],
                         delivery_time=info['deliveryTime'],
-                        delivery_post_codes=info['deliveryPostCodes'],
                         collection_discount_amount=info['collectionDiscountAmount'],
                         cost=info['cost'],
                         free_delivery=info['freeDelivery'],
@@ -155,27 +153,45 @@ def res_role(request):
 
 @csrf_exempt
 def post_code(request):
-    if request.method == "POST":
-        try:
-            token = request.headers.get('token')
-            token = Token.objects.filter(token=token)
-            if token.exists() and token[0].is_admin:
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
+    if token.exists() and token[0].is_admin:
+        if request.method == "POST":
+            try:
                 info = loads(request.body.decode('utf-8'))
-                pc = PostCode(
-                    post_code=info['postCode'],
-                    delivery_cost=info['deliveryCost'],
-                    free_delivery=info['freeDelivery'],
-                )
+                PostCode.objects.all().delete()
+                res = RestaurantInfo.objects.first()
+                delivery_cost = res.cost
+                free_del = res.free_delivery
+                for pc in info:
+                    if pc['deliveryCost'] == 0:
+                        d = delivery_cost
+                    else:
+                        d = pc['deliveryCost']
+                    if pc['freeDelivery'] == 0:
+                        f = free_del
+                    else:
+                        f = pc['freeDelivery']
+                    pc = PostCode(
+                        post_code=pc['postCode'],
+                        delivery_cost=d,
+                        free_delivery=f,
+                    )
 
-                pc.save()
-                return my_response(True, 'success', pc.to_json())
-            else:
-                return my_response(False, 'token invalid', {})
-
-        except Exception as e:
-            return my_response(False, 'error in post code, check send body, ' + str(e), {})
+                    pc.save()
+                return my_response(True, 'success', {})
+            except Exception as e:
+                return my_response(False, 'error in post code, check send body, ' + str(e), {})
+        elif request.method == 'GET':
+            _list = []
+            posts = PostCode.objects.all()
+            for p in posts:
+                _list.append(p.to_json())
+            return my_response(True, 'success', _list)
+        else:
+            return my_response(False, 'invalid method', {})
     else:
-        return my_response(False, 'invalid method', {})
+        return my_response(False, 'token invalid', {})
 
 
 @csrf_exempt
@@ -474,7 +490,7 @@ def option(request, option_id=None):
                     o.update(name=name, price=price, image=img_name, status=st)
                     o = o.first()
                     FoodSize.objects.filter(option=o).delete()
-                    
+
                 for s in sizes:
                     FoodSize(option=o, size=s['size'], price=s['price']).save()
 
@@ -507,7 +523,7 @@ def order_with_detail(request):
     if token.exists() and token[0].is_admin:
         if request.method == 'GET':
             o = Order.objects.get(order_id=request.GET.get('orderId'))
-            return my_response(True, 'success', o.to_json())
+            return my_response(True, 'success', o.to_json(with_detail=True, with_customer=True))
         else:
             return my_response(False, 'invalid method', {})
     else:
@@ -555,7 +571,7 @@ def filter_order(request):
                     _list.append(o.to_json())
                 return my_response(True, 'success', _list)
             except Exception as e:
-                return my_response(False, 'error in filter order, check send query params, '+ str(e), {})
+                return my_response(False, 'error in filter order, check send query params, ' + str(e), {})
         else:
             return my_response(False, 'invalid method', {})
     else:
@@ -571,7 +587,7 @@ def orders_today(request):
             orders = Order.objects.filter(datetime__day=datetime.datetime.now().day)
             _list = []
             for o in orders:
-                _list.append(o.to_json())
+                _list.append(o.to_json(with_customer=True))
             return my_response(True, 'success', _list)
         else:
             return my_response(False, 'invalid method', {})
@@ -626,6 +642,7 @@ def accept_reject_order(request):
                 acc_rej = info['acceptOrReject']
                 o_id = info['orderId']
                 mess = info['message']
+                extra_time = info['extraTime']
                 order = Order.objects.filter(order_id=o_id)
                 if acc_rej:
                     order.update(status=True)
@@ -640,7 +657,8 @@ def accept_reject_order(request):
                             'state': acc_rej,
                             'orderType': order.order_type,
                             'paymentType': order.payment_type,
-                            'totalPrice': order.total_price+order.service_charge,
+                            'totalPrice': order.total_price + order.service_charge,
+                            'extraTime': extra_time,
                             'click_action': 'FLUTTER_NOTIFICATION_CLICK',
                         },
                         notification={
