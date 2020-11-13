@@ -498,6 +498,8 @@ def insert_user_order(request):
                 user = token[0].user
                 info = loads(request.body.decode('utf-8'))
                 time = info['datetime']
+                if not RestaurantInfo.objects.first().open:
+                    return my_response(False, 'The restaurant is closed, Please try later', {})
                 if not check_allow_record_order(time):
                     return my_response(False, 'Maximum order is recorded for the restaurant time period, Please try again in a few minutes', {})
                 total_price = info['totalPrice']
