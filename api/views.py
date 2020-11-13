@@ -497,6 +497,8 @@ def insert_user_order(request):
                 user = token[0].user
                 info = loads(request.body.decode('utf-8'))
                 time = info['datetime']
+                if not check_allow_record_order(time):
+                    return my_response(False, 'Maximum order is recorded for the restaurant time period, Please try again in a few minutes', {})
                 total_price = info['totalPrice']
                 description = info['description']
                 address = info['addressId']
@@ -853,3 +855,14 @@ def time_diff(time1, time2):
     time_b = datetime.datetime.strptime(time2, "%H:%M")
     new_time = time_a - time_b
     return new_time.seconds / 60
+
+
+def check_allow_record_order(now_time):
+    res = RestaurantInfo.objects.first()
+    ts = res.time_slot
+    created_time = datetime.datetime.strptime(now_time, '%Y-%m-%d %H:%M:%S') - datetime.timedelta(minutes=ts)
+    count_before_order = Order.objects.filter(datetime__range=(created_time, now_time)).count()
+    max_order = res.max_order_per_time_slot
+    if count_before_order <= max_order:
+        return True
+    return False
