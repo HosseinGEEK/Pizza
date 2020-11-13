@@ -509,6 +509,7 @@ def insert_user_order(request):
                 order_type = info['orderType']
                 ser_charge = info['serviceCharge']
                 delivery_cost = info['deliveryCost']
+                pay_type = info['paymentType']
                 tr_id = random.randint(100000, 100000000)
                 order = Order(
                     user=user,
@@ -521,6 +522,7 @@ def insert_user_order(request):
                     order_type=order_type,
                     service_charge=ser_charge,
                     delivery_cost=delivery_cost,
+                    payment_type=pay_type,
                 )
                 order.save()
 
