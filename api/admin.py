@@ -652,7 +652,7 @@ def accept_reject_order(request):
                 res = RestaurantInfo.objects.first()
                 if acc_rej:
                     order.update(status=True)
-                    mess = res.accept_massage
+                    mess = res.accept_message
                 else:
                     mess = res.reject_message
 
