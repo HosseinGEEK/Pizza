@@ -574,7 +574,7 @@ def filter_order(request):
                     orders = orders.filter(payment_type=p_type)
                 _list = []
                 for o in orders:
-                    _list.append(o.to_json())
+                    _list.append(o.to_json(with_customer=True))
                 return my_response(True, 'success', _list)
             except Exception as e:
                 return my_response(False, 'error in filter order, check send query params, ' + str(e), {})
