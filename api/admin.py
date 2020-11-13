@@ -87,6 +87,8 @@ def res_info(request, res_id=None):
                         min_order_val=info['minOrderValue'],
                         sales_tax=info['salesTax'],
                         paypal_payment_fee=info['paypalPaymentFee'],
+                        accept_message=info['acceptMessage'],
+                        reject_message=info['rejectMessage'],
                         # show_item_category_or_sub=info['showItemCategory'],
                         # enable_accept_reject=info['enableAcceptReject'],
                         # message_show=info['message'],
@@ -108,6 +110,8 @@ def res_info(request, res_id=None):
                         min_order_val=info['minOrderValue'],
                         sales_tax=info['salesTax'],
                         paypal_payment_fee=info['paypalPaymentFee'],
+                        accept_message=info['acceptMessage'],
+                        reject_message=info['rejectMessage'],
                         # show_item_category_or_sub=info['showItemCategory'],
                         # enable_accept_reject=info['enableAcceptReject'],
                         # message_show=info['message'],
@@ -643,13 +647,20 @@ def accept_reject_order(request):
                 info = loads(request.body.decode('utf-8'))
                 acc_rej = info['acceptOrReject']
                 o_id = info['orderId']
-                mess = info['message']
                 extra_time = info['extraTime']
                 order = Order.objects.filter(order_id=o_id)
+                res = RestaurantInfo.objects.first()
                 if acc_rej:
                     order.update(status=True)
+                    mess = res.accept_massage
+                else:
+                    mess = res.reject_message
 
                 order = order.first()
+                if order.delivery_cost is not None:
+                    de_cost = order.delivery_cost
+                else:
+                    de_cost = 0
                 p = order.user.phone
                 users_notif = Device.objects.filter(name=p)
                 for un in users_notif:
@@ -659,7 +670,7 @@ def accept_reject_order(request):
                             'state': acc_rej,
                             'orderType': order.order_type,
                             'paymentType': order.payment_type,
-                            'totalPrice': order.total_price + order.service_charge,
+                            'totalPrice': order.total_price + order.service_charge + de_cost,
                             'extraTime': extra_time,
                             'click_action': 'FLUTTER_NOTIFICATION_CLICK',
                         },

@@ -457,12 +457,12 @@ def get_user_address(request):
 
 
 @csrf_exempt
-def insert_user_address(request):
-    if request.method == 'POST' or request.method == 'PUT':
-        try:
-            token = request.headers.get('token')
-            token = Token.objects.filter(token=token)
-            if token.exists():
+def user_address(request, address_id=None):
+    token = request.headers.get('token')
+    token = Token.objects.filter(token=token)
+    if token.exists():
+        if request.method == 'POST':
+            try:
                 user = token[0].user
                 info = loads(request.body.decode('utf-8'))
 
@@ -470,21 +470,22 @@ def insert_user_address(request):
                     user=user,
                     address=info['address'],
                     building_number=info['buildingNumber'],
+                    post_code=info['postCode'],
                     lat=info['lat'],
                     long=info['long']
                 )
-                if request.method == 'POST':
-                    a.save()
-                else:
-                    a.save(force_update=True)
+                a.save()
                 return my_response(True, 'success', a.to_json())
 
-            else:
-                return my_response(False, 'invalid token', {})
-        except Exception as e:
-            return my_response(False, 'error in insert Address, ' + str(e), {})
+            except Exception as e:
+                return my_response(False, 'error in insert Address, ' + str(e), {})
+        if request.method == 'DELETE':
+            Address.objects.filter(address_id=address_id).delete()
+            return my_response(True, 'success', {})
+        else:
+            return my_response(False, 'invalid method', {})
     else:
-        return my_response(False, 'invalid method', {})
+        return my_response(False, 'invalid token', {})
 
 
 @csrf_exempt
@@ -505,6 +506,7 @@ def insert_user_order(request):
                 del_time = info['deliveryTime']
                 order_type = info['orderType']
                 ser_charge = info['serviceCharge']
+                delivery_cost = info['deliveryCost']
                 tr_id = random.randint(100000, 100000000)
                 order = Order(
                     user=user,
@@ -516,6 +518,7 @@ def insert_user_order(request):
                     delivery_time=del_time,
                     order_type=order_type,
                     service_charge=ser_charge,
+                    delivery_cost=delivery_cost,
                 )
                 order.save()
 

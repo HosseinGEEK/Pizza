@@ -50,6 +50,7 @@ class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=500)
     building_number = models.CharField(max_length=50, blank=True, null=True)
+    post_code = models.CharField(max_length=25)
     lat = models.FloatField()
     long = models.FloatField()
 
@@ -60,6 +61,7 @@ class Address(models.Model):
             'buildingNumber': self.building_number,
             'lat': self.lat,
             'long': self.long,
+            'postCode': self.post_code,
         }
 
     def __str__(self):
@@ -226,7 +228,8 @@ class Order(models.Model):
     completed = models.BooleanField(default=False)  # for payment
     status = models.BooleanField(default=False)  # for accept reject admin
     payment_type = models.BooleanField(default=True)  # if with card is True else False
-    order_type = models.BooleanField()  # if delivery is True else False
+    order_type = models.BooleanField()  # if delivery is False else True
+    delivery_cost = models.FloatField(null=True, blank=True)
     description = models.CharField(max_length=200, blank=True, null=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
     delivery_time = models.CharField(max_length=10)
@@ -243,6 +246,7 @@ class Order(models.Model):
             'completed': self.completed,
             'paymentType': self.payment_type,
             'orderType': self.order_type,
+            'deliveryCost': self.delivery_cost,
             'deliveryTime': self.delivery_time,
         }
 
@@ -331,7 +335,8 @@ class RestaurantInfo(models.Model):
     show_item_category_or_sub = models.BooleanField(default=True)  # if cat is True else False
 
     enable_accept_reject = models.BooleanField(default=True)
-    message_show = models.CharField(max_length=500, default="")
+    accept_message = models.CharField(max_length=200, default="")
+    reject_message = models.CharField(max_length=200, default="")
     time_auto_reject = models.IntegerField(default=1)
 
     role = models.TextField(default="")
@@ -353,7 +358,8 @@ class RestaurantInfo(models.Model):
             'paypalPaymentFee': self.paypal_payment_fee,
             'showItemCategory': self.show_item_category_or_sub,
             'enableAcceptReject': self.enable_accept_reject,
-            'message': self.message_show,
+            'acceptMessage': self.accept_message,
+            'rejectMessage': self.reject_message,
             'timeAutoReject': self.time_auto_reject,
             'role': self.role,
             'times': times,
