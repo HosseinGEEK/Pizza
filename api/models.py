@@ -50,7 +50,7 @@ class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=500)
     building_number = models.CharField(max_length=50, blank=True, null=True)
-    post_code = models.CharField(max_length=25)
+    post_code = models.CharField(max_length=25, default='')
     lat = models.FloatField()
     long = models.FloatField()
 
