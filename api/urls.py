@@ -20,7 +20,7 @@ urlpatterns = [
     path('user/address/', views.user_address, ),
     url(r'^user/address/(?P<address_id>\w+)/$', views.user_address),
     path('user/order/', views.insert_user_order,),
-    path('user/refreshToken/', views.check_expiry_token,),
+    path('user/refreshToken/', views.refresh_token, ),
     path('sendMail', views.my_send_mail,),
     path('homeInfo/', views.get_home_info, name='home-info'),
     path('getDetail', views.get_food_detail, ),

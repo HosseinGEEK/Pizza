@@ -1,4 +1,3 @@
-from django.utils import timezone as tz
 from django.db import models
 
 
@@ -27,7 +26,7 @@ class Token(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=32)
     is_admin = models.BooleanField(default=False)
-    expiry_date = models.DateTimeField(default=tz.now())
+    expiry_date = models.DateTimeField()
 
     def to_json(self):
         return {

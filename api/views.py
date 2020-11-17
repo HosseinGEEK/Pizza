@@ -16,7 +16,6 @@ from fcm.models import *
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from django.utils import timezone as tz
 
 
 def my_response(status, message, data):
@@ -63,7 +62,7 @@ def register(request):
             )
             user.save(force_insert=True)
             tok = get_random_string(length=32)
-            tok = Token(user=user, token=tok)
+            tok = Token(user=user, token=tok, expiry_date=datetime.datetime.now())
             tok.save(force_insert=True)
             o.delete()
             Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=p, is_active=True).save()
@@ -91,7 +90,7 @@ def login(request):
                     Device(dev_id=info['deviceId'], reg_id=info['deviceToken'], name=phone, is_active=True).save()
                     user.update(status=True)
                     tok = get_random_string(length=32)
-                    tok = Token(user=user[0], token=tok)
+                    tok = Token(user=user[0], token=tok, expiry_date=datetime.datetime.now())
                     tok.save(force_insert=True)
                     return my_response(True, 'success', tok.to_json())
                 else:
@@ -109,7 +108,7 @@ def login(request):
 
 
 @csrf_exempt
-def check_expiry_token(request):
+def refresh_token(request):
     if request.method == "GET":
         try:
             token = request.headers.get('token')
@@ -122,7 +121,7 @@ def check_expiry_token(request):
                     new_token = token[0].user.email + str(datetime.datetime.now())
                     new_token = hashlib.md5(new_token.encode())
                     new_token = new_token.hexdigest()
-                    token.update(token=new_token, expiry_date=tz.now())
+                    token.update(token=new_token, expiry_date=datetime.datetime.now())
                     return my_response(True, 'success', {'token': new_token})
                 else:
                     token.delete()
