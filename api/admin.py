@@ -31,6 +31,7 @@ admin.site.register(Ticket)
 admin.site.register(Address)
 admin.site.register(RestaurantTime)
 admin.site.register(Otp)
+admin.site.register(PostCode)
 
 
 @csrf_exempt
@@ -388,11 +389,13 @@ def food(request, food_id=None):
             try:
                 info = loads(request.body.decode('utf-8'))
                 name = info['name']
-                describ = info['description']
+                describe = info['description']
                 price = info['price']
                 final_price = info['finalPrice']
                 image = info['image']
                 status = info['status']
+                is_double = info['isDouble']
+                numOfTy = info['numberOfType']
                 sizes = info['sizes']
                 types = info['types']
                 ops = info['options']
@@ -410,22 +413,26 @@ def food(request, food_id=None):
                     f = Food(
                         group_id=group_id,
                         name=name,
-                        description=describ,
+                        description=describe,
                         price=price,
                         final_price=final_price,
                         image=img_name,
                         status=status,
+                        is_double=is_double,
+                        number_of_type=numOfTy
                     )
                     f.save()
                 else:
                     f = Food.objects.filter(food_id=food_id)
                     f.update(
                         name=name,
-                        description=describ,
+                        description=describe,
                         price=price,
                         final_price=final_price,
                         image=img_name,
                         status=status,
+                        is_double=is_double,
+                        number_of_type=numOfTy
                     )
                     f = f.first()
                     FoodSize.objects.filter(food=f).delete()
@@ -439,6 +446,7 @@ def food(request, food_id=None):
                     size = s['size']
                     s_price = s['price']
                     FoodSize(food=f, size=size, price=s_price).save()
+
                 for t in types:
                     _type = t['type']
                     t_price = t['price']

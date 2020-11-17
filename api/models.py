@@ -103,6 +103,8 @@ class Food(models.Model):
     status = models.BooleanField(default=True)
     rank = models.FloatField(default=1.0)
     image = models.CharField(max_length=100)
+    number_of_type = models.IntegerField(default=1)
+    is_double = models.BooleanField(default=False)
 
     def to_json(self, fav=None, with_group=False):
         context = {
@@ -114,6 +116,8 @@ class Food(models.Model):
             'rank': self.rank,
             'image': self.image,
             'status': self.status,
+            'isDouble': self.is_double,
+            'numberOfType': self.number_of_type,
         }
         if fav is not None:
             context.update({'favorite': fav})
