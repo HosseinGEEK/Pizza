@@ -7,7 +7,7 @@ import hashlib
 from api import admin
 from api.models import User, Group, Food, FoodSize, Token, Favorite, Order, Option, Address, \
     OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress, Ticket, Otp, \
-    Payment
+    Payment, OrderType
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
@@ -529,11 +529,14 @@ def insert_user_order(request):
                 for f in foods:
                     of = OrderFood(
                         food_size_id=f['foodSizeId'],
-                        food_type_id=f['foodTypeId'],
                         order=order,
                         number=f['number']
                     )
                     of.save()
+
+                    ts = f['types']
+                    for t in ts:
+                        OrderType(order_food=of, food_type_id=t).save()
                     food_options = f['foodOptions']
                     for op_size_id in food_options:
                         OrderOption(order_food=of, option_size_id=op_size_id).save()

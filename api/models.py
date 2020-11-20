@@ -279,7 +279,6 @@ class Order(models.Model):
 class OrderFood(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     food_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE)
-    food_type = models.ForeignKey(FoodType, on_delete=models.CASCADE, blank=True, null=True)
     number = models.IntegerField()
     is_rated = models.BooleanField(default=False)
 
@@ -297,8 +296,12 @@ class OrderFood(models.Model):
             food = Option.objects.get(option_id=self.food_size.option_id)
             context.update({'food': food.to_json(with_group=True, with_sizes=False)})
 
-        if self.food_type is not None:
-            context.update({'type': self.food_type.to_json()})
+        ts = OrderType.objects.filter(order_food=self)
+        if ts.exists():
+            _list = []
+            for t in ts:
+                _list.append(t.food_type.to_json())
+            context.update({'types': _list})
 
         ops = OrderOption.objects.filter(order_food=self)
         if ops.exists():
@@ -308,6 +311,11 @@ class OrderFood(models.Model):
 
             context.update({'options': op_list})
         return context
+
+
+class OrderType(models.Model):
+    order_food = models.ForeignKey(OrderFood, on_delete=models.CASCADE)
+    food_type = models.ForeignKey(FoodType, on_delete=models.CASCADE)
 
 
 class OrderOption(models.Model):
