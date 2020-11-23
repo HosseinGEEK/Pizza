@@ -441,7 +441,7 @@ def food(request, food_id=None):
 
                 for o in ops:
                     op = FoodSize.objects.get(food_size_id=o)
-                    FoodOption(food=f, option=op).save()
+                    FoodOption(food=f, option_size=op).save()
                 for s in sizes:
                     size = s['size']
                     s_price = s['price']
