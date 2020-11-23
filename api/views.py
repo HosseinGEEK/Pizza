@@ -363,46 +363,48 @@ def get_home_info(request):
 @csrf_exempt
 def get_food_detail(request):
     if request.method == 'GET':
-        food_id = request.GET.get('foodId')
-        option_list = []
-        food_sizes_list = []
-        food_types_list = []
+        try:
+            food_id = request.GET.get('foodId')
+            option_list = []
+            food_sizes_list = []
+            food_types_list = []
 
-        sizes = FoodSize.objects.filter(food__food_id=food_id)
-        for s in sizes:
-            food_sizes_list.append(s.to_json())
+            sizes = FoodSize.objects.filter(food__food_id=food_id)
+            for s in sizes:
+                food_sizes_list.append(s.to_json())
 
-        types = FoodType.objects.filter(food__food_id=food_id)
-        for t in types:
-            food_types_list.append(t.to_json())
+            types = FoodType.objects.filter(food__food_id=food_id)
+            for t in types:
+                food_types_list.append(t.to_json())
 
-        fo_options = list(FoodOption.objects.filter(food__food_id=food_id))
-        list_peymaeysh = []
-        _list = []
-        while len(fo_options) != 0:
-            fo = fo_options[0]
-            list_peymaeysh.append(fo)
-            o = Option.objects.get(option_id=fo.option_size.option.option_id)
+            fo_options = list(FoodOption.objects.filter(food__food_id=food_id))
+            list_peymaeysh = []
+            _list = []
+            while len(fo_options) != 0:
+                fo = fo_options[0]
+                list_peymaeysh.append(fo)
+                o = Option.objects.get(option_id=fo.option_size.option.option_id)
 
-            for foo in fo_options:
-                oo = Option.objects.get(option_id=foo.option_size.option.option_id)
-                if o == oo and foo is not list_peymaeysh:
-                    list_peymaeysh.append(foo)
+                for foo in fo_options:
+                    oo = Option.objects.get(option_id=foo.option_size.option.option_id)
+                    if o == oo and foo is not list_peymaeysh:
+                        list_peymaeysh.append(foo)
 
-            for i in list_peymaeysh:
-                _list.append(i.option_size.to_json())
-                fo_options.remove(i)
-            list_peymaeysh.clear()
-            option_list.append(o.to_json(sizes_list=_list))
-            _list.clear()
+                for i in list_peymaeysh:
+                    _list.append(i.option_size.to_json())
+                    fo_options.remove(i)
+                list_peymaeysh.clear()
+                option_list.append(o.to_json(sizes_list=_list))
+                _list.clear()
 
-        context = {
-            'options': option_list,
-            'foodSizes': food_sizes_list,
-            'foodTypes': food_types_list,
-        }
-
-        return my_response(True, 'success', context)
+            context = {
+                'options': option_list,
+                'foodSizes': food_sizes_list,
+                'foodTypes': food_types_list,
+            }
+            return my_response(True, 'success', context)
+        except Exception as e:
+            return my_response(False, 'getFood detail, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
 
