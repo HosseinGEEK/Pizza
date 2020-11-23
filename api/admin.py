@@ -551,7 +551,7 @@ def filter_order(request):
     if token.exists() and token[0].is_admin:
         if request.method == 'GET':
             try:
-                orders = Order.objects.all()
+                orders = Order.objects.all().reverse()
                 tr_id = request.GET.get('trackId')
                 if tr_id is not None:
                     orders = orders.filter(track_id__contains=tr_id)
