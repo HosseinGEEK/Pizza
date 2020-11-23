@@ -363,7 +363,7 @@ def get_home_info(request):
 @csrf_exempt
 def get_food_detail(request):
     if request.method == 'GET':
-        try:
+        # try:
             food_id = request.GET.get('foodId')
             option_list = []
             food_sizes_list = []
@@ -393,18 +393,17 @@ def get_food_detail(request):
                 for i in list_peymaeysh:
                     _list.append(i.option_size.to_json())
                     fo_options.remove(i)
-                option_list.append(o.to_json(with_sizes=False, sizes_list=[_list[0]]))
+                option_list.append(o.to_json(with_sizes=False, sizes_list=_list))
                 list_peymaeysh.clear()
-                _list.clear()
-
+                _list = []
             context = {
                 'options': option_list,
                 'foodSizes': food_sizes_list,
                 'foodTypes': food_types_list,
             }
             return my_response(True, 'success', context)
-        except Exception as e:
-            return my_response(False, 'getFood detail, ' + str(e), {})
+        # except Exception as e:
+        #     return my_response(False, 'getFood detail, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
 
