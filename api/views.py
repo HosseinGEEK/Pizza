@@ -392,9 +392,8 @@ def get_food_detail(request):
 
                 for i in list_peymaeysh:
                     _list.append(i.option_size.to_json())
-                option_list.append(o.to_json(with_sizes=False, sizes_list=_list))
-                for i in list_peymaeysh:
                     fo_options.remove(i)
+                option_list.append(o.to_json(with_sizes=False, sizes_list=list_peymaeysh))
                 list_peymaeysh.clear()
                 _list.clear()
 
