@@ -81,8 +81,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="395" column="40" selection-start-line="395" selection-start-column="40" selection-end-line="395" selection-end-column="40" />
+            <state relative-caret-position="425">
+              <caret line="396" column="38" lean-forward="true" selection-start-line="396" selection-start-column="38" selection-end-line="396" selection-end-column="38" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -348,20 +348,6 @@
       <option name="presentableId" value="Default" />
       <updated>1600244553792</updated>
       <workItem from="1602259249823" duration="8000" />
-    </task>
-    <task id="LOCAL-00051" summary="modify api">
-      <created>1603553138829</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1603553138829</updated>
-    </task>
-    <task id="LOCAL-00052" summary="modify api">
-      <created>1603553221925</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1603553221925</updated>
     </task>
     <task id="LOCAL-00053" summary="modify order Table times">
       <created>1603565096342</created>
@@ -692,7 +678,21 @@
       <option name="project" value="LOCAL" />
       <updated>1606152891804</updated>
     </task>
-    <option name="localTasksCounter" value="100" />
+    <task id="LOCAL-00100" summary="modify">
+      <created>1606154862238</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1606154862238</updated>
+    </task>
+    <task id="LOCAL-00101" summary="modify">
+      <created>1606155905008</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1606155905009</updated>
+    </task>
+    <option name="localTasksCounter" value="102" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1101,8 +1101,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="395" column="40" selection-start-line="395" selection-start-column="40" selection-end-line="395" selection-end-column="40" />
+        <state relative-caret-position="425">
+          <caret line="396" column="38" lean-forward="true" selection-start-line="396" selection-start-column="38" selection-end-line="396" selection-end-column="38" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
