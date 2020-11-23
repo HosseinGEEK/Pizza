@@ -188,7 +188,7 @@ class FoodSize(models.Model):
 
 class FoodOption(models.Model):
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
-    option_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE)
+    option_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE, null=True, blank=True)
 
 
 class FoodType(models.Model):
