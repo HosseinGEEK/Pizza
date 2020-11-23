@@ -551,7 +551,7 @@ def filter_order(request):
     if token.exists() and token[0].is_admin:
         if request.method == 'GET':
             try:
-                orders = Order.objects.all().reverse()
+                orders = Order.objects.all().order_by('datetime')
                 tr_id = request.GET.get('trackId')
                 if tr_id is not None:
                     orders = orders.filter(track_id__contains=tr_id)
@@ -583,7 +583,7 @@ def filter_order(request):
 
                 paginator = Paginator(orders, 25)
                 try:
-                    page = int(request.GET.get('page', '1'))
+                    page = int(request.GET.get('page'))
                 except Exception as e:
                     page = 1
 
