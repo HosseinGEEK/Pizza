@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bd550058-432c-4847-bbe3-e289478094cd" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="bd550058-432c-4847-bbe3-e289478094cd" name="Default" comment="modify">
       <change beforePath="$PROJECT_DIR$/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -81,8 +80,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="406" column="70" selection-start-line="406" selection-start-column="70" selection-end-line="406" selection-end-column="70" />
+            <state relative-caret-position="221">
+              <caret line="389" column="50" selection-start-line="389" selection-start-column="50" selection-end-line="389" selection-end-column="50" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -348,13 +347,6 @@
       <option name="presentableId" value="Default" />
       <updated>1600244553792</updated>
       <workItem from="1602259249823" duration="8000" />
-    </task>
-    <task id="LOCAL-00045" summary="modify admin api">
-      <created>1603478518104</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1603478518104</updated>
     </task>
     <task id="LOCAL-00046" summary="modify admin api">
       <created>1603480401003</created>
@@ -692,7 +684,14 @@
       <option name="project" value="LOCAL" />
       <updated>1606151288574</updated>
     </task>
-    <option name="localTasksCounter" value="94" />
+    <task id="LOCAL-00094" summary="modify">
+      <created>1606151482254</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1606151482254</updated>
+    </task>
+    <option name="localTasksCounter" value="95" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -704,9 +703,9 @@
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32905984" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.38176638" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.38176638" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.26780626" />
-      <window_info active="true" content_ui="combo" x="663" y="61" width="210" height="702" id="Project" order="0" visible="true" weight="0.110738255" />
+      <window_info content_ui="combo" x="663" y="61" width="210" height="702" id="Project" order="0" visible="true" weight="0.110738255" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="4" />
       <window_info anchor="right" id="SciView" order="3" />
@@ -1101,8 +1100,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="406" column="70" selection-start-line="406" selection-start-column="70" selection-end-line="406" selection-end-column="70" />
+        <state relative-caret-position="221">
+          <caret line="389" column="50" selection-start-line="389" selection-start-column="50" selection-end-line="389" selection-end-column="50" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>

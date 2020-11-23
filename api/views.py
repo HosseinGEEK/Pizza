@@ -393,9 +393,9 @@ def get_food_detail(request):
                 for i in list_peymaeysh:
                     _list.append(i.option_size.to_json())
                     fo_options.remove(i)
-                list_peymaeysh.clear()
+                list_peymaeysh = []
                 option_list.append(o.to_json(sizes_list=_list))
-                _list.clear()
+                _list = []
 
             context = {
                 'options': option_list,
