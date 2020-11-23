@@ -376,10 +376,25 @@ def get_food_detail(request):
         for t in types:
             food_types_list.append(t.to_json())
 
-        fo_options = FoodOption.objects.filter(food__food_id=food_id)
-        for fo in fo_options:
-            o = FoodSize.objects.get(food_size_id=fo.option_id)
-            option_list.append(o.to_json(with_option_name=True))
+        fo_options = list(FoodOption.objects.filter(food__food_id=food_id))
+        list_peymaeysh = []
+        _list = []
+        while len(fo_options) != 0:
+            fo = fo_options[0]
+            list_peymaeysh.append(fo)
+            o = Option.objects.get(option_id=fo.option_size.option.option_id)
+
+            for foo in fo_options:
+                oo = Option.objects.get(option_id=foo.option_size.option.option_id)
+                if o == oo and foo is not list_peymaeysh:
+                    list_peymaeysh.append(foo)
+
+            for i in list_peymaeysh:
+                _list.append(i.option_size.to_json())
+                fo_options.remove(i)
+            list_peymaeysh.clear()
+            option_list.append(o.to_json(sizes_list=_list))
+            _list.clear()
 
         context = {
             'options': option_list,
@@ -500,7 +515,9 @@ def insert_user_order(request):
                 if not RestaurantInfo.objects.first().open:
                     return my_response(False, 'The restaurant is closed, Please try later', {})
                 if not check_allow_record_order(time):
-                    return my_response(False, 'Maximum order is recorded for the restaurant time period, Please try again in a few minutes', {})
+                    return my_response(False,
+                                       'Maximum order is recorded for the restaurant time period, Please try again in a few minutes',
+                                       {})
                 total_price = info['totalPrice']
                 description = info['description']
                 address = info['addressId']

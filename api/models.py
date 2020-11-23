@@ -139,7 +139,7 @@ class Option(models.Model):
     status = models.BooleanField(default=True)
     image = models.CharField(max_length=100)
 
-    def to_json(self, fav=None, with_group=False, with_sizes=True):
+    def to_json(self, fav=None, with_group=False, with_sizes=True, sizes_list=None):
         context = {
             'optionId': self.option_id,
             'name': self.name,
@@ -155,6 +155,8 @@ class Option(models.Model):
             for s in sizes:
                 size_list.append(s.to_json())
             context.update({'sizes': size_list})
+        elif sizes_list is not None:
+            context.update({'sizes': sizes_list})
 
         if fav is not None:
             context.update({'favorite': fav})
@@ -186,7 +188,7 @@ class FoodSize(models.Model):
 
 class FoodOption(models.Model):
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
-    option = models.ForeignKey(FoodSize, on_delete=models.CASCADE)
+    option_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE)
 
 
 class FoodType(models.Model):
