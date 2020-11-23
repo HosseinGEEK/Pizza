@@ -387,7 +387,7 @@ def get_food_detail(request):
 
                 for foo in fo_options:
                     oo = Option.objects.get(option_id=foo.option_size.option.option_id)
-                    if o == oo and foo is not list_peymaeysh:
+                    if o.option_id == oo.option_id and foo is not list_peymaeysh:
                         list_peymaeysh.append(foo)
 
                 for i in list_peymaeysh:
