@@ -580,8 +580,19 @@ def filter_order(request):
                     else:
                         p_type = True
                     orders = orders.filter(payment_type=p_type)
+
+                paginator = Paginator(orders, 25)
+                try:
+                    page = int(request.GET.get('page', '1'))
+                except Exception as e:
+                    page = 1
+
+                try:
+                    orders = paginator.page(page)
+                except Exception as e:
+                    orders = paginator.page(paginator.num_pages)
                 _list = []
-                for o in orders:
+                for o in orders.object_list:
                     _list.append(o.to_json(with_customer=True))
                 return my_response(True, 'success', _list)
             except Exception as e:

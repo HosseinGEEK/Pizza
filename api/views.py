@@ -589,22 +589,12 @@ def get_orders(request):
                 user = token[0].user
                 orders = Order.objects.filter(user=user)
 
-            paginator = Paginator(orders, 25)
-            try:
-                page = int(request.GET.get('page', '1'))
-            except Exception as e:
-                page = 1
-
-            try:
-                orders = paginator.page(page)
-            except Exception as e:
-                orders = paginator.page(paginator.num_pages)
             if token[0].is_admin:
                 w_d = False
             else:
                 w_d = True
             orders_list = []
-            for o in orders.object_list:
+            for o in orders:
                 orders_list.append(o.to_json(with_detail=w_d))
 
             return my_response(True, 'success', orders_list)
