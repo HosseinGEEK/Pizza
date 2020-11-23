@@ -387,15 +387,15 @@ def get_food_detail(request):
 
                 for foo in fo_options:
                     oo = Option.objects.get(option_id=foo.option_size.option.option_id)
-                    if o.option_id == oo.option_id and foo is not list_peymaeysh:
+                    if o.option_id == oo.option_id and foo not in list_peymaeysh:
                         list_peymaeysh.append(foo)
 
                 for i in list_peymaeysh:
                     _list.append(i.option_size.to_json())
                     fo_options.remove(i)
-                list_peymaeysh = []
+                list_peymaeysh.clear()
                 option_list.append(o.to_json(sizes_list=_list))
-                _list = []
+                _list.clear()
 
             context = {
                 'options': option_list,
