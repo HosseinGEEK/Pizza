@@ -584,10 +584,10 @@ def get_orders(request):
         token = Token.objects.filter(token=token)
         if token.exists():
             if token[0].is_admin:
-                orders = Order.objects.all().reverse()
+                orders = Order.objects.all()
             else:
                 user = token[0].user
-                orders = Order.objects.filter(user=user).reverse()
+                orders = Order.objects.filter(user=user)
 
             paginator = Paginator(orders, 25)
             try:
