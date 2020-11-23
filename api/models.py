@@ -166,11 +166,6 @@ class Option(models.Model):
         return self.name + '({})'.format(str(self.option_id))
 
 
-class FoodOption(models.Model):
-    food = models.ForeignKey(Food, on_delete=models.CASCADE)
-    option = models.ForeignKey(Option, on_delete=models.CASCADE)
-
-
 class FoodSize(models.Model):
     food_size_id = models.AutoField(primary_key=True)
     food = models.ForeignKey(Food, on_delete=models.CASCADE, null=True, blank=True)
@@ -187,6 +182,11 @@ class FoodSize(models.Model):
         if with_option_name:
             context.update({'name': self.option.name})
         return context
+
+
+class FoodOption(models.Model):
+    food = models.ForeignKey(Food, on_delete=models.CASCADE)
+    option = models.ForeignKey(FoodSize, on_delete=models.CASCADE)
 
 
 class FoodType(models.Model):

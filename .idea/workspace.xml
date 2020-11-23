@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -42,8 +43,8 @@
       <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="22" column="10" selection-start-line="22" selection-start-column="10" selection-end-line="22" selection-end-column="28" />
+            <state relative-caret-position="119">
+              <caret line="25" column="35" lean-forward="true" selection-start-line="25" selection-start-column="35" selection-end-line="25" selection-end-column="35" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -63,8 +64,8 @@
       <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/admin.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="308">
-              <caret line="434" column="46" selection-start-line="434" selection-start-column="46" selection-end-line="434" selection-end-column="46" />
+            <state relative-caret-position="422">
+              <caret line="443" column="48" selection-start-line="443" selection-start-column="48" selection-end-line="443" selection-end-column="48" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -75,8 +76,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="285" column="22" lean-forward="true" selection-start-line="285" selection-start-column="22" selection-end-line="285" selection-end-column="22" />
+            <state relative-caret-position="218">
+              <caret line="168" column="6" selection-start-line="168" selection-start-column="6" selection-end-line="168" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -84,8 +85,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="527" column="35" selection-start-line="527" selection-start-column="30" selection-end-line="527" selection-end-column="35" />
+            <state relative-caret-position="524">
+              <caret line="381" column="62" selection-start-line="381" selection-start-column="62" selection-end-line="381" selection-end-column="62" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -161,7 +162,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -194,6 +194,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -350,13 +351,6 @@
       <option name="presentableId" value="Default" />
       <updated>1600244553792</updated>
       <workItem from="1602259249823" duration="8000" />
-    </task>
-    <task id="LOCAL-00040" summary="modify admin api">
-      <created>1603387848067</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1603387848067</updated>
     </task>
     <task id="LOCAL-00041" summary="modify admin api">
       <created>1603392791721</created>
@@ -694,7 +688,14 @@
       <option name="project" value="LOCAL" />
       <updated>1605631449796</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="added orderType model and modify order api">
+      <created>1605893146380</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1605893146380</updated>
+    </task>
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -708,10 +709,9 @@
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32905984" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.38176638" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.26780626" />
-      <window_info content_ui="combo" x="663" y="61" width="210" height="702" id="Project" order="0" visible="true" weight="0.10805369" />
+      <window_info content_ui="combo" x="663" y="61" width="210" height="702" id="Project" order="0" visible="true" weight="0.110738255" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="4" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32763532" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -722,6 +722,7 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32763532" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -757,7 +758,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="complete send email and otp api" />
     <MESSAGE value="modify apis" />
     <MESSAGE value="admin login test" />
     <MESSAGE value="modify api" />
@@ -782,7 +782,8 @@
     <MESSAGE value="modify post code in address" />
     <MESSAGE value="modify" />
     <MESSAGE value="modify expiry date for token" />
-    <option name="LAST_COMMIT_MESSAGE" value="modify expiry date for token" />
+    <MESSAGE value="added orderType model and modify order api" />
+    <option name="LAST_COMMIT_MESSAGE" value="added orderType model and modify order api" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/api/urls.py">
@@ -1088,8 +1089,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="22" column="10" selection-start-line="22" selection-start-column="10" selection-end-line="22" selection-end-column="28" />
+        <state relative-caret-position="119">
+          <caret line="25" column="35" lean-forward="true" selection-start-line="25" selection-start-column="35" selection-end-line="25" selection-end-column="35" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
@@ -1098,8 +1099,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/admin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="434" column="46" selection-start-line="434" selection-start-column="46" selection-end-line="434" selection-end-column="46" />
+        <state relative-caret-position="422">
+          <caret line="443" column="48" selection-start-line="443" selection-start-column="48" selection-end-line="443" selection-end-column="48" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
@@ -1108,15 +1109,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="285" column="22" lean-forward="true" selection-start-line="285" selection-start-column="22" selection-end-line="285" selection-end-column="22" />
+        <state relative-caret-position="218">
+          <caret line="168" column="6" selection-start-line="168" selection-start-column="6" selection-end-line="168" selection-end-column="6" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/api/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="527" column="35" selection-start-line="527" selection-start-column="30" selection-end-line="527" selection-end-column="35" />
+        <state relative-caret-position="524">
+          <caret line="381" column="62" selection-start-line="381" selection-start-column="62" selection-end-line="381" selection-end-column="62" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>

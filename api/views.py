@@ -378,8 +378,8 @@ def get_food_detail(request):
 
         fo_options = FoodOption.objects.filter(food__food_id=food_id)
         for fo in fo_options:
-            o = Option.objects.get(option_id=fo.option.option_id)
-            option_list.append(o.to_json())
+            o = FoodSize.objects.get(food_size_id=fo.option_id)
+            option_list.append(o.to_json(with_option_name=True))
 
         context = {
             'options': option_list,
