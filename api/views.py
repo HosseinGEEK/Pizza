@@ -363,7 +363,7 @@ def get_home_info(request):
 @csrf_exempt
 def get_food_detail(request):
     if request.method == 'GET':
-        # try:
+        try:
             food_id = request.GET.get('foodId')
             option_list = []
             food_sizes_list = []
@@ -383,17 +383,15 @@ def get_food_detail(request):
             while len(fo_options) != 0:
                 fo = fo_options[0]
                 list_peymaeysh.append(fo)
-                o = Option.objects.get(option_id=fo.option_size.option.option_id)
-
                 for foo in fo_options:
-                    oo = Option.objects.get(option_id=foo.option_size.option.option_id)
-                    if o.option_id == oo.option_id and foo not in list_peymaeysh:
+                    if fo.option_size.option.option_id == foo.option_size.option.option_id \
+                            and foo not in list_peymaeysh:
                         list_peymaeysh.append(foo)
 
                 for i in list_peymaeysh:
                     _list.append(i.option_size.to_json())
                     fo_options.remove(i)
-                option_list.append(o.to_json(with_sizes=False, sizes_list=_list))
+                option_list.append(fo.option_size.option.to_json(with_sizes=False, sizes_list=_list))
                 list_peymaeysh.clear()
                 _list = []
             context = {
@@ -402,8 +400,8 @@ def get_food_detail(request):
                 'foodTypes': food_types_list,
             }
             return my_response(True, 'success', context)
-        # except Exception as e:
-        #     return my_response(False, 'getFood detail, ' + str(e), {})
+        except Exception as e:
+            return my_response(False, 'getFood detail, ' + str(e), {})
     else:
         return my_response(False, 'invalid method', {})
 
