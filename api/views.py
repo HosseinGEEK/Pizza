@@ -7,7 +7,7 @@ import hashlib
 from api import admin
 from api.models import User, Group, Food, FoodSize, Token, Favorite, Order, Option, Address, \
     OrderOption, RestaurantInfo, RestaurantTime, OrderFood, FoodOption, FoodType, RestaurantAddress, Ticket, Otp, \
-    Payment, OrderType
+    Payment, OrderType, OptionType
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
@@ -368,14 +368,24 @@ def get_food_detail(request):
             option_list = []
             food_sizes_list = []
             food_types_list = []
+            option_type_list = []
 
             sizes = FoodSize.objects.filter(food__food_id=food_id)
             for s in sizes:
                 food_sizes_list.append(s.to_json())
 
-            types = FoodType.objects.filter(food__food_id=food_id)
+            types = FoodType.objects.filter(food__food_id=food_id, option_type=None)
             for t in types:
                 food_types_list.append(t.to_json())
+
+            op_tys = OptionType.objects.filter(food__food_id=food_id)
+            for ot in op_tys:
+                l = []
+                types = FoodType.objects.filter(option_type=ot)
+                for t in types:
+                    l.append(t.to_json())
+                ctx = {'optionTypeId': ot.id, 'name': ot.name, 'children': l}
+                option_type_list.append(ctx)
 
             fo_options = list(FoodOption.objects.filter(food__food_id=food_id))
             list_peymaeysh = []
@@ -398,6 +408,7 @@ def get_food_detail(request):
                 'options': option_list,
                 'foodSizes': food_sizes_list,
                 'foodTypes': food_types_list,
+                'optionTypes': option_type_list,
             }
             return my_response(True, 'success', context)
         except Exception as e:

@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from fcm.models import Device
 
 from .models import User, Group, Food, FoodSize, FoodType, Option, Token, Order, RestaurantInfo, RestaurantAddress, \
-    PostCode, Offer, RestaurantTime, OrderFood, OrderOption, Favorite, FoodOption, Ticket, Address, Otp
+    PostCode, Offer, RestaurantTime, OrderFood, OrderOption, Favorite, FoodOption, Ticket, Address, Otp, OptionType
 from django.core.paginator import Paginator
 
 admin.site.register(User)
@@ -399,6 +399,7 @@ def food(request, food_id=None):
                 sizes = info['sizes']
                 types = info['types']
                 ops = info['options']
+                option_types = ['optionTypes']
                 try:
                     img_name = image_name() + '.png'
                     path = 'media/Images/' + img_name
@@ -422,6 +423,19 @@ def food(request, food_id=None):
                         number_of_type=numOfTy
                     )
                     f.save()
+                    for s in sizes:
+                        size = s['size']
+                        s_price = s['price']
+                        FoodSize(food=f, size=size, price=s_price).save()
+                    for t in types:
+                        _type = t['type']
+                        t_price = t['price']
+                        FoodType(food=f, type=_type, price=t_price).save()
+                    for ot in option_types:
+                        op_t = OptionType(food=f, name=ot['name'])
+                        op_t.save()
+                        for t in ot['children']:
+                            FoodType(food=f, type=t['type'], price=t['price'], option_type=op_t).save()
                 else:
                     f = Food.objects.filter(food_id=food_id)
                     f.update(
@@ -435,22 +449,62 @@ def food(request, food_id=None):
                         number_of_type=numOfTy
                     )
                     f = f.first()
-                    FoodSize.objects.filter(food=f).delete()
-                    FoodType.objects.filter(food=f).delete()
-                    FoodOption.objects.filter(food=f).delete()
+                    fo_types = list(FoodType.objects.filter(food=f))
+                    while len(fo_types) != 0:
+                        temp = fo_types[0]
+                        for t in types:
+                            if t['id'] == temp.food_type_id:
+                                FoodType.objects.filter(food_type_id=t['id']).update(type=t['type'], price=t['price'])
+                                fo_types.remove(temp)
+                                temp = None
+                        if temp is not None:
+                            fo_types.remove(temp)
+                            FoodType.objects.filter(food_type_id=temp.food_type_id).delete()
 
+                    fo_sizes = list(FoodSize.objects.filter(food=f))
+                    while len(fo_sizes) != 0:
+                        temp = fo_sizes[0]
+                        for s in sizes:
+                            if s['id'] == temp.food_size_id:
+                                FoodSize.objects.filter(food_size_id=s['id']).update(size=s['size'], price=s['price'])
+                                fo_sizes.remove(temp)
+                                temp = None
+                        if temp is not None:
+                            fo_sizes.remove(temp)
+                            FoodSize.objects.filter(food_size_id=temp.food_size_id).delete()
+                    op_tys = list(OptionType.objects.filter(food=f))
+                    while len(op_tys) != 0:
+                        temp2 = op_tys[0]
+                        for ot in option_types:
+                            if ot['id'] == temp2.id:
+                                temp1 = OptionType.objects.filter(id=ot['id'])
+                                temp1.update(name=ot['name'])
+                                types = ot['children']
+                                fo_types = list(FoodType.objects.filter(option_type=temp1))
+                                while len(fo_types) != 0:
+                                    temp = fo_types[0]
+                                    for t in types:
+                                        if t['id'] == temp.food_type_id:
+                                            FoodType.objects.filter(food_type_id=t['id'])\
+                                                .update(type=t['type'], price=t['price'])
+                                            fo_types.remove(temp)
+                                            temp = None
+                                    if temp is not None:
+                                        fo_types.remove(temp)
+                                        FoodType.objects.filter(food_type_id=temp.food_type_id).delete()
+                                op_tys.remove(temp2)
+                                temp2 = None
+                        if temp2 is not None:
+                            op_tys.remove(temp2)
+                            OptionType.objects.filter(id=temp2.id).delete()
+
+
+                FoodOption.objects.filter(food=f).delete()
                 for o in ops:
                     op = FoodSize.objects.get(food_size_id=o)
                     FoodOption(food=f, option_size=op).save()
-                for s in sizes:
-                    size = s['size']
-                    s_price = s['price']
-                    FoodSize(food=f, size=size, price=s_price).save()
 
-                for t in types:
-                    _type = t['type']
-                    t_price = t['price']
-                    FoodType(food=f, type=_type, price=t_price).save()
+
 
                 return my_response(True, 'success', f.to_json())
             except Exception as e:
@@ -499,14 +553,23 @@ def option(request, option_id=None):
                     g_id = info['groupId']
                     o = Option(group_id=g_id, name=name, price=price, image=img_name)
                     o.save()
+                    for s in sizes:
+                        FoodSize(option=o, size=s['size'], price=s['price']).save()
                 else:
                     o = Option.objects.filter(option_id=option_id)
                     o.update(name=name, price=price, image=img_name, status=st)
                     o = o.first()
-                    FoodSize.objects.filter(option=o).delete()
-
-                for s in sizes:
-                    FoodSize(option=o, size=s['size'], price=s['price']).save()
+                    fo_sizes = list(FoodSize.objects.filter(option=o))
+                    while len(fo_sizes) != 0:
+                        temp = fo_sizes[0]
+                        for s in sizes:
+                            if s['id'] == temp.food_size_id:
+                                FoodSize.objects.filter(food_size_id=s['id']).update(size=s['size'], price=s['price'])
+                                fo_sizes.remove(temp)
+                                temp = None
+                        if temp is not None:
+                            fo_sizes.remove(temp)
+                            FoodSize.objects.filter(food_size_id=temp.food_size_id).delete()
 
                 return my_response(True, 'success', o.to_json())
 

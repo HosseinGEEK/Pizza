@@ -191,9 +191,15 @@ class FoodOption(models.Model):
     option_size = models.ForeignKey(FoodSize, on_delete=models.CASCADE, null=True, blank=True)
 
 
+class OptionType(models.Model):
+    name = models.CharField(max_length=25)
+    food = models.ForeignKey(Food, on_delete=models.CASCADE)
+
+
 class FoodType(models.Model):
     food_type_id = models.AutoField(primary_key=True)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
+    option_type = models.ForeignKey(OptionType, on_delete=models.CASCADE, blank=True, null=True)
     type = models.CharField(max_length=50)
     price = models.FloatField()
 
