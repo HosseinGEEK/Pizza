@@ -3,6 +3,7 @@ import datetime
 from json import loads
 
 from api.update_food import *
+from api.update_option import *
 from api.views import my_response, image_name
 from django.contrib import admin
 from django.http import JsonResponse
@@ -517,21 +518,7 @@ def option(request, option_id=None):
                     o = Option.objects.filter(option_id=option_id)
                     o.update(name=name, price=price, image=img_name, status=st)
                     o = o.first()
-                    fo_sizes = list(FoodSize.objects.filter(option=o))
-                    while len(fo_sizes) != 0:
-                        temp = fo_sizes[0]
-                        for s in sizes:
-                            if s['id'] is None:
-                                FoodSize(food=f, size=s['size'], price=s['price']).save()
-                                fo_sizes.remove(temp)
-                                temp = None
-                            elif s['id'] == temp.food_size_id:
-                                FoodSize.objects.filter(food_size_id=s['id']).update(size=s['size'], price=s['price'])
-                                fo_sizes.remove(temp)
-                                temp = None
-                        if temp is not None:
-                            fo_sizes.remove(temp)
-                            FoodSize.objects.filter(food_size_id=temp.food_size_id).delete()
+                    update_option_size(o, sizes)
 
                 return my_response(True, 'success', o.to_json())
 
