@@ -127,7 +127,7 @@ class Food(models.Model):
         return context
 
     def __str__(self):
-        return self.group.name + ' ' + self.name
+        return self.group.name + ' ' + self.name + ' foodId: ' + str(self.food_id)
 
 
 class Option(models.Model):
