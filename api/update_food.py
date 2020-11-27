@@ -26,6 +26,7 @@ def food_type(f, types):
                 FoodType.objects.filter(food_type_id=t['id']).update(type=t['type'], price=t['price'])
                 fo_types.remove(temp)
                 temp = None
+                break
         if temp is not None:
             FoodType.objects.filter(food_type_id=temp.food_type_id).delete()
             fo_types.remove(temp)
@@ -73,6 +74,7 @@ def food_size(f, sizes):
                 )
                 fo_sizes.remove(temp)
                 temp = None
+                break
         if temp is not None:
             FoodSize.objects.filter(food_size_id=temp.food_size_id).delete()
             fo_sizes.remove(temp)
@@ -113,6 +115,7 @@ def food_option_type(f, o_types):
                 option_type(f, temp2, types)
                 op_tys.remove(temp2)
                 temp2 = None
+                break
         if temp2 is not None:
             OptionType.objects.filter(id=temp2.id).delete()
             op_tys.remove(temp2)
@@ -143,6 +146,7 @@ def option_type(f, option_t, types):
                 FoodType.objects.filter(food_type_id=t['id']).update(type=t['type'], price=t['price'])
                 fo_types.remove(temp)
                 temp = None
+                break
         if temp is not None:
             FoodType.objects.filter(food_type_id=temp.food_type_id).delete()
             fo_types.remove(temp)
