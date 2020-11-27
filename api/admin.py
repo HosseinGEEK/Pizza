@@ -464,8 +464,8 @@ def food(request, food_id=None):
                                 fo_types.remove(temp)
                                 temp = None
                         if temp is not None:
-                            fo_types.remove(temp)
                             FoodType.objects.filter(food_type_id=temp.food_type_id).delete()
+                            fo_types.remove(temp)
 
                     fo_sizes = list(FoodSize.objects.filter(food=f))
                     while len(fo_sizes) != 0:
@@ -481,8 +481,8 @@ def food(request, food_id=None):
                                 fo_sizes.remove(temp)
                                 temp = None
                         if temp is not None:
-                            fo_sizes.remove(temp)
                             FoodSize.objects.filter(food_size_id=temp.food_size_id).delete()
+                            fo_sizes.remove(temp)
                     op_tys = list(OptionType.objects.filter(food=f))
                     while len(op_tys) != 0:
                         temp2 = op_tys[0]
@@ -501,13 +501,13 @@ def food(request, food_id=None):
                                             fo_types.remove(temp)
                                             temp = None
                                     if temp is not None:
-                                        fo_types.remove(temp)
                                         FoodType.objects.filter(food_type_id=temp.food_type_id).delete()
+                                        fo_types.remove(temp)
                                 op_tys.remove(temp2)
                                 temp2 = None
                         if temp2 is not None:
-                            op_tys.remove(temp2)
                             OptionType.objects.filter(id=temp2.id).delete()
+                            op_tys.remove(temp2)
 
                 FoodOption.objects.filter(food=f).delete()
                 for o in ops:
