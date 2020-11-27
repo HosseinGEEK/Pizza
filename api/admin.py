@@ -459,7 +459,11 @@ def food(request, food_id=None):
                     while len(fo_types) != 0:
                         temp = fo_types[0]
                         for t in types:
-                            if t['id'] == temp.food_type_id:
+                            if t['id'] is None:
+                                FoodType(type=t['type'], price=t['price']).save()
+                                fo_types.remove(temp)
+                                temp = None
+                            elif t['id'] == temp.food_type_id:
                                 FoodType.objects.filter(food_type_id=t['id']).update(type=t['type'], price=t['price'])
                                 fo_types.remove(temp)
                                 temp = None
@@ -471,7 +475,16 @@ def food(request, food_id=None):
                     while len(fo_sizes) != 0:
                         temp = fo_sizes[0]
                         for s in sizes:
-                            if s['id'] == temp.food_size_id:
+                            if s['id'] is None:
+                                FoodSize(
+                                    size=s['size'],
+                                    price=s['price'],
+                                    extra_type_price=s['extraTypePrice'],
+                                    extra_option_price=s['extraOptionPrice'],
+                                ).save()
+                                fo_sizes.remove(temp)
+                                temp = None
+                            elif s['id'] == temp.food_size_id:
                                 FoodSize.objects.filter(food_size_id=s['id']).update(
                                     size=s['size'],
                                     price=s['price'],
@@ -487,7 +500,14 @@ def food(request, food_id=None):
                     while len(op_tys) != 0:
                         temp2 = op_tys[0]
                         for ot in o_types:
-                            if ot['id'] == temp2.id:
+                            if ot['id'] is None:
+                                op_t = OptionType(food=f, name=ot['name'], option_type=ot['optionType'])
+                                op_t.save()
+                                for t in ot['children']:
+                                    FoodType(food=f, type=t['type'], price=t['price'], option_type=op_t).save()
+                                op_tys.remove(temp2)
+                                temp2 = None
+                            elif ot['id'] == temp2.id:
                                 temp1 = OptionType.objects.filter(id=ot['id'])
                                 temp1.update(name=ot['name'], option_type=ot['optionType'])
                                 types = ot['children']
@@ -571,7 +591,11 @@ def option(request, option_id=None):
                     while len(fo_sizes) != 0:
                         temp = fo_sizes[0]
                         for s in sizes:
-                            if s['id'] == temp.food_size_id:
+                            if s['id'] is None:
+                                FoodSize(size=s['size'], price=s['price']).save()
+                                fo_sizes.remove(temp)
+                                temp = None
+                            elif s['id'] == temp.food_size_id:
                                 FoodSize.objects.filter(food_size_id=s['id']).update(size=s['size'], price=s['price'])
                                 fo_sizes.remove(temp)
                                 temp = None
