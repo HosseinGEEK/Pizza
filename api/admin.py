@@ -426,13 +426,19 @@ def food(request, food_id=None):
                     for s in sizes:
                         size = s['size']
                         s_price = s['price']
-                        FoodSize(food=f, size=size, price=s_price).save()
+                        FoodSize(
+                            food=f,
+                            size=size,
+                            price=s_price,
+                            extra_type_price=s['extraTypePrice'],
+                            extra_option_price=s['extraOptionPrice'],
+                        ).save()
                     for t in types:
                         _type = t['type']
                         t_price = t['price']
                         FoodType(food=f, type=_type, price=t_price).save()
                     for ot in o_types:
-                        op_t = OptionType(food=f, name=ot['name'])
+                        op_t = OptionType(food=f, name=ot['name'], option_type=ot['optionType'])
                         op_t.save()
                         for t in ot['children']:
                             FoodType(food=f, type=t['type'], price=t['price'], option_type=op_t).save()
@@ -466,7 +472,12 @@ def food(request, food_id=None):
                         temp = fo_sizes[0]
                         for s in sizes:
                             if s['id'] == temp.food_size_id:
-                                FoodSize.objects.filter(food_size_id=s['id']).update(size=s['size'], price=s['price'])
+                                FoodSize.objects.filter(food_size_id=s['id']).update(
+                                    size=s['size'],
+                                    price=s['price'],
+                                    extra_type_price=s['extraTypePrice'],
+                                    extra_option_price=s['extraOptionPrice'],
+                                )
                                 fo_sizes.remove(temp)
                                 temp = None
                         if temp is not None:
@@ -478,14 +489,14 @@ def food(request, food_id=None):
                         for ot in o_types:
                             if ot['id'] == temp2.id:
                                 temp1 = OptionType.objects.filter(id=ot['id'])
-                                temp1.update(name=ot['name'])
+                                temp1.update(name=ot['name'], option_type=ot['optionType'])
                                 types = ot['children']
                                 fo_types = list(FoodType.objects.filter(option_type=temp1))
                                 while len(fo_types) != 0:
                                     temp = fo_types[0]
                                     for t in types:
                                         if t['id'] == temp.food_type_id:
-                                            FoodType.objects.filter(food_type_id=t['id'])\
+                                            FoodType.objects.filter(food_type_id=t['id']) \
                                                 .update(type=t['type'], price=t['price'])
                                             fo_types.remove(temp)
                                             temp = None
@@ -498,13 +509,10 @@ def food(request, food_id=None):
                             op_tys.remove(temp2)
                             OptionType.objects.filter(id=temp2.id).delete()
 
-
                 FoodOption.objects.filter(food=f).delete()
                 for o in ops:
                     op = FoodSize.objects.get(food_size_id=o)
                     FoodOption(food=f, option_size=op).save()
-
-
 
                 return my_response(True, 'success', f.to_json())
             except Exception as e:

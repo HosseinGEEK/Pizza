@@ -384,8 +384,7 @@ def get_food_detail(request):
                 types = FoodType.objects.filter(option_type=ot)
                 for t in types:
                     l.append(t.to_json())
-                ctx = {'optionTypeId': ot.id, 'name': ot.name, 'children': l}
-                option_type_list.append(ctx)
+                option_type_list.append(ot.to_json(l))
 
             fo_options = list(FoodOption.objects.filter(food__food_id=food_id))
             list_peymaeysh = []

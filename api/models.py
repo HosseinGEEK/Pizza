@@ -174,12 +174,16 @@ class FoodSize(models.Model):
     option = models.ForeignKey(Option, on_delete=models.CASCADE, null=True, blank=True)
     size = models.CharField(max_length=50)
     price = models.FloatField()
+    extra_type_price = models.FloatField(default=0.0)
+    extra_option_price = models.FloatField(default=0.0)
 
     def to_json(self, with_option_name=False):
         context = {
             'sizeId': self.food_size_id,
             'size': self.size,
             'price': self.price,
+            'extraTypePrice': self.extra_type_price,
+            'extraOptionPrice': self.extra_option_price,
         }
         if with_option_name:
             context.update({'name': self.option.name})
@@ -193,7 +197,16 @@ class FoodOption(models.Model):
 
 class OptionType(models.Model):
     name = models.CharField(max_length=25)
+    option_type = models.BooleanField(default=True)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
+
+    def to_json(self, children):
+        return {
+            'optionTypeId': self.id,
+            'name': self.name,
+            'optionType': self.option_type,
+            'children': children,
+        }
 
 
 class FoodType(models.Model):
