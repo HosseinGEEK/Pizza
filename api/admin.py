@@ -399,7 +399,7 @@ def food(request, food_id=None):
                 sizes = info['sizes']
                 types = info['types']
                 ops = info['options']
-                option_types = ['optionTypes']
+                o_types = info['optionTypes']
                 try:
                     img_name = image_name() + '.png'
                     path = 'media/Images/' + img_name
@@ -431,7 +431,7 @@ def food(request, food_id=None):
                         _type = t['type']
                         t_price = t['price']
                         FoodType(food=f, type=_type, price=t_price).save()
-                    for ot in option_types:
+                    for ot in o_types:
                         op_t = OptionType(food=f, name=ot['name'])
                         op_t.save()
                         for t in ot['children']:
@@ -475,7 +475,7 @@ def food(request, food_id=None):
                     op_tys = list(OptionType.objects.filter(food=f))
                     while len(op_tys) != 0:
                         temp2 = op_tys[0]
-                        for ot in option_types:
+                        for ot in o_types:
                             if ot['id'] == temp2.id:
                                 temp1 = OptionType.objects.filter(id=ot['id'])
                                 temp1.update(name=ot['name'])
