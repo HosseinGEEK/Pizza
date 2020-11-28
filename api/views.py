@@ -212,15 +212,25 @@ def delete_account(request):
 @csrf_exempt
 def password_reminder(request):
     if request.method == 'GET':
-        phone = request.GET.get('phone')
-        user = User.objects.filter(phone=phone)
+        e = request.GET.get('email')
+        user = User.objects.filter(email=e)
         if user.exists():
-            password = random.randint(100, 99999)
-            password = str(password)
-            # pass_hash = hashlib.md5(password.encode('utf-8')).hexdigest()
-            user.update(password=password)
+            mail_content = 'your password: ' + user[0].password + ' for pizza app'
+            sender_gmail = 'pizzariaamicos@gmail.com'
+            sender_pass = 'Cisco2020'
+            message = MIMEMultipart()
+            message['From'] = sender_gmail
+            message['To'] = e
+            message['Subject'] = 'Pizza App'
+            message.attach(MIMEText(mail_content, 'plain'))
+            session = smtplib.SMTP('smtp.gmail.com', 587)
+            session.starttls()
+            session.login(sender_gmail, sender_pass)
+            text = message.as_string()
+            session.sendmail(sender_gmail, e, text)
+            session.quit()
         else:
-            return my_response(False, 'user not found', {})
+            return my_response(False, 'email not exist', {})
     else:
         return my_response(False, 'invalid method', {})
 
