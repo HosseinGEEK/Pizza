@@ -229,6 +229,7 @@ def password_reminder(request):
             text = message.as_string()
             session.sendmail(sender_gmail, e, text)
             session.quit()
+            return my_response(True, 'your password sent to your email', {})
         else:
             return my_response(False, 'email not exist', {})
     else:
