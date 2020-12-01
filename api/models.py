@@ -134,7 +134,7 @@ class Option(models.Model):
     option_id = models.AutoField(primary_key=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
-    description = models.CharField(max_length=200)
+    description = models.CharField(max_length=200, default='')
     price = models.FloatField()
     rank = models.FloatField(default=1.0)
     status = models.BooleanField(default=True)
