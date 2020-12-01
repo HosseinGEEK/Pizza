@@ -495,6 +495,7 @@ def option(request, option_id=None):
             try:
                 info = loads(request.body.decode('utf-8'))
                 name = info['name']
+                describe = info['description']
                 price = info['price']
                 image = info['image']
                 st = info['status']
@@ -510,13 +511,13 @@ def option(request, option_id=None):
 
                 if request.method == 'POST':
                     g_id = info['groupId']
-                    o = Option(group_id=g_id, name=name, price=price, image=img_name)
+                    o = Option(group_id=g_id, name=name, description=describe, price=price, image=img_name)
                     o.save()
                     for s in sizes:
                         FoodSize(option=o, size=s['size'], price=s['price']).save()
                 else:
                     o = Option.objects.filter(option_id=option_id)
-                    o.update(name=name, price=price, image=img_name, status=st)
+                    o.update(name=name, description=describe, price=price, image=img_name, status=st)
                     o = o.first()
                     update_option_size(o, sizes)
 

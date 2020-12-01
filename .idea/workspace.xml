@@ -38,7 +38,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="urls.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/urls.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="263">
@@ -62,7 +62,7 @@
       <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/admin.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
+            <state relative-caret-position="7480">
               <caret line="455" column="37" selection-start-line="455" selection-start-column="31" selection-end-line="455" selection-end-column="37" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
@@ -71,11 +71,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="226" column="30" lean-forward="true" selection-start-line="226" selection-start-column="30" selection-end-line="226" selection-end-column="30" />
+            <state relative-caret-position="306">
+              <caret line="231" column="70" selection-start-line="231" selection-start-column="70" selection-end-line="231" selection-end-column="70" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -96,7 +96,7 @@
         <entry file="file://$PROJECT_DIR$/api/update_option.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="442">
-              <caret line="26" column="24" lean-forward="true" selection-start-line="26" selection-start-column="24" selection-end-line="26" selection-end-column="24" />
+              <caret line="26" column="24" selection-start-line="26" selection-start-column="24" selection-end-line="26" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -160,8 +160,8 @@
         <option value="$PROJECT_DIR$/api/admin.py" />
         <option value="$PROJECT_DIR$/api/update_option.py" />
         <option value="$PROJECT_DIR$/api/update_food.py" />
-        <option value="$PROJECT_DIR$/api/views.py" />
         <option value="$PROJECT_DIR$/api/urls.py" />
+        <option value="$PROJECT_DIR$/api/views.py" />
       </list>
     </option>
   </component>
@@ -175,7 +175,7 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="326" />
+    <option name="x" value="325" />
     <option name="y" value="-35" />
     <option name="width" value="945" />
     <option name="height" value="1040" />
@@ -187,7 +187,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -220,6 +219,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -376,13 +376,6 @@
       <option name="presentableId" value="Default" />
       <updated>1600244553792</updated>
       <workItem from="1602259249823" duration="8000" />
-    </task>
-    <task id="LOCAL-00073" summary="modify popular food apis">
-      <created>1604821355649</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
-      <option name="project" value="LOCAL" />
-      <updated>1604821355649</updated>
     </task>
     <task id="LOCAL-00074" summary="added service charge to order">
       <created>1604827854336</created>
@@ -720,7 +713,14 @@
       <option name="project" value="LOCAL" />
       <updated>1606577187930</updated>
     </task>
-    <option name="localTasksCounter" value="122" />
+    <task id="LOCAL-00122" summary="modifying :))))">
+      <created>1606577295285</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1606577295286</updated>
+    </task>
+    <option name="localTasksCounter" value="123" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -734,7 +734,7 @@
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32905984" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.38176638" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.25925925" />
-      <window_info active="true" content_ui="combo" x="663" y="61" width="210" height="702" id="Project" order="0" visible="true" weight="0.095302016" />
+      <window_info active="true" content_ui="combo" x="663" y="61" width="210" height="702" id="Project" order="0" visible="true" weight="0.0966443" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="4" />
       <window_info anchor="right" id="SciView" order="3" />
@@ -753,24 +753,24 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12818792" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.54131055" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32905984" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32905984" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" id="Database" order="4" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.27065527" />
       <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" weight="0.32905984" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="SciView" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32905984" />
-      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32905984" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info id="Favorites" order="2" side_tool="true" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -783,7 +783,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="modify  notif to users and admins and reverse invoices" />
     <MESSAGE value="modify  notif to users" />
     <MESSAGE value="add isRate to orderFoodId for send rate&#10;create Payment model&#10;create api orderPayment&#10;modify notif" />
     <MESSAGE value="modify notif and order payment api" />
@@ -808,7 +807,8 @@
     <MESSAGE value="complete update option" />
     <MESSAGE value="modify" />
     <MESSAGE value="completed forget pass and end :)" />
-    <option name="LAST_COMMIT_MESSAGE" value="completed forget pass and end :)" />
+    <MESSAGE value="modifying :))))" />
+    <option name="LAST_COMMIT_MESSAGE" value="modifying :))))" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/api/admin.py">
@@ -1086,7 +1086,7 @@
     <entry file="file://$PROJECT_DIR$/api/update_option.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
-          <caret line="26" column="24" lean-forward="true" selection-start-line="26" selection-start-column="24" selection-end-line="26" selection-end-column="24" />
+          <caret line="26" column="24" selection-start-line="26" selection-start-column="24" selection-end-line="26" selection-end-column="24" />
         </state>
       </provider>
     </entry>
@@ -1106,20 +1106,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/admin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
+        <state relative-caret-position="7480">
           <caret line="455" column="37" selection-start-line="455" selection-start-column="31" selection-end-line="455" selection-end-column="37" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/api/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="226" column="30" lean-forward="true" selection-start-line="226" selection-start-column="30" selection-end-line="226" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1130,6 +1120,16 @@
           <caret line="17" column="51" selection-start-line="17" selection-start-column="34" selection-end-line="17" selection-end-column="51" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="231" column="70" selection-start-line="231" selection-start-column="70" selection-end-line="231" selection-end-column="70" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>

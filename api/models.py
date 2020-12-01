@@ -134,6 +134,7 @@ class Option(models.Model):
     option_id = models.AutoField(primary_key=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200)
     price = models.FloatField()
     rank = models.FloatField(default=1.0)
     status = models.BooleanField(default=True)
@@ -143,6 +144,7 @@ class Option(models.Model):
         context = {
             'optionId': self.option_id,
             'name': self.name,
+            'description': self.description,
             'price': self.price,
             'rank': self.rank,
             'status': self.status,
