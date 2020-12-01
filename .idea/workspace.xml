@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bd550058-432c-4847-bbe3-e289478094cd" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models.py" afterDir="false" />
-    </list>
+    <list default="true" id="bd550058-432c-4847-bbe3-e289478094cd" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -378,13 +375,6 @@
       <updated>1600244553792</updated>
       <workItem from="1602259249823" duration="8000" />
     </task>
-    <task id="LOCAL-00075" summary="added totalPrice and payment type to user notif">
-      <created>1604902289970</created>
-      <option name="number" value="00075" />
-      <option name="presentableId" value="LOCAL-00075" />
-      <option name="project" value="LOCAL" />
-      <updated>1604902289971</updated>
-    </task>
     <task id="LOCAL-00076" summary="modify food and option api admin">
       <created>1605005513538</created>
       <option name="number" value="00076" />
@@ -721,7 +711,14 @@
       <option name="project" value="LOCAL" />
       <updated>1606828079271</updated>
     </task>
-    <option name="localTasksCounter" value="124" />
+    <task id="LOCAL-00124" summary="modify">
+      <created>1606828174304</created>
+      <option name="number" value="00124" />
+      <option name="presentableId" value="LOCAL-00124" />
+      <option name="project" value="LOCAL" />
+      <updated>1606828174304</updated>
+    </task>
+    <option name="localTasksCounter" value="125" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -805,11 +802,11 @@
     <MESSAGE value="modify bug of order for put  method Food and Option&#10;and add optionType api-models" />
     <MESSAGE value="complete update food" />
     <MESSAGE value="complete update option" />
-    <MESSAGE value="modify" />
     <MESSAGE value="completed forget pass and end :)" />
     <MESSAGE value="modifying :))))" />
     <MESSAGE value="added description to option" />
-    <option name="LAST_COMMIT_MESSAGE" value="added description to option" />
+    <MESSAGE value="modify" />
+    <option name="LAST_COMMIT_MESSAGE" value="modify" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/api/admin.py">

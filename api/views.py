@@ -606,7 +606,7 @@ def get_orders(request):
                 orders = Order.objects.all()
             else:
                 user = token[0].user
-                orders = Order.objects.filter(user=user)
+                orders = Order.objects.filter(user=user).order_by('-datetime')
 
             if token[0].is_admin:
                 w_d = False
