@@ -219,9 +219,13 @@ class FoodType(models.Model):
     price = models.FloatField()
 
     def to_json(self):
+        child = False
+        if self.option_type is not None:
+            child = True
         return {
             'foodTypeId': self.food_type_id,
             'type': self.type,
+            'childOfOptionType': child,
             'price': self.price,
         }
 
