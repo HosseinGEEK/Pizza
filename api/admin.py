@@ -403,6 +403,10 @@ def food(request, food_id=None):
                 types = info['types']
                 ops = info['options']
                 o_types = info['optionTypes']
+                options_e_p = None
+                if 'optionsExtraPrice' in info:
+                    options_e_p = info['optionsExtraPrice']
+
                 try:
                     img_name = image_name() + '.png'
                     path = 'media/Images/' + img_name
@@ -420,6 +424,7 @@ def food(request, food_id=None):
                         description=describe,
                         price=price,
                         final_price=final_price,
+                        options_extra_price=options_e_p,
                         image=img_name,
                         status=status,
                         is_double=is_double,
@@ -452,6 +457,7 @@ def food(request, food_id=None):
                         description=describe,
                         price=price,
                         final_price=final_price,
+                        options_extra_price=options_e_p,
                         image=img_name,
                         status=status,
                         is_double=is_double,

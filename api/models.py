@@ -100,6 +100,7 @@ class Food(models.Model):
     description = models.CharField(max_length=200)
     price = models.FloatField(null=True, blank=True)
     final_price = models.FloatField(null=True, blank=True)
+    options_extra_price = models.FloatField(null=True, blank=True)
     status = models.BooleanField(default=True)
     rank = models.FloatField(default=1.0)
     image = models.CharField(max_length=100)
@@ -113,6 +114,7 @@ class Food(models.Model):
             'description': self.description,
             'price': self.price,
             'finalPrice': self.final_price,
+            'optionsExtraPrice': self.options_extra_price,
             'rank': self.rank,
             'image': self.image,
             'status': self.status,
